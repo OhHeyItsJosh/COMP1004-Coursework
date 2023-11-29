@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project management app</title>
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="modal-container">
+
+    </div>
+    <div id="modal-prefabs"> <!-- A container for modal templates / prefabs to be stored -->
+        <modal class ="modal modal-zoom-animation" id="test-modal" style="width: 25%">
+            <div class="centered-column">
+                <h1 modal-var="title"></h1>
+                <p modal-var="description" style = "margin-bottom: 16px"></p>
+
+                <div class="centered-row">
+                    <button onclick="popHighestModal()">Close</button>
+                    <button modal-var="do-something-btn" onclick="console.log('nothing has been set for this button...')">Do Something</button>
+                    <button onclick="modalTest()">Open Another Modal</button>
+                </div>
+            </div>
+        </modal>
+    </div>
+    <header>
+        <ul class="navbar tab-controller" tab-controller-id="main-nav">
+            <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
+            <li class="selectable-tab" tab-id="tasks">Tasks</li>
+            <li class="selectable-tab" tab-id="notes">Notes</li>
+        </ul>
+    </header>
+    <div class="tab-view" tab-controller-id="main-nav">
+        <div class="tab tab-active" tab-id="dashboard">
+            <h1>This is dashboard tab</h1>
+            <div class="demo-box" style="background:red"></div>
+            <button onclick="modalTest()">Modal Test</button>
+            <div id="modal-example-test"></div>
+        </div>
+        <div  class="tab" tab-id="tasks">
+            <h1>This is tasks tab</h1>
+            <div class="demo-box" style="background:blue"></div>
+
+        </div>
+        <div  class="tab" tab-id="notes">
+            <h1>This is notes tab</h1>
+            <div class="demo-box" style="background:green"></div>
+
+        </div>
+    </div>
+</body>
+<script defer src = "javascript/tabSystem.js"></script>
+<script defer src = "javascript/modalSystem.js"></script>
+<script defer src = "javascript/main.js"></script>
+</html>

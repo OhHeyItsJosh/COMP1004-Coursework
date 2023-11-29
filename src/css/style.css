@@ -1,0 +1,64 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+header {
+    width: 100%;
+    height: 80PX;
+    background: gray;
+
+}
+
+.navbar {
+    height: 100%;
+}
+
+.navbar li {
+    float: left;
+    list-style: none;
+    display: flex;
+    padding: 0px 16px;
+    height: 100%;
+    align-items: center;
+}
+
+.tab {
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.tab-active {
+    display: block;
+}
+
+.demo-box {
+    width: 100px;
+    height: 100px;
+}
+
+button {
+    margin: 0px 8px;
+}
+
+.centered-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.centered-row {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.centered-column > * {
+    text-align: center;
+}
