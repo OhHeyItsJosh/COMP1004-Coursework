@@ -20,6 +20,7 @@
 
 #modal-container > :not(:last-child) {
     filter: blur(10px);
+    pointer-events: none;
 }
 
 #modal-prefabs {
