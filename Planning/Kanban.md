@@ -6,6 +6,10 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] UI Elements prototype:<br>- [x] Create tab system for web app<br>- [x] Create modal system for web app
+- [ ] Add to the project backlog to get an idea of what needs to be done
+- [ ] [[Scrum meeting 1 -  01_11_23|Sprint 1 spec]]
+- [ ] Create basic class diagram
 - [ ] Create sitemap for project
 - [ ] Create initial wireframes for UI
 - [ ] Create user stories for the project
@@ -14,17 +18,27 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Create basic class diagram
-- [ ] Create sequence diagram
+- [ ] Create use case diagram and table<br>- [x] use case diagram<br>- [ ] use case table
 
 
 ## Sprint Backlog
 
-- [ ] [[Scrum meeting 1 -  01_11_23|Sprint 1 spec]]
+- [ ] [[Scrum meeting 2|Sprint 2 spec]]
+- [ ] Create sequence diagram
 
 
 ## Project Backlog
 
+- [ ] Create initial specification for UI design
+- [ ] Create basic prototype for the UI content detailed in the wireframes
+- [ ] Begin development on the underlying structures and begin to implement the user stories into the app.
+- [ ] Implement ability to create and open project
+- [ ] Initial task system
+- [ ] Initial notes system
+- [ ] Nesting for both tasks and notes
+- [ ] Implement the many to many relationship between tasks and notes
+- [ ] Implement initial dashboard layout and content
+- [ ] Allow for a project to be imported and exported using a JSON format
 
 
 
