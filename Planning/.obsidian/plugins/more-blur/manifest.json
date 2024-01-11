@@ -1,0 +1,11 @@
+{
+	"id": "more-blur",
+	"name": "More Blur",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "A simple plugin that adds more customisation to the blur effects in Obsidian",
+	"author": "ImJoshh_",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}

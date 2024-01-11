@@ -1,0 +1,39 @@
+/*
+
+This CSS file will be included with your plugin, and
+available in the app when your plugin is enabled.
+
+If your plugin does not need CSS, delete this file.
+
+*/
+
+:root {
+    --background-dark-translucent: #1e1e1e7a;
+}
+
+body {
+    --workspace-background-translucent: rgba(var(--mono-rgb-0), 0);
+}
+
+.translucent-workspace.theme-dark .workspace-split {
+    --background-primary: var(--background-dark-translucent);
+    --tab-background-active: var(--background-dark-translucent);
+}
+
+.view-header-title-container:not(.mod-at-end):after {
+    background: none;
+}
+
+.workspace-split.mod-root .workspace-leaf-content {
+    border-radius: 16px;
+    border: 1px solid var(--tab-divider-color);
+    border-right-width: 2px;
+}
+
+.is-focused .workspace-tab-header.is-active {
+    border: 1px solid var(--tab-divider-color);
+    border-bottom: none;
+}
+.is-focused .workspace-tab-header.is-active::before, .is-focused .workspace-tab-header.is-active::after {
+    display: none;
+}
