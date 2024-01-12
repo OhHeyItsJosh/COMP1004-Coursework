@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "69f0e66b7bcdd0e5",
+            "id": "5e197f8c0e352b27",
             "type": "leaf",
             "state": {
               "type": "kanban",
@@ -18,7 +18,7 @@
             }
           },
           {
-            "id": "5e197f8c0e352b27",
+            "id": "b7cb49e7ff2e1154",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -168,11 +168,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "69f0e66b7bcdd0e5",
+  "active": "5e197f8c0e352b27",
   "lastOpenFiles": [
     "Meetings/Scrum meeting 3.md",
-    "Meetings/Scrum meeting 2.md",
     "Kanban.md",
+    "Meetings/Scrum meeting 2.md",
     "Meetings/Scrum meeting 2 - agenda.md",
     "Meetings/Scrum meeting 1 -  01_11_23.md",
     "Sprints",

@@ -35,15 +35,19 @@ class TabView {
                     tabObj.classList.remove("tab-active");
             }
         }
+
+
     }
 }
 
 class TabHandler {
     tabViews;
     currentTab;
+    controller;
 
-    constructor() {
+    constructor(controller) {
         this.tabViews = [];
+        this.controller = controller;
     }
 
     addTabView(tabView) {
@@ -54,6 +58,17 @@ class TabHandler {
         for (const tabView of this.tabViews)
         {
             tabView.setTab(tab);
+        }
+
+        for (const tabButton of this.controller.children)
+        {
+            if (tabButton.getAttribute("tab-id") == tab) {
+                tabButton.classList.add("selectable-tab-active");
+            }
+            else {
+                if (tabButton.classList.contains("selectable-tab-active"))
+                    tabButton.classList.remove("selectable-tab-active");
+            }
         }
     }
 }
@@ -78,7 +93,7 @@ function initTabHandlers() {
             console.error(`Error: A tab controller with the id ${controllerId} already exists`);
         }
 
-        tabHandlers.set(controllerId, new TabHandler());
+        tabHandlers.set(controllerId, new TabHandler(tabController));
 
         const selectableTabs = tabController.getElementsByClassName("selectable-tab");
         for (const selectableTab of selectableTabs)

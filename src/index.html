@@ -17,7 +17,7 @@
                 <h1 modal-var="title"></h1>
                 <p modal-var="description" style = "margin-bottom: 16px"></p>
 
-                <div class="centered-row">
+                <div class="flex-row row-centered">
                     <button onclick="popHighestModal()">Close</button>
                     <button modal-var="do-something-btn" onclick="console.log('nothing has been set for this button...')">Do Something</button>
                     <button onclick="modalTest()">Open Another Modal</button>
@@ -25,26 +25,157 @@
             </div>
         </modal>
     </div>
-    <header>
-        <ul class="navbar tab-controller" tab-controller-id="main-nav">
-            <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
-            <li class="selectable-tab" tab-id="tasks">Tasks</li>
-            <li class="selectable-tab" tab-id="notes">Notes</li>
-        </ul>
-    </header>
-    <div class="tab-view" tab-controller-id="main-nav">
-        <div class="tab tab-active" tab-id="dashboard">
-            <h1>This is dashboard tab</h1>
-            <div class="demo-box" style="background:red"></div>
-            <button onclick="modalTest()">Modal Test</button>
-        </div>
-        <div class="tab" tab-id="tasks">
-            <h1>This is tasks tab</h1>
-            <div class="demo-box" style="background:blue"></div>
-        </div>
-        <div class="tab" tab-id="notes">
-            <h1>This is notes tab</h1>
-            <div class="demo-box" style="background:green"></div>
+    <div id="wrapper">
+        <header>
+            <ul class="navbar tab-controller" tab-controller-id="main-nav">
+                <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
+                <li class="selectable-tab selectable-tab-active" tab-id="tasks">Tasks</li>
+                <li class="selectable-tab" tab-id="notes">Notes</li>
+            </ul>
+        </header>
+        <div class="tab-view" tab-controller-id="main-nav">
+            <div class="tab" tab-id="dashboard">
+                <h1>This is dashboard tab</h1>
+                <div style="display:block;">
+                    <button onclick="modalTest()">Modal Test</button>
+                </div>
+            </div>
+
+            <div class="tab tab-active" tab-id="tasks">
+                <div class="expanded" style="padding: 16px; overflow: hidden;">
+                    <div class="space-between-row" style = "margin-bottom: 16px">
+                        <h2>Tasks</h2>
+                        <button>New</button>
+                    </div>
+                    <div class="flex-row row-centered" style = "gap: 16px; flex-grow: 1; overflow: hidden; padding: 16px; margin: -16px;">
+                        <div class="task-group">
+                            <h3 class="task-header">Completed</h3>
+
+                            <div class="task-container">
+
+                                <!-- task card widget -->
+                                <div class="task-card">
+                                    <div class="space-between-row">
+                                        <div class="flex-row" style="align-items: center;">
+                                            <h3 class="task-title">Task name</h3>
+                                            <p class="task-deadline">Deadline</p>
+                                        </div>
+                                        <div class="task-status-display">Completed</div>
+                                    </div>
+                                    <div class="task-body-row">
+                                        <div class="space-between-column">
+                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                                            <div class="tag-row">
+                                                <div class="task-tag">Tag1</div>
+                                                <div class="task-tag">Tag2</div>
+                                            </div>
+                                        </div>
+                                        <div class="centered-column">
+                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="task-card">
+                                    <div class="space-between-row">
+                                        <div class="flex-row" style="align-items: center;">
+                                            <h3 class="task-title">Task name</h3>
+                                            <p class="task-deadline">Deadline</p>
+                                        </div>
+                                        <div class="task-status-display">Completed</div>
+                                    </div>
+                                    <div class="task-body-row">
+                                        <div class="space-between-column">
+                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                                            <div class="tag-row">
+                                                <div class="task-tag">Tag1</div>
+                                                <div class="task-tag">Tag2</div>
+                                            </div>
+                                        </div>
+                                        <div class="centered-column">
+                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="task-card">
+                                    <div class="space-between-row">
+                                        <div class="flex-row" style="align-items: center;">
+                                            <h3 class="task-title">Task name</h3>
+                                            <p class="task-deadline">Deadline</p>
+                                        </div>
+                                        <div class="task-status-display">Completed</div>
+                                    </div>
+                                    <div class="task-body-row">
+                                        <div class="space-between-column">
+                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                                            <div class="tag-row">
+                                                <div class="task-tag">Tag1</div>
+                                                <div class="task-tag">Tag2</div>
+                                            </div>
+                                        </div>
+                                        <div class="centered-column">
+                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="task-card">
+                                    <div class="space-between-row">
+                                        <div class="flex-row" style="align-items: center;">
+                                            <h3 class="task-title">Task name</h3>
+                                            <p class="task-deadline">Deadline</p>
+                                        </div>
+                                        <div class="task-status-display">Completed</div>
+                                    </div>
+                                    <div class="task-body-row">
+                                        <div class="space-between-column">
+                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                                            <div class="tag-row">
+                                                <div class="task-tag">Tag1</div>
+                                                <div class="task-tag">Tag2</div>
+                                            </div>
+                                        </div>
+                                        <div class="centered-column">
+                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="task-card">
+                                    <div class="space-between-row">
+                                        <div class="flex-row" style="align-items: center;">
+                                            <h3 class="task-title">Task name</h3>
+                                            <p class="task-deadline">Deadline</p>
+                                        </div>
+                                        <div class="task-status-display">Completed</div>
+                                    </div>
+                                    <div class="task-body-row">
+                                        <div class="space-between-column">
+                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                                            <div class="tag-row">
+                                                <div class="task-tag">Tag1</div>
+                                                <div class="task-tag">Tag2</div>
+                                            </div>
+                                        </div>
+                                        <div class="centered-column">
+                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="task-group">
+                            <h3 class="task-header">In Progress</h3>
+                        </div>
+                        <div class="task-group">
+                            <h3 class="task-header">Not Started</h3>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+            <div class="tab" tab-id="notes">
+                <h1>This is notes tab</h1>
+            </div>
         </div>
     </div>
 </body>

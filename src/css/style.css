@@ -3,16 +3,46 @@
     margin: 0;
 }
 
+:root {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgb(65,65,65);
+}
+
 html, body {
     width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 
 header {
     width: 100%;
-    height: 80PX;
-    background: gray;
+    height: 80px;
+    background: #f0f4f5;
+    box-shadow: 0 1px 5px 0px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
 
+.placeholder {
+    position: relative;
+    background: gray;
+    border-radius: 16px;
+}
+
+.placeholder::after {
+    content: "Placeholder";
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: .8em;
+}
+
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
 .navbar {
@@ -26,21 +56,79 @@ header {
     padding: 0px 16px;
     height: 100%;
     align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: 0.2s ease-in;
+}
+
+.navbar li:hover {
+    background: rgba(20, 24, 27, 0.1);
+    cursor: pointer;
+    user-select: none;
+}
+
+.selectable-tab-active {
+    display: block;
+    position: relative;
+}
+
+.selectable-tab::after {
+    content: "";
+    transition: 0.2s ease-in;
+    height: 0;
+    transform: translateX(-50%);
+}
+
+.selectable-tab-active::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 50%;
+    height: 3px;
+    background: #247d8f;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+}
+
+.expanded {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.space-between-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.space-between-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .tab {
     width: 100%;
     height: 100%;
     display: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-view {
+    position: relative;
+    height: inherit;
+    flex-grow: 1;
+    display: contents;
 }
 
 .tab-active {
-    display: block;
-}
-
-.demo-box {
-    width: 100px;
-    height: 100px;
+    display: flex;
+    flex-direction: column;
 }
 
 button {
@@ -50,15 +138,120 @@ button {
 .centered-column {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
 }
 
-.centered-row {
+.flex-row {
     display: flex;
-    width: 100%;
+    flex-direction: row;
+}
+
+.row-centered {
     justify-content: center;
 }
 
 .centered-column > * {
     text-align: center;
+}
+
+button {
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    /* border: 1px solid rgba(0,0,0,0.1); */
+    background-color: #359da6;
+    transition: 0.2s linear;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+button:hover {
+    background: #007580;
+    cursor: pointer;
+}
+
+.task-group {
+    position: relative;
+    padding: 16px;
+    border-radius: 24px;
+    width: 100%;
+    background-color: #e8eded;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 1px 5px 3px 0px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.task-group .task-header {
+    padding-bottom: 16px;
+}
+
+.task-group .task-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    width: 100%;
+    overflow: scroll;
+    padding: 8px 8px;
+    margin: -8px;
+    border-radius: 16px;
+}
+
+/* Task card */
+
+.task-card {
+    display: flex;
+    flex-direction: column;
+    background: #bfc6c7;
+    padding: 16px;
+    border-radius: 16px;
+    /* overflow: hidden; */
+    box-shadow: 2px 4px 3px -1px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+}
+
+.task-card .task-description {
+    margin: 0 16px;
+}
+
+.task-card .task-deadline {
+    margin: 0 16px;
+    font-size: .8em;
+    /* font-weight: 700; */
+}
+
+.task-card .task-status-display {
+    background: green; /* temporary */
+    padding: 4px 6px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: white;
+    font-size: .8em;
+}
+
+.task-body-row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin-top: 8px;
+}
+
+.tag-row {
+    position: relative;
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    float: left;
+}
+
+.tag-row .task-tag {
+    padding: 4px 6px;
+    background: grey;
+    font-size: .8em;
+    font-weight: bold;
+    color: white;
+    border-radius: 8px;
 }
