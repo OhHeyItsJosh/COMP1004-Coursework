@@ -1,3 +1,10 @@
+### What was achieved in the last sprint?
+
+- More solid requirements and project vision was established.
+- Wrote user stories for the functionality the app should have.
+- Initial wireframes for the UI were created.
+- Began work on creating UML diagrams, created initial sitemap and class diagram.
+
 ### Plans for next sprint
 
 - Continue working on UML diagrams (sequence diagram, use case diagrams, state diagrams, etc)
