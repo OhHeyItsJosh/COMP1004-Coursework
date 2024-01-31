@@ -11,8 +11,9 @@
     <div id="modal-container">
 
     </div>
-    <div id="modal-prefabs"> <!-- A container for modal templates / prefabs to be stored -->
-        <modal class ="modal modal-zoom-animation" id="test-modal" style="width: 25%">
+    <div id="prefabs"> <!-- A container for modal templates / prefabs to be stored -->
+
+        <modal class ="modal modal-zoom-animation" id="test-modal">
             <div class="centered-column">
                 <h1 modal-var="title"></h1>
                 <p modal-var="description" style = "margin-bottom: 16px"></p>
@@ -24,6 +25,52 @@
                 </div>
             </div>
         </modal>
+
+        <!-- task card widget -->
+        <div class="task-card" id = "task-card-prefab">
+            <div class="space-between-row">
+                <div class="flex-row" style="align-items: center;">
+                    <h3 class="task-title" modal-var="name">Task name</h3>
+                    <p class="task-deadline" modal-var="deadline">Deadline</p>
+                </div>
+                <div class="task-status-display">Completed</div>
+            </div>
+            <div class="task-body-row">
+                <div class="space-between-column" style="flex: 1">
+                    <p class="task-description" modal-var="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                    <div class="tag-row">
+                        <div class="task-tag">Tag1</div>
+                        <div class="task-tag">Tag2</div>
+                    </div>
+                </div>
+                <div class="centered-column">
+                    <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                </div>
+            </div>
+        </div>
+
+        <modal id="create-task-modal" class="modal modal-zoom-animation">
+            <div class="centered-column">
+                <h1>Create Task</h1>
+                <div style="margin-bottom: 16px">
+                    <div class="input-field">
+                        <p>Name</p>
+                        <input type="text" class="task-name-input">
+                    </div>
+
+                    <div class="input-field">
+                        <p>Description</p>
+                        <input type="text" class="task-description-input">
+                    </div>
+                </div>
+
+                <div class="flex-row row-centered">
+                    <button onclick="popHighestModal()">Cancel</button>
+                    <button onclick="createTask(this);">Create</button>
+                </div>
+            </div>
+        </modal>
+
     </div>
     <div id="wrapper">
         <header>
@@ -45,122 +92,13 @@
                 <div class="expanded" style="padding: 16px; overflow: hidden;">
                     <div class="space-between-row" style = "margin-bottom: 16px">
                         <h2>Tasks</h2>
-                        <button>New</button>
+                        <button onclick="createTaskClicked()">New</button>
                     </div>
                     <div class="flex-row row-centered" style = "gap: 16px; flex-grow: 1; overflow: hidden; padding: 16px; margin: -16px;">
                         <div class="task-group">
                             <h3 class="task-header">Completed</h3>
 
-                            <div class="task-container">
-
-                                <!-- task card widget -->
-                                <div class="task-card">
-                                    <div class="space-between-row">
-                                        <div class="flex-row" style="align-items: center;">
-                                            <h3 class="task-title">Task name</h3>
-                                            <p class="task-deadline">Deadline</p>
-                                        </div>
-                                        <div class="task-status-display">Completed</div>
-                                    </div>
-                                    <div class="task-body-row">
-                                        <div class="space-between-column">
-                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                                            <div class="tag-row">
-                                                <div class="task-tag">Tag1</div>
-                                                <div class="task-tag">Tag2</div>
-                                            </div>
-                                        </div>
-                                        <div class="centered-column">
-                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="task-card">
-                                    <div class="space-between-row">
-                                        <div class="flex-row" style="align-items: center;">
-                                            <h3 class="task-title">Task name</h3>
-                                            <p class="task-deadline">Deadline</p>
-                                        </div>
-                                        <div class="task-status-display">Completed</div>
-                                    </div>
-                                    <div class="task-body-row">
-                                        <div class="space-between-column">
-                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                                            <div class="tag-row">
-                                                <div class="task-tag">Tag1</div>
-                                                <div class="task-tag">Tag2</div>
-                                            </div>
-                                        </div>
-                                        <div class="centered-column">
-                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- <div class="task-card">
-                                    <div class="space-between-row">
-                                        <div class="flex-row" style="align-items: center;">
-                                            <h3 class="task-title">Task name</h3>
-                                            <p class="task-deadline">Deadline</p>
-                                        </div>
-                                        <div class="task-status-display">Completed</div>
-                                    </div>
-                                    <div class="task-body-row">
-                                        <div class="space-between-column">
-                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                                            <div class="tag-row">
-                                                <div class="task-tag">Tag1</div>
-                                                <div class="task-tag">Tag2</div>
-                                            </div>
-                                        </div>
-                                        <div class="centered-column">
-                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="task-card">
-                                    <div class="space-between-row">
-                                        <div class="flex-row" style="align-items: center;">
-                                            <h3 class="task-title">Task name</h3>
-                                            <p class="task-deadline">Deadline</p>
-                                        </div>
-                                        <div class="task-status-display">Completed</div>
-                                    </div>
-                                    <div class="task-body-row">
-                                        <div class="space-between-column">
-                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                                            <div class="tag-row">
-                                                <div class="task-tag">Tag1</div>
-                                                <div class="task-tag">Tag2</div>
-                                            </div>
-                                        </div>
-                                        <div class="centered-column">
-                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="task-card">
-                                    <div class="space-between-row">
-                                        <div class="flex-row" style="align-items: center;">
-                                            <h3 class="task-title">Task name</h3>
-                                            <p class="task-deadline">Deadline</p>
-                                        </div>
-                                        <div class="task-status-display">Completed</div>
-                                    </div>
-                                    <div class="task-body-row">
-                                        <div class="space-between-column">
-                                            <p class="task-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                                            <div class="tag-row">
-                                                <div class="task-tag">Tag1</div>
-                                                <div class="task-tag">Tag2</div>
-                                            </div>
-                                        </div>
-                                        <div class="centered-column">
-                                            <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
-                                        </div>
-                                    </div>
-                                </div> -->
+                            <div class="task-container" id="completed-task-container">
                             </div>
                         </div>
                         <div class="task-group">
@@ -179,6 +117,7 @@
         </div>
     </div>
 </body>
+<script defer src = "javascript/prefab.js"></script>
 <script defer src = "javascript/tabSystem.js"></script>
 <script defer src = "javascript/modalSystem.js"></script>
 <script defer src = "javascript/main.js"></script>

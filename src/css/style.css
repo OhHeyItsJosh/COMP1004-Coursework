@@ -139,6 +139,7 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
 }
 
 .flex-row {
@@ -150,9 +151,9 @@ button {
     justify-content: center;
 }
 
-.centered-column > * {
+/* .centered-column * {
     text-align: center;
-}
+} */
 
 button {
     padding: 6px 12px;
@@ -211,6 +212,8 @@ button:hover {
     /* overflow: hidden; */
     box-shadow: 2px 4px 5px -1px rgba(0,0,0,0.3);
     flex-shrink: 0;
+    user-select: none;
+    cursor: pointer;
 }
 
 .task-card .task-description {
@@ -254,4 +257,13 @@ button:hover {
     font-weight: bold;
     color: white;
     border-radius: 8px;
+}
+
+
+.input-field {
+    margin: 8px 0;
+}
+
+.input-field {
+    text-align: start;
 }
