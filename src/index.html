@@ -49,18 +49,38 @@
             </div>
         </div>
 
+        <!-- create task modal -->
         <modal id="create-task-modal" class="modal modal-zoom-animation">
             <div class="centered-column">
                 <h1>Create Task</h1>
-                <div style="margin-bottom: 16px">
+                <div style="margin-bottom: 16px; width: 35vw;">
                     <div class="input-field">
-                        <p>Name</p>
-                        <input type="text" class="task-name-input">
+                        <label>
+                            <p>Name</p>
+                            <input type="text" class="task-name-input">
+                        </label>
                     </div>
 
                     <div class="input-field">
-                        <p>Description</p>
-                        <input type="text" class="task-description-input">
+                        <label>
+                            <p>Description</p>
+                            <textarea class="task-description-input" rows="4"></textarea>
+                        </label>
+                    </div>
+
+                    <div class="flex-row" style="gap: 8px">
+                        <div class="input-field">
+                            <label>
+                                <p>Start Date</p>
+                                <input type="date" class="task-startdate-input" onclick="dateButtonOverride(event, this)">
+                            </label>
+                        </div>
+                        <div class="input-field">
+                            <label>
+                                <p>End Date</p>
+                                <input type="date" class="task-enddate-input" onclick="dateButtonOverride(event, this)">
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -120,5 +140,8 @@
 <script defer src = "javascript/prefab.js"></script>
 <script defer src = "javascript/tabSystem.js"></script>
 <script defer src = "javascript/modalSystem.js"></script>
+<script defer src = "javascript/state.js"></script>
+<script defer src = "javascript/core.js"></script>
+
 <script defer src = "javascript/main.js"></script>
 </html>

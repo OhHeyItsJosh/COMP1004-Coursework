@@ -1,10 +1,10 @@
 * {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 0;
     margin: 0;
 }
 
 :root {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: rgb(65,65,65);
 }
 
@@ -259,11 +259,48 @@ button:hover {
     border-radius: 8px;
 }
 
-
-.input-field {
-    margin: 8px 0;
+textarea {
+    resize: none;
+    font-size: 0.8rem;
 }
 
 .input-field {
+    margin: 8px 0;
     text-align: start;
+    width: 100%;
+
+}
+
+.input-field label p {
+    margin-bottom: 6px;
+}
+
+.input-field input[type="text"], textarea, input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"], textarea, input[type="date"] {
+    padding: 8px 6px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(240,240,240);
+    transition: 0.2s ease-in-out;
+}
+
+input[type="text"]:focus, textarea, input[type="date"] {
+    outline: none;
+    /* filter: brightness(0.9); */
+}
+
+.input-field input[type="date"] {
+    cursor: pointer;
+}
+
+.input-field input[type="date"]::selection {
+    background: transparent;
+}
+
+*::selection {
+    background: red;
 }
