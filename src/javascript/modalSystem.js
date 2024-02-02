@@ -7,9 +7,11 @@ const ANIM_DURATION = 300;
 class Modal {
     element;
     animation;
+    state;
 
-    constructor(object) {
+    constructor(object, state) {
         this.element = object;
+        this.state = state;
 
         for (const clazz of object.classList.entries())
         {

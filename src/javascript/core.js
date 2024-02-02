@@ -115,6 +115,10 @@ class TreeNode {
 
         this.children.splice(index, 1);
     }
+
+    getChildren() {
+        return this.children.map((child) => this.nodeTree.getNode(child));
+    }
 }
 
 class TasksHierarchy extends NodeHierarchyTree {

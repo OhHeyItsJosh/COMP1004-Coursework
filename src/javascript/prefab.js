@@ -68,6 +68,11 @@ function indexPrefabs() {
     }
 }
 
+/**
+ * 
+ * @param {string} id 
+ * @returns {PrefabBuilder}
+ */
 function fetchPrefab(id) {
     const foundModal = prefabsIndex.get(id);
     if (!foundModal)

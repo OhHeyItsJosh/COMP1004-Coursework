@@ -2,10 +2,12 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 0;
     margin: 0;
+    --foreground-colour: rgb(65,65,65);
+    --separator-colour: rgb(175, 175, 175);
 }
 
 :root {
-    color: rgb(65,65,65);
+    color: var(--foreground-colour);
 }
 
 html, body {
@@ -98,19 +100,6 @@ header {
     flex-direction: column;
 }
 
-.space-between-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.space-between-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 .tab {
     width: 100%;
     height: 100%;
@@ -135,6 +124,8 @@ button {
     margin: 0px 8px;
 }
 
+/* row and column stuff */
+
 .centered-column {
     display: flex;
     flex-direction: column;
@@ -150,6 +141,24 @@ button {
 .row-centered {
     justify-content: center;
 }
+
+.row-vertical-centered {
+    align-items: center;
+}
+
+.space-between-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* align-items: center; */
+}
+
+.space-between-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 
 /* .centered-column * {
     text-align: center;
@@ -190,7 +199,7 @@ button:hover {
     padding-bottom: 16px;
 }
 
-.task-group .task-container {
+.task-container {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
@@ -216,7 +225,7 @@ button:hover {
     cursor: pointer;
 }
 
-.task-card .task-description {
+.task-description {
     margin: 0 16px;
 }
 
@@ -233,6 +242,7 @@ button:hover {
     font-weight: bold;
     color: white;
     font-size: .8em;
+    height: fit-content;
 }
 
 .task-body-row {
@@ -301,6 +311,41 @@ input[type="text"]:focus, textarea, input[type="date"] {
     background: transparent;
 }
 
-*::selection {
-    background: red;
+
+#task-view-modal {
+    min-width: 700px;
+    max-height: 85vh;
+}
+
+.horizontal-spacer {
+    width: 100%;
+    height: 1px;
+    position: relative;
+    background: var(--separator-colour);
+    margin: 16px 0;
+}
+
+.task-relations-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.task-relations-wrapper .nested-tasks-section {
+    flex: 65
+}
+
+.task-relations-wrapper .related-notes-section {
+    flex: 35
+}
+
+.vertical-separator {
+    width: 1px;
+    background: var(--separator-colour);
+    position: relative;
+}
+
+.nested-tasks-container, .related-notes-container {
+    min-height: 100px;
+    margin-top: 16px;
 }

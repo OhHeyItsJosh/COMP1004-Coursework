@@ -86,7 +86,43 @@
 
                 <div class="flex-row row-centered">
                     <button onclick="popHighestModal()">Cancel</button>
-                    <button onclick="createTask(this);">Create</button>
+                    <button modal-var="create-btn">Create</button>
+                </div>
+            </div>
+        </modal>
+
+        <modal id="task-view-modal" class="modal modal-zoom-animation" style="padding: 24px 32px">
+            <div class="task-view-header">
+                <div class="space-between-row">
+                    <div class="space-between-column">
+                        <div>
+                            <h1 modal-var="title">(Title)</h1>
+                            <p class="task-description" modal-var="description">(Description)</p>
+                        </div>
+                        <div class="flex-row row-vertical-centered">
+                            <h4 modal-var="date-display">(Date)</h4>
+                            <button style="margin-left: 16px;">Edit</button>
+                        </div>
+                    </div>
+                    <div class="placeholder" style="width:225px; height: 175px; flex-shrink: 0;"></div>
+                </div>
+            </div>
+            <div class="horizontal-spacer"></div>
+            <div class="task-relations-wrapper">
+                <div class="nested-tasks-section">
+                    <div class="space-between-row">
+                        <h3>Nested Tasks:</h3>
+                        <button modal-var="add-task">Add Task</button>
+                    </div>
+                    <div class="nested-tasks-container task-container" modal-var="tasks-container"></div>
+                </div>
+                <div class="vertical-separator"></div>
+                <div class="related-notes-section">
+                    <div class="space-between-row">
+                        <h3>Related Notes:</h3>
+                        <button modal-var="add-note">Link Note</button>
+                    </div>
+                    <div class="related-notes-container" modal-var="notes-container"></div>
                 </div>
             </div>
         </modal>
