@@ -20,6 +20,8 @@ const taskStatefulBuilder = new StatefulCollectionBuilder({
 function init() {
     const exampleTask = new Task("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
     activeProject.tasksHierarchy.addRootLevelNode(exampleTask);
+    const newTag = activeProject.tasksHierarchy.createTag("Test Tag", "#ff55AA");
+    exampleTask.addTag(newTag.id);
     
     const nestedTask = new Task("Nested Task", "This is a test for nesting tasks", Date.now(), Date.now());
     exampleTask.addChildNode(nestedTask);
@@ -38,10 +40,26 @@ function buildTaskCard(task) {
     taskCard.setVariableContent("description", task.getDescription());
     taskCard.setVariableContent("deadline", `${getDateString(task.getEndDate())}`);
 
+    const tagContainer = taskCard.getVariable("tags");
+    task.getTags().forEach((tag) => tagContainer.appendChild(renderTag(tag)));
+
     const taskElement = taskCard.getElement();
     taskElement.addEventListener("click", () => showTaskViewModal(task));
 
     return taskElement;
+}
+
+/**
+ * 
+ * @param {Tag} tag 
+ * @returns 
+ */
+function renderTag(tag) {
+    const elem = document.createElement("div");
+    elem.classList.add("task-tag");
+    elem.innerHTML = tag.text;
+    elem.setAttribute("style", `background: ${tag.color};`);
+    return elem;
 }
 
 function modalTest() {
@@ -97,6 +115,7 @@ function createTask(sourceModal) {
     return task;
 }
 
+// spaghetti code, NEED to come up with better state management system
 /**
  * 
  * @param {Task} task 
@@ -108,6 +127,61 @@ function showTaskViewModal(task) {
     modalBuilder.setVariableContent("description", task.getDescription());
     modalBuilder.setVariableContent("date-display", `${getDateString(task.getStartDate())}  -  ${getDateString(task.getEndDate())}`);
 
+    const tagContainer = modalBuilder.getVariable("tag-container");
+    const tagBuilder = new StatefulCollectionBuilder({
+        builder: renderTag,
+        onAppend: (widget, state) => {
+            tagContainer.appendChild(widget);
+        }
+    });
+
+    const localAddTag = (tag) => {
+        const added = task.addTag(tag.id);
+        
+        // clunky
+        if (!added)
+            return;
+
+        // update states
+        tagBuilder.appendItem(tag.id, tag);
+        taskStatefulBuilder.rebuildItem(task.getId(), task);
+    }
+
+    task.getTags().forEach((tag) => tagBuilder.appendItem(tag.id, tag));
+
+    // tags
+    modalBuilder.setVariableClickListener("add-tag-btn", () => {
+        const tagSelectModalBuilder = fetchPrefab("tag-select-modal");
+        const tagContainer = tagSelectModalBuilder.getVariable("tag-container");
+
+        activeProject.tasksHierarchy.getSavedTags().map((tag) => {
+            const tagElement = renderTag(tag);
+            tagElement.onclick = () => {
+                localAddTag(tag);
+                popHighestModal();
+            }
+
+            return tagElement;
+        })
+            .forEach((element) => {
+                tagContainer.appendChild(element);
+            });
+        
+
+        tagSelectModalBuilder.setVariableClickListener("tag-submit-btn", () => {
+            const tagText = tagSelectModalBuilder.getVariable("tag-text-field").value;
+            const tagColour = tagSelectModalBuilder.getVariable("tag-colour-field").value;
+
+            const createdTag = activeProject.tasksHierarchy.createTag(tagText, tagColour);
+            localAddTag(createdTag);
+
+            popHighestModal();
+        });
+
+        showModal(new Modal(tagSelectModalBuilder.getElement()));
+    });
+
+    // nested tasks
     const nestedTasksContainer = modalBuilder.getVariable("tasks-container");
 
     /**
@@ -121,6 +195,7 @@ function showTaskViewModal(task) {
         }
     });
 
+    // add task button
     const addTaskButton = modalBuilder.getVariable("add-task");
     addTaskButton.onclick = () => {
         const createTaskModalBuilder = fetchPrefab("create-task-modal");

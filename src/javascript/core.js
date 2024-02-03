@@ -47,16 +47,16 @@ class NodeHierarchyTree {
 
 class TreeNode {
     /** @type {string} 
-     * @private */
+     * @protected */
     id;
     /** @type {NodeHierarchyTree} 
-     * @private */
+     * @protected */
     nodeTree;
     /** @type {string[]} 
-     * @private */
+     * @protected */
     children;
     /** @type {string} 
-     * @private */
+     * @protected */
     parent;
 
     constructor() {
@@ -122,9 +122,60 @@ class TreeNode {
 }
 
 class TasksHierarchy extends NodeHierarchyTree {
-    constructor() { super(); }
+    /** @type {Map<number, Tag>} @private */
+    tagRepo;
+
+    constructor() {
+        super();
+        this.tagRepo = new Map();
+     }
+
+     getSavedTags() {
+        return Array.from(this.tagRepo.values());
+     }
+
+     getTag(id) {
+        return this.tagRepo.get(id);
+     }
+
+     #nextTagId() {
+        let index = this.tagRepo.size;
+
+        while (this.tagRepo.has(index))
+            { index++; }
+
+        return index;
+     }
+
+     /**
+      * 
+      * @param {string} text
+      * @param {string} color
+      * @returns {Tag}
+      */
+     createTag(text, color) {
+        const tag = new Tag(this.#nextTagId(), text, color);
+        this.tagRepo.set(tag.id, tag);
+
+        return tag;
+     }
 
     getActiveTasks() {}
+}
+
+class Tag {
+    /** @type {number} */
+    id;
+    /** @type {string} */
+    text;
+    /** @type {string} */
+    color;
+
+    constructor(id, text, color) {
+        this.id = id;
+        this.text = text;
+        this.color = color;
+    }
 }
 
 class Task extends TreeNode {
@@ -139,12 +190,17 @@ class Task extends TreeNode {
     /**
      * @type {number}
      * @private */
-    startDate
+    startDate;
 
     /**
      * @type {number}
      * @private */
-    endDate
+    endDate;
+
+    /**
+     * @type {number[]}
+     * @private */
+    tags;
 
     /**
      * 
@@ -159,6 +215,7 @@ class Task extends TreeNode {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.tags = [];
     }
 
     getName() {
@@ -176,4 +233,21 @@ class Task extends TreeNode {
     getEndDate() {
         return new Date(this.endDate);
     }
+
+    addTag(tagId) {
+        if (this.tags.includes(tagId)) 
+            return false;
+
+        this.tags.push(tagId);
+        return true;
+    }
+
+    getTags() {
+        return this.tags.map((tagId) => TasksHierarchy.prototype.getTag.call(this.nodeTree, tagId));
+    }
+
+    // /** @return {string[]} */
+    // getCachedTagsFromParentStructure() {
+    //     return TasksHierarchy.prototype.getSavedTags.call(this.nodeTree);
+    // }
 }

@@ -38,9 +38,7 @@
             <div class="task-body-row">
                 <div class="space-between-column" style="flex: 1">
                     <p class="task-description" modal-var="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
-                    <div class="tag-row">
-                        <div class="task-tag">Tag1</div>
-                        <div class="task-tag">Tag2</div>
+                    <div modal-var="tags" class="tag-row" style="margin-top: 8px">
                     </div>
                 </div>
                 <div class="centered-column">
@@ -96,7 +94,12 @@
                 <div class="space-between-row">
                     <div class="space-between-column">
                         <div>
-                            <h1 modal-var="title">(Title)</h1>
+                            <div class="flex-row row-vertical-centered">
+                                <h1 modal-var="title">(Title)</h1>
+                                <div modal-var="tag-container" class="tag-row larger-tags" style="padding-left: 16px; padding-right: 8px;">
+                                </div>
+                                <button modal-var="add-tag-btn">Add Tag</button>
+                            </div>
                             <p class="task-description" modal-var="description">(Description)</p>
                         </div>
                         <div class="flex-row row-vertical-centered">
@@ -123,6 +126,18 @@
                         <button modal-var="add-note">Link Note</button>
                     </div>
                     <div class="related-notes-container" modal-var="notes-container"></div>
+                </div>
+            </div>
+        </modal>
+
+        <modal id="tag-select-modal" class="modal modal-zoom-animation">
+            <div class="flex-column">
+                <div class="tag-select-container flex-column" style="gap: 4px" modal-var="tag-container">
+                </div>
+                <div class="flex-row" style="gap: 6px;">
+                    <input modal-var="tag-text-field" type="text">
+                    <input modal-var="tag-colour-field" type="color">
+                    <button modal-var="tag-submit-btn">+</button>
                 </div>
             </div>
         </modal>

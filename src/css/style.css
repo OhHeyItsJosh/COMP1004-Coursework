@@ -120,9 +120,9 @@ header {
     flex-direction: column;
 }
 
-button {
+/* button {
     margin: 0px 8px;
-}
+} */
 
 /* row and column stuff */
 
@@ -131,6 +131,11 @@ button {
     flex-direction: column;
     justify-content: center;
     text-align: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .flex-row {
@@ -256,8 +261,10 @@ button:hover {
     position: relative;
     display: flex;
     gap: 6px;
-    margin-top: 8px;
+    /* margin-top: 8px; */
     float: left;
+    height: fit-content;
+    flex-wrap: wrap;
 }
 
 .tag-row .task-tag {
@@ -348,4 +355,39 @@ input[type="text"]:focus, textarea, input[type="date"] {
 .nested-tasks-container, .related-notes-container {
     min-height: 100px;
     margin-top: 16px;
+}
+
+.larger-tags .task-tag {
+    padding: 6px 12px;
+    /* border-radius: 12px; */
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+input[type="color"] {
+    width: 30px;
+    border: 2px solid var(--separator-colour);
+    outline: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+input::-moz-color-swatch {
+    border: none;
+}
+
+.tag-select-container {
+    margin-bottom: 12px;
+}
+
+.tag-select-container .task-tag {
+    padding: 4px 6px;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+    color: white;
+    cursor: pointer;
+}
+
+.tag-select-container .task-tag:hover {
+    filter: brightness(1.2);
 }
