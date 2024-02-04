@@ -39,6 +39,7 @@ class PrefabBuilder {
         element.innerHTML = content;
     }
 
+    /** @return {HTMLElement} */
     getVariable(variableName) {
         return this.variableElements.get(variableName);
     }

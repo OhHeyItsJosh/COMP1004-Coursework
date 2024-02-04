@@ -143,11 +143,15 @@ header {
     flex-direction: row;
 }
 
-.row-centered {
+.flex-centered {
     justify-content: center;
 }
 
-.row-vertical-centered {
+.flex-space-between {
+    justify-content: space-between;
+}
+
+.flex-align-center {
     align-items: center;
 }
 
@@ -162,6 +166,10 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.button-row {
+    gap: 16px;
 }
 
 
@@ -241,13 +249,30 @@ button:hover {
 }
 
 .task-card .task-status-display {
-    background: green; /* temporary */
     padding: 4px 6px;
     border-radius: 8px;
     font-weight: bold;
     color: white;
     font-size: .8em;
     height: fit-content;
+    text-align: center;
+}
+
+.status-completed, select[selected="2"]  {
+    background: green;
+}
+
+.status-progress, select[selected="1"] {
+    background: rgb(245, 141, 4);
+}
+
+.status-not-started, select[selected="0"] {
+    background: rgb(143, 4, 4);
+}
+
+.status-container { 
+    width: 225px;
+    flex-shrink: 0;
 }
 
 .task-body-row {
@@ -390,4 +415,13 @@ input::-moz-color-swatch {
 
 .tag-select-container .task-tag:hover {
     filter: brightness(1.2);
+}
+
+.status-container select {
+    padding: 6px 8px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    color: white;
+    width: 100%;
 }

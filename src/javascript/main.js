@@ -3,21 +3,55 @@
 ///<reference path="prefab.js"/>
 
 const completedTaskContainer = document.getElementById("completed-task-container");
+const inProgressTaskContainer = document.getElementById("in-progress-task-container");
+const notStartedTaskContainer = document.getElementById("not-started-task-container");
 
 const activeProject = new Project();
 
+function taskBuilderToContainer(container) {
+    return new StatefulCollectionBuilder({
+        onAppend: (widget, state) => {
+            if (!state.isRootLevelNode())
+            return;
+        
+            container.append(widget);
+        },
+        builder: buildTaskCard
+    });
+}
+
 /** 
- * @typedef {StatefulCollectionBuilder<Task>} TaskBuilder
+ * @typedef {StatefulDistributor<Task>} TaskBuilder
  * @type {TaskBuilder} 
  * */
-const taskStatefulBuilder = new StatefulCollectionBuilder({
-    onAppend: (widget, state) => {
-        completedTaskContainer.append(widget);
-    },
-    builder: buildTaskCard
-});
+const taskDistributorBuilder = new StatefulDistributor({
+    "completed": taskBuilderToContainer(completedTaskContainer),
+    "in-progress": taskBuilderToContainer(inProgressTaskContainer),
+    "not-started": taskBuilderToContainer(notStartedTaskContainer)
+}, (id, state) => {
+    switch(state.getStatus())
+    {
+        case Status.NOT_STARTED:
+            return "not-started";
+
+        case Status.IN_PROGRESS:
+            return "in-progress";
+
+        case Status.COMPLETED:
+            return "completed";
+    }
+})
+
+/**
+ * @typedef {StateNotifier<Task>} TaskNotifier
+ * @type {TaskNotifier} 
+ */
+const taskStateNotifier = new StateNotifier();
 
 function init() {
+    taskStateNotifier.addBuilder(taskDistributorBuilder);
+
+    // create example data
     const exampleTask = new Task("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
     activeProject.tasksHierarchy.addRootLevelNode(exampleTask);
     const newTag = activeProject.tasksHierarchy.createTag("Test Tag", "#ff55AA");
@@ -26,8 +60,15 @@ function init() {
     const nestedTask = new Task("Nested Task", "This is a test for nesting tasks", Date.now(), Date.now());
     exampleTask.addChildNode(nestedTask);
 
-    taskStatefulBuilder.appendItem(exampleTask.getId(), exampleTask);
+    taskStateNotifier.setState(exampleTask.getId(), exampleTask);
+    // taskStatefulBuilder.appendItem(exampleTask.getId(), exampleTask);
 }
+
+const StatusClassMap = {
+    0: "status-not-started",
+    1: "status-progress",
+    2: "status-completed" 
+} 
 
 /**
  * 
@@ -40,11 +81,18 @@ function buildTaskCard(task) {
     taskCard.setVariableContent("description", task.getDescription());
     taskCard.setVariableContent("deadline", `${getDateString(task.getEndDate())}`);
 
+    if (task.getChildren().length == 0)
+        taskCard.getVariable("progress-indicator").remove();
+    
+    const statusDisplay = taskCard.getVariable("status");
+    statusDisplay.innerHTML = StatusName[task.getStatus()];
+    statusDisplay.classList.add(StatusClassMap[task.getStatus()]);
+
     const tagContainer = taskCard.getVariable("tags");
     task.getTags().forEach((tag) => tagContainer.appendChild(renderTag(tag)));
 
     const taskElement = taskCard.getElement();
-    taskElement.addEventListener("click", () => showTaskViewModal(task));
+    taskElement.addEventListener("click", () => showModal(new TaskViewModal(task)));
 
     return taskElement;
 }
@@ -74,98 +122,197 @@ function modalTest() {
         descriptionText.innerHTML += "<br>You did something!"
     });
     
-    const modal = new Modal(modalBuilder.getElement());
+    const modal = new StaticModal(modalBuilder.getElement());
     showModal(modal);
 }
 
 
 function createTaskClicked() {
-    const modalBuilder = fetchPrefab("create-task-modal");
-    modalBuilder.setVariableClickListener("create-btn", () => newTaskClicked(modalBuilder.getElement()))
-
-    const modal = new Modal(modalBuilder.getElement());
-    showModal(modal);
-}
-
-function newTaskClicked(source) {
-    const task = createTask(source);
-    
-    activeProject.tasksHierarchy.addRootLevelNode(task);
-    taskStatefulBuilder.appendItem(task.getId(), task);
-    
-    popHighestModal();
-}
-
-/**
- * 
- * @param {*} sourceModal 
- * @returns {Task}
- */
-function createTask(sourceModal) {
-    const name = sourceModal.getElementsByClassName("task-name-input")[0].value;
-    const description = sourceModal.getElementsByClassName("task-description-input")[0].value;
-    const startDate = sourceModal.getElementsByClassName("task-startdate-input")[0].valueAsNumber;
-    const endDate = sourceModal.getElementsByClassName("task-enddate-input")[0].valueAsNumber;
-
-    // TODO: improve feedback in the future
-    if (isNaN(startDate) || isNaN(endDate))
-        return null;
-
-    const task = new Task(name, description, startDate, endDate);
-    return task;
-}
-
-// spaghetti code, NEED to come up with better state management system
-/**
- * 
- * @param {Task} task 
- */
-function showTaskViewModal(task) {
-    const modalBuilder = fetchPrefab("task-view-modal");
-
-    modalBuilder.setVariableContent("title", task.getName());
-    modalBuilder.setVariableContent("description", task.getDescription());
-    modalBuilder.setVariableContent("date-display", `${getDateString(task.getStartDate())}  -  ${getDateString(task.getEndDate())}`);
-
-    const tagContainer = modalBuilder.getVariable("tag-container");
-    const tagBuilder = new StatefulCollectionBuilder({
-        builder: renderTag,
-        onAppend: (widget, state) => {
-            tagContainer.appendChild(widget);
-        }
-    });
-
-    const localAddTag = (tag) => {
-        const added = task.addTag(tag.id);
+    showModal(new CreateTaskModal((task) => 
+    {
+        activeProject.tasksHierarchy.addRootLevelNode(task);
+        taskDistributorBuilder.setItem(task.getId(), task);
         
-        // clunky
-        if (!added)
-            return;
+        popHighestModal();
+    }));
+}
 
-        // update states
-        tagBuilder.appendItem(tag.id, tag);
-        taskStatefulBuilder.rebuildItem(task.getId(), task);
+class TaskViewModal extends Modal {
+    /** @type {Task} */
+    task;
+
+    /** @type {StatefulCollectionBuilder<Tag>} */
+    tagBuilder;
+    /** @type {StatefulCollectionBuilder<Task>} */
+    nestedTasksBuilder;
+
+
+    constructor(task) {
+        super();
+        this.task = task;
     }
 
-    task.getTags().forEach((tag) => tagBuilder.appendItem(tag.id, tag));
+    build() {
+        const modalBuilder = fetchPrefab("task-view-modal");
 
-    // tags
-    modalBuilder.setVariableClickListener("add-tag-btn", () => {
+        modalBuilder.setVariableContent("title", this.task.getName());
+        modalBuilder.setVariableContent("description", this.task.getDescription());
+        modalBuilder.setVariableContent("date-display", `${getDateString(this.task.getStartDate())}  -  ${getDateString(this.task.getEndDate())}`);
+
+        const statusSelectBox = modalBuilder.getVariable("status-select");
+        statusSelectBox.setAttribute("selected", `${this.task.getStatus()}`);
+
+        const selectOption = statusSelectBox.querySelector(`option[value="${this.task.getStatus()}"]`);
+        selectOption.setAttribute("selected", "");
+        
+        statusSelectBox.onchange = (event) => {
+            const status = parseInt(statusSelectBox.value);
+            this.task.setStatus(status);
+            statusSelectBox.setAttribute("selected", `${status}`);
+            taskStateNotifier.setState(this.task.getId(), this.task);
+        }
+    
+        const tagContainer = modalBuilder.getVariable("tag-container");
+        this.tagBuilder = new StatefulCollectionBuilder({
+            builder: renderTag,
+            onAppend: (widget, state) => {
+                tagContainer.appendChild(widget);
+            }
+        });
+    
+        this.task.getTags().forEach((tag) => this.tagBuilder.appendItem(tag.id, tag));
+    
+        // bind edit tag button
+        modalBuilder.setVariableClickListener("add-tag-btn", () => {
+            showModal(new TagEditModal(this.task, (tagId, state) => 
+            {
+                this.tagBuilder.setItem(tagId, state);
+                taskStateNotifier.setState(this.task.getId(), this.task);
+            }))
+        });
+    
+        // nested tasks
+        const nestedTasksContainer = modalBuilder.getVariable("tasks-container");
+    
+        /**
+         * @typedef {StatefulCollectionBuilder<Task>} TaskBuilder
+         * @type {TaskBuilder}
+         */
+        this.nestedTasksBuilder = new StatefulCollectionBuilder({
+            builder: buildTaskCard,
+            onAppend: (widget, state) => {
+                if (state.getParent() != this.task)
+                    return;
+
+                nestedTasksContainer.appendChild(widget);
+            }
+        });
+
+        taskStateNotifier.addBuilder(this.nestedTasksBuilder);
+    
+        // bind add task button
+        modalBuilder.setVariableClickListener("add-task", () => showModal(new CreateTaskModal((task) => 
+        {
+            this.task.addChildNode(task);
+            this.nestedTasksBuilder.appendItem(task.getId(), task);
+            taskStateNotifier.setState(this.task.getId(), this.task);
+
+            popHighestModal();
+        }))); 
+    
+        this.task.getChildren().forEach((child) => {
+            this.nestedTasksBuilder.appendItem(child.getId(), child);
+        })
+
+        return modalBuilder.getElement();
+    }
+
+    onClose() {
+        taskStateNotifier.removeBuilder(this.nestedTasksBuilder);
+    }
+}
+
+class CreateTaskModal extends Modal {
+
+    /** @typedef {(task: Task) => void} CreateCallback */
+     /** @type  {CreateCallback} */
+    onCreateCallback;
+
+    /** @param {CreateCallback} onCreate */
+    constructor(onCreate) {
+        super();
+        this.onCreateCallback = onCreate;
+    }
+
+    build() {
+        const createTaskModalBuilder = fetchPrefab("create-task-modal");
+        createTaskModalBuilder.setVariableClickListener("create-btn", (event) => 
+        {
+            const task = this.createTask();
+            if (!task)
+                return;
+
+            this.onCreateCallback(task);
+        });
+
+        return createTaskModalBuilder.getElement();
+    }
+
+    /**
+     * @param {*} sourceModal 
+     * @returns {Task}
+     */
+    createTask() {
+        const name = this.element.getElementsByClassName("task-name-input")[0].value;
+        const description = this.element.getElementsByClassName("task-description-input")[0].value;
+        const startDate = this.element.getElementsByClassName("task-startdate-input")[0].valueAsNumber;
+        const endDate = this.element.getElementsByClassName("task-enddate-input")[0].valueAsNumber;
+
+        // TODO: improve feedback in the future
+        if (isNaN(startDate) || isNaN(endDate))
+            return null;
+
+        const task = new Task(name, description, startDate, endDate);
+        return task;
+    }
+}
+
+class TagEditModal extends Modal {
+
+    /** @type {Task} */
+    task;
+    /** @typedef {(tagId: string, state: Tag) => void} ChangeCallback */
+    /** @type {ChangeCallback} */
+    onUpdate;
+
+    /**
+     * 
+     * @param {Task} task 
+     * @param {ChangeCallback} onUpdate 
+     */
+    constructor(task, onUpdate) {
+        super();
+        this.task = task;
+        this.onUpdate = onUpdate;
+    }
+
+    build() {
         const tagSelectModalBuilder = fetchPrefab("tag-select-modal");
         const tagContainer = tagSelectModalBuilder.getVariable("tag-container");
 
-        activeProject.tasksHierarchy.getSavedTags().map((tag) => {
+        activeProject.tasksHierarchy.getSavedTags()
+        .map((tag) => {
             const tagElement = renderTag(tag);
             tagElement.onclick = () => {
-                localAddTag(tag);
+                this.toggleTag(tag);
                 popHighestModal();
             }
 
             return tagElement;
         })
-            .forEach((element) => {
-                tagContainer.appendChild(element);
-            });
+        .forEach((element) => {
+            tagContainer.appendChild(element);
+        });
         
 
         tagSelectModalBuilder.setVariableClickListener("tag-submit-btn", () => {
@@ -173,53 +320,30 @@ function showTaskViewModal(task) {
             const tagColour = tagSelectModalBuilder.getVariable("tag-colour-field").value;
 
             const createdTag = activeProject.tasksHierarchy.createTag(tagText, tagColour);
-            localAddTag(createdTag);
+            this.toggleTag(createdTag);
 
             popHighestModal();
         });
 
-        showModal(new Modal(tagSelectModalBuilder.getElement()));
-    });
-
-    // nested tasks
-    const nestedTasksContainer = modalBuilder.getVariable("tasks-container");
-
-    /**
-     * @typedef {StatefulCollectionBuilder<Task>} TaskBuilder
-     * @type {TaskBuilder}
-     */
-    const nestedTasksBuilder = new StatefulCollectionBuilder({
-        builder: buildTaskCard,
-        onAppend: (widget, state) => {
-            nestedTasksContainer.appendChild(widget);
-        }
-    });
-
-    // add task button
-    const addTaskButton = modalBuilder.getVariable("add-task");
-    addTaskButton.onclick = () => {
-        const createTaskModalBuilder = fetchPrefab("create-task-modal");
-
-        createTaskModalBuilder.setVariableClickListener("create-btn", (event) => 
-        {
-            const newTask = createTask(createTaskModalBuilder.getElement());
-            
-            task.addChildNode(newTask);
-            nestedTasksBuilder.appendItem(newTask.getId(), newTask);
-
-            popHighestModal();
-        });
-
-        showModal(new Modal(createTaskModalBuilder.getElement()))
+        return tagSelectModalBuilder.getElement();
     }
 
-    task.getChildren().forEach((child) => {
-        nestedTasksBuilder.appendItem(child.getId(), child);
-    })
+    toggleTag(tag) {
+        const hasTag = this.task.hasTag(tag.id);
 
-    showModal(new Modal(modalBuilder.getElement()), {
-        tasksBuilder: nestedTasksBuilder
-    });
+        if (hasTag) {
+            this.task.removeTag(tag.id);
+            this.onUpdate(tag.id, null);
+        }
+        else {
+            this.task.addTag(tag.id);
+            this.onUpdate(tag.id, tag);
+        }
+    }
+
+    onClose() {
+
+    }
 }
 
 /**
@@ -227,7 +351,7 @@ function showTaskViewModal(task) {
  * @param {Date} date 
  */
 function getDateString(date) {
-    return `${date.getDay().toString().padStart(2, "0")}-${date.getMonth().toString().padStart(2, "0")}-${date.getFullYear().toString()}`;
+    return `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getFullYear().toString()}`;
 }
 
 function dateButtonOverride(event, target) {

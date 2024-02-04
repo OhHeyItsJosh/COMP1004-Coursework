@@ -18,7 +18,7 @@
                 <h1 modal-var="title"></h1>
                 <p modal-var="description" style = "margin-bottom: 16px"></p>
 
-                <div class="flex-row row-centered">
+                <div class="flex-row flex-centered button-row">
                     <button onclick="popHighestModal()">Close</button>
                     <button modal-var="do-something-btn" onclick="console.log('nothing has been set for this button...')">Do Something</button>
                     <button onclick="modalTest()">Open Another Modal</button>
@@ -33,7 +33,7 @@
                     <h3 class="task-title" modal-var="name">Task name</h3>
                     <p class="task-deadline" modal-var="deadline">Deadline</p>
                 </div>
-                <div class="task-status-display">Completed</div>
+                <div class="task-status-display" modal-var="status">Completed</div>
             </div>
             <div class="task-body-row">
                 <div class="space-between-column" style="flex: 1">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="centered-column">
-                    <div class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                    <div modal-var="progress-indicator" class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
                     </div>
                 </div>
 
-                <div class="flex-row row-centered">
+                <div class="flex-row flex-centered button-row">
                     <button onclick="popHighestModal()">Cancel</button>
                     <button modal-var="create-btn">Create</button>
                 </div>
@@ -94,20 +94,30 @@
                 <div class="space-between-row">
                     <div class="space-between-column">
                         <div>
-                            <div class="flex-row row-vertical-centered">
+                            <div class="flex-row flex-align-center">
                                 <h1 modal-var="title">(Title)</h1>
                                 <div modal-var="tag-container" class="tag-row larger-tags" style="padding-left: 16px; padding-right: 8px;">
                                 </div>
-                                <button modal-var="add-tag-btn">Add Tag</button>
+                                <button modal-var="add-tag-btn">Edit Tags</button>
                             </div>
                             <p class="task-description" modal-var="description">(Description)</p>
                         </div>
-                        <div class="flex-row row-vertical-centered">
-                            <h4 modal-var="date-display">(Date)</h4>
+                        <div class="flex-row flex-align-center" style="margin-top: 16px;">
+                            <h4 style="white-space: pre;" modal-var="date-display">(Date)</h4>
                             <button style="margin-left: 16px;">Edit</button>
                         </div>
                     </div>
-                    <div class="placeholder" style="width:225px; height: 175px; flex-shrink: 0;"></div>
+                    <div class="status-container">
+                        <div class="flex-column flex-space-between flex-align-center" style="height: 100%; gap: 16px;">
+                            <div class="placeholder" style="width: 100px; height: 100px; flex-shrink: 0;"></div>
+                            <select name="status" modal-var="status-select">
+                                <option value="0">Not Started</option>
+                                <option value="1">In Progress</option>
+                                <option value="2">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- <div class="placeholder" style="width:225px; height: 175px; flex-shrink: 0;"></div> -->
                 </div>
             </div>
             <div class="horizontal-spacer"></div>
@@ -165,18 +175,19 @@
                         <h2>Tasks</h2>
                         <button onclick="createTaskClicked()">New</button>
                     </div>
-                    <div class="flex-row row-centered" style = "gap: 16px; flex-grow: 1; overflow: hidden; padding: 16px; margin: -16px;">
+                    <div class="flex-row flex-centered" style = "gap: 16px; flex-grow: 1; overflow: hidden; padding: 16px; margin: -16px;">
                         <div class="task-group">
                             <h3 class="task-header">Completed</h3>
-
                             <div class="task-container" id="completed-task-container">
                             </div>
                         </div>
                         <div class="task-group">
                             <h3 class="task-header">In Progress</h3>
+                            <div class="task-container" id="in-progress-task-container"></div>
                         </div>
                         <div class="task-group">
                             <h3 class="task-header">Not Started</h3>
+                            <div class="task-container" id="not-started-task-container"></div>
                         </div>
                     </div>
                 </div>

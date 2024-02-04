@@ -43,6 +43,11 @@ class NodeHierarchyTree {
     getNode(id) {
         return this.nodeMap.get(id);
     }
+
+    isRootLevelNode(id) {
+        const pred = this.rootNodes.indexOf(id) != -1;
+        return pred;
+    }
 }
 
 class TreeNode {
@@ -118,6 +123,10 @@ class TreeNode {
 
     getChildren() {
         return this.children.map((child) => this.nodeTree.getNode(child));
+    }
+
+    isRootLevelNode() {
+        return this.nodeTree.isRootLevelNode(this.id);
     }
 }
 
@@ -202,10 +211,14 @@ class Task extends TreeNode {
      * @private */
     tags;
 
+    /** @type {number} 
+     * @private */
+    status;
+
     /**
      * 
-     * @param {string} name 
-     * @param {string} description 
+     * @param {string}  name 
+     * @param {string} description
      * @param {number} startDate 
      * @param {number} endDate 
      */
@@ -215,7 +228,9 @@ class Task extends TreeNode {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        
         this.tags = [];
+        this.status = Status.NOT_STARTED;
     }
 
     getName() {
@@ -242,12 +257,44 @@ class Task extends TreeNode {
         return true;
     }
 
+    hasTag(tagId) {
+        return this.tags.includes(tagId);
+    }
+
+    removeTag(tagId) {
+        const index = this.tags.indexOf(tagId);
+        if (index == -1)
+            return;
+        
+        this.tags.splice(index, 1);
+    }
+
     getTags() {
         return this.tags.map((tagId) => TasksHierarchy.prototype.getTag.call(this.nodeTree, tagId));
+    }
+
+    getStatus() {
+        return this.status;
+    }
+
+    setStatus(status) {
+        this.status = status;
     }
 
     // /** @return {string[]} */
     // getCachedTagsFromParentStructure() {
     //     return TasksHierarchy.prototype.getSavedTags.call(this.nodeTree);
     // }
+}
+
+const Status = {
+    NOT_STARTED: 0,
+    IN_PROGRESS: 1,
+    COMPLETED: 2
+}
+
+const StatusName = {
+    0: "Not Started",
+    1: "In Progress",
+    2: "Completed"
 }

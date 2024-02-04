@@ -7,21 +7,31 @@ const ANIM_DURATION = 300;
 class Modal {
     element;
     animation;
-    state;
 
-    constructor(object, state) {
-        this.element = object;
-        this.state = state;
+    constructor() {
+        if (this.constructor == Modal)
+            throw new Error("Modal is abstract and should not be instanciated");
+    }
 
-        for (const clazz of object.classList.entries())
+    initialise() {
+        this.element = this.build();
+        this.animation = this.findAnim();
+    }
+
+    findAnim() {
+        for (const clazz of this.element.classList.entries())
         {
             const animationName = clazz[1];
             if (recognisedAnimationClasses.has(animationName)) {
-                this.animation = animationName;
-                break;
+                return animationName;
             }
         }
     }
+
+    /** @abstract */
+    build() {};
+    /** @abstract */
+    onClose() {};
 
     async openAnim() {
         this.element.classList.remove(this.animation);
@@ -34,6 +44,19 @@ class Modal {
     }
 }
 
+class StaticModal extends Modal {
+
+    constructor(element) {
+        super();
+        this.element = element;
+    }
+
+    build() {
+        console.log(this.element);
+        return this.element;
+    }
+}
+
 function wait(ms) {
     return new Promise((resolve, reject) => {
         setTimeout(() => resolve(), ms);
@@ -43,6 +66,7 @@ function wait(ms) {
 const modalContainer = document.getElementById("modal-container");
 
 function showModal(modal) {
+    modal.initialise();
     modalStack.push(modal);
     modalContainer.appendChild(modal.element);
     modalContainerChangedState();
@@ -56,6 +80,8 @@ async function popHighestModal() {
     const highest = modalStack.pop();
 
     highest.closeAnim();
+    highest.onClose();
+
     await wait(100);
     modalContainer.removeChild(highest.element);
     modalContainerChangedState();
