@@ -8,7 +8,7 @@ class Stateful {
      * @param {T} state
      * @abstract
      */
-    setItem(id, state) {};
+    setItem(id, state, args) {};
 
     /**
      * 
@@ -24,27 +24,41 @@ class Stateful {
 class StatefulCollectionBuilder extends Stateful {
     /**
      * @typedef {(state: T) => Object} WidgetBuilder
-     * @typedef {(widget: Object, state: T) => void} AppendCallback
+     * @typedef {(widget: Object, state: T) => boolean} AppendPredicate
+     * @typedef {(ids: string[]) => string[]} SortCallback
      */
 
+    /** @type {HTMLElement} */
+    #parent;
     /** @type {Map<string, Object>} */
     #items;
     /**@type {WidgetBuilder} */
     #builder;
-    /** @type {AppendCallback} */
-    #onAppend;
+    /** @type {AppendPredicate} */
+    #shouldAppendPredicate;
+    /** @type {SortCallback} */
+    #sortCallback;
 
     /**
-     * @param {{builder: WidgetBuilder, onAppend: AppendCallback}} args
+     * @param {{parent: HTMLElement, builder: WidgetBuilder, shouldAppend: AppendPredicate, sorter: SortCallback}} args
      */
     constructor(args) {
         super();
         this.#items = new Map();
         this.#builder = args.builder;
-        this.#onAppend = args.onAppend;
+        this.#shouldAppendPredicate = args.shouldAppend;
+        this.#parent = args.parent;
+        this.#sortCallback = args.sorter;
     }
 
-    setItem(id, state) {
+    /**
+     * 
+     * @param {string} id 
+     * @param {T} state 
+     * @param {{resort: boolean}} args 
+     * @returns 
+     */
+    setItem(id, state, args) {
         if (this.#items.has(id))
         {
             if (state == null)
@@ -56,6 +70,19 @@ class StatefulCollectionBuilder extends Stateful {
             return;
         else
             this.appendItem(id, state);
+
+        if (args && args.resort && this.#sortCallback)
+            this.sortItems();
+    }
+
+    sortItems() {
+        const ids = Array.from(this.#items.keys());
+        const sortedIds = this.#sortCallback.call(this, ids);
+
+        for (const sortedId of sortedIds)
+        {
+            this.#parent.appendChild(this.#items.get(sortedId));
+        }
     }
 
     rebuildItem(id, state) {
@@ -82,8 +109,10 @@ class StatefulCollectionBuilder extends Stateful {
 
     appendItem(id, state) {
         const widget = this.#builder(state);
-        this.#onAppend(widget, state);
+        if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))
+            return;
 
+        this.#parent.appendChild(widget);
         this.#items.set(id, widget);
     }
 
@@ -91,6 +120,55 @@ class StatefulCollectionBuilder extends Stateful {
         return this.#items.has(id);
     }
 }
+
+/**
+ * @template T
+ */
+class StatefulListener extends Stateful {
+    #setItemCallback
+
+    /**
+     * @param {(id: string, state: T, args: any)} setItemCallback 
+     */
+    constructor(setItemCallback) {
+        super();
+        this.#setItemCallback = setItemCallback;
+    }
+
+    setItem(id, state, args) {
+        this.#setItemCallback(id, state, args);
+    }
+
+    hasItem(id) {
+        return true;
+    }
+}
+
+// class StatefulBuilder extends Stateful {
+//     /** @type {string} */
+//     #id
+//     /** @type {WidgetBuilder} */
+//     #builder
+//     /** @type {HTMLElement} */
+//     #widget
+
+//     constructor(id, builder) {
+//         super();
+//         this.#id = id;
+//         this.#builder = builder;
+//     }
+
+//     setItem(id, state, args) {
+//         if (id != this.#id)
+//             return;
+
+        
+//     }
+
+//     hasItem(id) {
+
+//     }
+// }
 
 /**
  * @template T
@@ -115,20 +193,20 @@ class StatefulDistributor extends Stateful {
         this.sortToGroup = sortCallback;
     }
 
-    setItem(id, state) {
+    setItem(id, state, args) {
         // sort
         const groupId = this.sortToGroup(id, state);
         const sortedGroup = this.statefulGroups.get(groupId);
 
         // presence check in sorted group
         if (sortedGroup.hasItem(id)) {
-            sortedGroup.setItem(id, state);
+            sortedGroup.setItem(id, state, args);
             return;
         }
 
         // remove from all groups and re-append item
         this.removeFromAll(id);
-        sortedGroup.setItem(id, state);
+        sortedGroup.setItem(id, state, args);
     }
 
     hasItem(id) {
@@ -172,10 +250,10 @@ class StateNotifier {
      * @param {string} id 
      * @param {T} state 
      */
-    setState(id, state) {
+    setState(id, state, args) {
         for (const builder of this.#notifyList)
         {
-            builder.setItem(id, state);
+            builder.setItem(id, state, args);
         }
     }
 }

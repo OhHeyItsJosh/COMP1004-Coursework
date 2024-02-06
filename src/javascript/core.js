@@ -128,6 +128,23 @@ class TreeNode {
     isRootLevelNode() {
         return this.nodeTree.isRootLevelNode(this.id);
     }
+
+    hasChildren() {
+        return this.children.length > 0;
+    }
+
+    /**
+     * 
+     * @param {(id: string, node: TreeNode) => void} callback 
+     */
+    forEachParent(callback) {
+        const parent = this.getParent();
+        if (!parent)
+            return;
+        
+        callback(parent.getId(), parent);
+        parent.forEachParent(callback);
+    }
 }
 
 class TasksHierarchy extends NodeHierarchyTree {
@@ -237,8 +254,16 @@ class Task extends TreeNode {
         return this.name;
     }
 
+    setName(name) {
+        this.name = name;
+    }
+
     getDescription() {
         return this.description;
+    }
+
+    setDescription(description) {
+        this.description = description;
     }
 
     getStartDate() {
@@ -247,6 +272,11 @@ class Task extends TreeNode {
 
     getEndDate() {
         return new Date(this.endDate);
+    }
+
+    setDates(startDate, endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     addTag(tagId) {
@@ -281,10 +311,44 @@ class Task extends TreeNode {
         this.status = status;
     }
 
+    getSubtaskCompletion() {
+        const report = new SubtaskReport();
+        return this.getCompletionRecursive(report);
+    }
+
+    /**
+     * 
+     * @param {SubtaskReport} report 
+     */
+    getCompletionRecursive(report) {
+        for (const childNode of this.getChildren())
+        {
+            if (childNode.getStatus() == Status.COMPLETED)
+                report.completed++;
+            report.count++;
+
+            if (childNode.hasChildren())
+                childNode.getCompletionRecursive(report);
+        }
+
+        return report;
+    }
+
     // /** @return {string[]} */
     // getCachedTagsFromParentStructure() {
     //     return TasksHierarchy.prototype.getSavedTags.call(this.nodeTree);
     // }
+}
+
+class SubtaskReport {
+    constructor() {
+        this.count = 0;
+        this.completed = 0;
+    }
+
+    toString() {
+        return `${this.completed} / ${this.count}`;
+    }
 }
 
 const Status = {

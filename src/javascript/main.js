@@ -8,13 +8,24 @@ const notStartedTaskContainer = document.getElementById("not-started-task-contai
 
 const activeProject = new Project();
 
-function taskBuilderToContainer(container) {
+function taskBuilderToContainer(container, inverseSort) {
     return new StatefulCollectionBuilder({
-        onAppend: (widget, state) => {
+        parent: container,
+        shouldAppend: (widget, state) => {
             if (!state.isRootLevelNode())
-            return;
-        
-            container.append(widget);
+                return false;
+            return true;
+        },
+        sorter: (ids) => {
+            return ids.sort((a, b) => {
+                const a_node = activeProject.tasksHierarchy.getNode(a);
+                const b_node = activeProject.tasksHierarchy.getNode(b);
+
+                if (inverseSort)
+                    return b_node.getEndDate() - a_node.getEndDate();
+                else
+                    return a_node.getEndDate() - b_node.getEndDate();
+            });
         },
         builder: buildTaskCard
     });
@@ -25,9 +36,9 @@ function taskBuilderToContainer(container) {
  * @type {TaskBuilder} 
  * */
 const taskDistributorBuilder = new StatefulDistributor({
-    "completed": taskBuilderToContainer(completedTaskContainer),
-    "in-progress": taskBuilderToContainer(inProgressTaskContainer),
-    "not-started": taskBuilderToContainer(notStartedTaskContainer)
+    "completed": taskBuilderToContainer(completedTaskContainer, true),
+    "in-progress": taskBuilderToContainer(inProgressTaskContainer, false),
+    "not-started": taskBuilderToContainer(notStartedTaskContainer, false)
 }, (id, state) => {
     switch(state.getStatus())
     {
@@ -94,6 +105,14 @@ function buildTaskCard(task) {
     const taskElement = taskCard.getElement();
     taskElement.addEventListener("click", () => showModal(new TaskViewModal(task)));
 
+    // progress indicator
+    const completion = task.getSubtaskCompletion();
+    const {progressCircumference, progressIndicator} = buildProgressIndicator(80, 10);
+
+    progressIndicator.setAttribute("stroke-dashoffset", completionToOffset(completion, progressCircumference));
+    taskCard.getVariable("progress-indicator").appendChild(progressIndicator);
+    taskCard.setVariableContent("progress-label", completion.toString());
+
     return taskElement;
 }
 
@@ -131,7 +150,7 @@ function createTaskClicked() {
     showModal(new CreateTaskModal((task) => 
     {
         activeProject.tasksHierarchy.addRootLevelNode(task);
-        taskDistributorBuilder.setItem(task.getId(), task);
+        taskDistributorBuilder.setItem(task.getId(), task, { resort: true });
         
         popHighestModal();
     }));
@@ -145,6 +164,13 @@ class TaskViewModal extends Modal {
     tagBuilder;
     /** @type {StatefulCollectionBuilder<Task>} */
     nestedTasksBuilder;
+    /** @type {StatefulListener<Task>} */
+    progressChangeListener;
+
+    /** @type {HTMLElement} */
+    progressLabel;
+    /** @type {HTMLElement} */
+    progressIndicator
 
 
     constructor(task) {
@@ -152,13 +178,42 @@ class TaskViewModal extends Modal {
         this.task = task;
     }
 
+    /**
+     * 
+     * @param {PrefabBuilder} builder 
+     */
+    renderStaticText(builder) {
+        builder.setVariableContent("title", this.task.getName());
+        builder.setVariableContent("description", this.task.getDescription());
+        builder.setVariableContent("date-display", `${getDateString(this.task.getStartDate())}  -  ${getDateString(this.task.getEndDate())}`);
+    }
+
     build() {
         const modalBuilder = fetchPrefab("task-view-modal");
+        
+        // populate basic text elements
+        this.renderStaticText(modalBuilder);
 
-        modalBuilder.setVariableContent("title", this.task.getName());
-        modalBuilder.setVariableContent("description", this.task.getDescription());
-        modalBuilder.setVariableContent("date-display", `${getDateString(this.task.getStartDate())}  -  ${getDateString(this.task.getEndDate())}`);
+        modalBuilder.setVariableClickListener("edit-btn", () => {
+            const editModal = new CreateTaskModal((editedTask) => 
+            {
+                const shouldResort = editedTask.getEndDate().getTime() != this.task.getEndDate().getTime();
 
+                // apply new data to task
+                this.task.setName(editedTask.getName());
+                this.task.setDescription(editedTask.getDescription());
+                this.task.setDates(editedTask.getStartDate(), editedTask.getEndDate());
+
+                // re-render static text + update task state
+                this.renderStaticText(modalBuilder);
+                taskStateNotifier.setState(this.task.getId(), this.task, { resort: shouldResort });
+            });
+
+            editModal.useExistingTask(this.task);
+            showModal(editModal);
+        });
+
+        // status select box
         const statusSelectBox = modalBuilder.getVariable("status-select");
         statusSelectBox.setAttribute("selected", `${this.task.getStatus()}`);
 
@@ -169,15 +224,18 @@ class TaskViewModal extends Modal {
             const status = parseInt(statusSelectBox.value);
             this.task.setStatus(status);
             statusSelectBox.setAttribute("selected", `${status}`);
-            taskStateNotifier.setState(this.task.getId(), this.task);
+            taskStateNotifier.setState(this.task.getId(), this.task, { resort: true });
+
+            this.task.forEachParent((id, task) => {
+                taskStateNotifier.setState(id, task);
+            })
         }
-    
+        
+        // render tags
         const tagContainer = modalBuilder.getVariable("tag-container");
         this.tagBuilder = new StatefulCollectionBuilder({
-            builder: renderTag,
-            onAppend: (widget, state) => {
-                tagContainer.appendChild(widget);
-            }
+            parent: tagContainer,
+            builder: renderTag
         });
     
         this.task.getTags().forEach((tag) => this.tagBuilder.appendItem(tag.id, tag));
@@ -199,12 +257,12 @@ class TaskViewModal extends Modal {
          * @type {TaskBuilder}
          */
         this.nestedTasksBuilder = new StatefulCollectionBuilder({
+            parent: nestedTasksContainer,
             builder: buildTaskCard,
-            onAppend: (widget, state) => {
+            shouldAppend: (widget, state) => {
                 if (state.getParent() != this.task)
-                    return;
-
-                nestedTasksContainer.appendChild(widget);
+                    return false;
+                return true;
             }
         });
 
@@ -216,19 +274,56 @@ class TaskViewModal extends Modal {
             this.task.addChildNode(task);
             this.nestedTasksBuilder.appendItem(task.getId(), task);
             taskStateNotifier.setState(this.task.getId(), this.task);
-
-            popHighestModal();
+            
+            this.task.forEachParent((id, task) => {
+                taskStateNotifier.setState(id, task);
+            });
         }))); 
     
         this.task.getChildren().forEach((child) => {
             this.nestedTasksBuilder.appendItem(child.getId(), child);
         })
 
+        // render progress indicator if there are subtasks
+        if (this.task.hasChildren()) {
+            const {progressCircumference, progressIndicator } = buildProgressIndicator(100, 14);
+            this.progressIndicator = progressIndicator;
+            this.progressLabel = modalBuilder.getVariable("progress-label");
+    
+            modalBuilder.getVariable("progress-indicator").appendChild(this.progressIndicator);
+    
+            this.progressChangeListener = new StatefulListener((id, state, args) => {
+                if (id != this.task.getId())
+                    return;
+
+                this.setProgressIndicator(this.task.getSubtaskCompletion(), progressCircumference);
+            });
+    
+            taskStateNotifier.addBuilder(this.progressChangeListener);
+            this.setProgressIndicator(this.task.getSubtaskCompletion(), progressCircumference);
+        }
+        // remove progress indicator if there are no subtasks
+        else {
+            const indicator = modalBuilder.getVariable("progress-indicator");
+            indicator.parentElement.classList.add("flex-centered");
+            indicator.parentElement.classList.remove("flex-space-between");
+            indicator.remove();
+        }
+
+
         return modalBuilder.getElement();
+    }
+
+    setProgressIndicator(completion, circumference) {
+        const offset = completionToOffset(completion, circumference);
+
+        this.progressIndicator.setAttribute("stroke-dashoffset", offset);
+        this.progressLabel.innerHTML = completion.toString();
     }
 
     onClose() {
         taskStateNotifier.removeBuilder(this.nestedTasksBuilder);
+        taskStateNotifier.removeBuilder(this.progressChangeListener);
     }
 }
 
@@ -237,6 +332,8 @@ class CreateTaskModal extends Modal {
     /** @typedef {(task: Task) => void} CreateCallback */
      /** @type  {CreateCallback} */
     onCreateCallback;
+    /** @type {Task} */
+    existingTask;
 
     /** @param {CreateCallback} onCreate */
     constructor(onCreate) {
@@ -246,6 +343,14 @@ class CreateTaskModal extends Modal {
 
     build() {
         const createTaskModalBuilder = fetchPrefab("create-task-modal");
+        // IDEA: maybe change modal to store builder instead of element, this way of accessing and setting data is unconsistent.
+        if (this.existingTask) {
+            this.popluateInputs(this.existingTask, createTaskModalBuilder.getElement());
+            
+            createTaskModalBuilder.setVariableContent("create-btn", "Save");
+            createTaskModalBuilder.setVariableContent("title", "Edit Task");
+        }
+
         createTaskModalBuilder.setVariableClickListener("create-btn", (event) => 
         {
             const task = this.createTask();
@@ -253,9 +358,25 @@ class CreateTaskModal extends Modal {
                 return;
 
             this.onCreateCallback(task);
+            popHighestModal();
         });
 
         return createTaskModalBuilder.getElement();
+    }
+
+    useExistingTask(task) {
+        this.existingTask = task;
+    }
+
+    /**
+     * 
+     * @param {Task} task 
+     */
+    popluateInputs(task, element) {
+        element.getElementsByClassName("task-name-input")[0].value = task.getName();
+        element.getElementsByClassName("task-description-input")[0].value = task.getDescription();
+        element.getElementsByClassName("task-startdate-input")[0].valueAsNumber = task.getStartDate().getTime();
+        element.getElementsByClassName("task-enddate-input")[0].valueAsNumber = task.getEndDate().getTime();
     }
 
     /**
@@ -357,6 +478,40 @@ function getDateString(date) {
 function dateButtonOverride(event, target) {
     event.preventDefault();
     target.showPicker();
+}
+
+function buildProgressIndicator(size, thickness) {
+    const builder = fetchPrefab("progress-indicator");
+    const inner = builder.getVariable("inner-ring");
+    const outer = builder.getVariable("outer-ring");
+
+    inner.setAttribute("cx", size / 2);
+    inner.setAttribute("cy", size / 2);
+    outer.setAttribute("cx", size / 2);
+    outer.setAttribute("cy", size / 2);
+
+    const radius = (size / 2) - (thickness / 2) - 4;
+    inner.setAttribute("r", radius);
+    outer.setAttribute("r", radius);
+
+    inner.setAttribute("stroke-width", thickness / 4);
+    outer.setAttribute("stroke-width", thickness);
+
+    const circumference = Math.round(2 * Math.PI * radius);
+    outer.setAttribute("stroke-dasharray", circumference);
+
+    const element = builder.getElement();
+    element.setAttribute("width", size);
+    element.setAttribute("height", size);
+
+    return {
+        progressIndicator: element,
+        progressCircumference: circumference
+    }
+}
+
+function completionToOffset(completion, circumference) {
+    return circumference - Math.round((completion.completed / completion.count) * circumference);
 }
 
 init();

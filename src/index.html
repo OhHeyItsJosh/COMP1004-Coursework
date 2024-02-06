@@ -42,7 +42,9 @@
                     </div>
                 </div>
                 <div class="centered-column">
-                    <div modal-var="progress-indicator" class="placeholder" style="width: 125px; height: 125px; flex-shrink: 0;"></div>
+                    <div modal-var="progress-indicator" class="progress-indicator-container">
+                        <div modal-var="progress-label" class="progress-label"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -50,7 +52,7 @@
         <!-- create task modal -->
         <modal id="create-task-modal" class="modal modal-zoom-animation">
             <div class="centered-column">
-                <h1>Create Task</h1>
+                <h1 modal-var="title">Create Task</h1>
                 <div style="margin-bottom: 16px; width: 35vw;">
                     <div class="input-field">
                         <label>
@@ -104,12 +106,15 @@
                         </div>
                         <div class="flex-row flex-align-center" style="margin-top: 16px;">
                             <h4 style="white-space: pre;" modal-var="date-display">(Date)</h4>
-                            <button style="margin-left: 16px;">Edit</button>
+                            <button modal-var="edit-btn" style="margin-left: 16px;">Edit</button>
                         </div>
                     </div>
                     <div class="status-container">
                         <div class="flex-column flex-space-between flex-align-center" style="height: 100%; gap: 16px;">
-                            <div class="placeholder" style="width: 100px; height: 100px; flex-shrink: 0;"></div>
+                            <div modal-var="progress-indicator" class="progress-indicator-container">
+                                <h3 modal-var="progress-label" class="progress-label"></h3>
+                            </div>
+                            <!-- <div class="placeholder" style="width: 100px; height: 100px; flex-shrink: 0;"></div> -->
                             <select name="status" modal-var="status-select">
                                 <option value="0">Not Started</option>
                                 <option value="1">In Progress</option>
@@ -152,6 +157,13 @@
             </div>
         </modal>
 
+        <svg id="progress-indicator" class="progress-indicator" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
+            <use xlink:href="#stroke"/>
+
+            <circle modal-var="inner-ring" class="inner-ring" stroke-linecap="round" fill="none"/>
+            <circle modal-var="outer-ring" class="outer-ring" stroke-linecap="round" fill="none" stroke="url(#stroke)"/>
+        </svg>
+
     </div>
     <div id="wrapper">
         <header>
@@ -160,6 +172,14 @@
                 <li class="selectable-tab selectable-tab-active" tab-id="tasks">Tasks</li>
                 <li class="selectable-tab" tab-id="notes">Notes</li>
             </ul>
+            <svg width = "0" height = "0" viewBox="0 0 0 0">
+                <defs>
+                    <linearGradient id ="stroke">
+                        <stop offset = "0%" stop-color="#8f006d"/>
+                        <stop offset = "100%" stop-color="#21a4c4"/>
+                    </linearGradient>
+                </defs>
+            </svg>
         </header>
         <div class="tab-view" tab-controller-id="main-nav">
             <div class="tab" tab-id="dashboard">

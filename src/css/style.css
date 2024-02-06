@@ -425,3 +425,24 @@ input::-moz-color-swatch {
     color: white;
     width: 100%;
 }
+
+.progress-indicator {
+    transform: rotate(-90deg);
+    display: block;
+}
+
+.progress-indicator .inner-ring {
+    stroke: var(--separator-colour);
+}
+
+.progress-indicator-container {
+    position: relative;
+}
+
+.progress-indicator-container .progress-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+}
