@@ -183,8 +183,8 @@
         <header>
             <ul class="navbar tab-controller" tab-controller-id="main-nav">
                 <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
-                <li class="selectable-tab selectable-tab-active" tab-id="tasks">Tasks</li>
-                <li class="selectable-tab" tab-id="notes">Notes</li>
+                <li class="selectable-tab" tab-id="tasks">Tasks</li>
+                <li class="selectable-tab selectable-tab-active" tab-id="notes">Notes</li>
                 <button onclick="exportClicked()">Export (temp)</button>
                 <button onclick="importClicked()">Import (temp)</button>
             </ul>
@@ -198,6 +198,8 @@
             </svg>
         </header>
         <div class="tab-view" tab-controller-id="main-nav">
+
+            
             <div class="tab" tab-id="dashboard">
                 <h1>This is dashboard tab</h1>
                 <div style="display:block;">
@@ -205,8 +207,8 @@
                 </div>
             </div>
 
-            <div class="tab tab-active" tab-id="tasks">
-                <div class="expanded" style="padding: 16px; overflow: hidden;">
+            <div class="tab" tab-id="tasks">
+                <div class="flex-column expanded" style="padding: 16px; overflow: hidden;">
                     <div class="space-between-row" style = "margin-bottom: 16px">
                         <h2>Tasks</h2>
                         <button onclick="createTaskClicked()">New</button>
@@ -229,8 +231,39 @@
                 </div>
     
             </div>
-            <div class="tab" tab-id="notes">
-                <h1>This is notes tab</h1>
+
+
+            <div class="tab tab-active" tab-id="notes">
+                <div class="flex-row expanded note-tab-container">
+                    <div class="side-nav-panel">
+                        <div class="flex-column flex-align-center" style="height: 100%">
+                            <h4 class="section-header">Notes Explorer</h4>
+                            <ul class="tree-view" id="note-explorer">
+                                <!-- <li class="tree-branch"><div class="tree-item">Test1</div>
+                                    <ul class="tree-sublist">
+                                        <li class="tree-branch"><div class="tree-item flex-row"><div class="tree-indent"></div>Nested 1</div></li>
+                                        <li class="tree-branch"><div class="tree-item flex-row"><div class="tree-indent"></div>Nested 2</div>
+                                            <ul class="tree-sublist">
+                                                <li class="tree-branch"><div class="tree-item flex-row selected"><div class="tree-indent"></div><div class="tree-indent"></div>More Nested 1</div></li>
+                                                <li class="tree-branch"><div class="tree-item flex-row"><div class="tree-indent"></div><div class="tree-indent"></div>More Nested 2</div></li>
+                                            </ul>
+                                        </li>
+                                        <li class="tree-branch"><div class="tree-item flex-row"><div class="tree-indent"></div>Nested 3</div></li>
+                                    </ul>
+                                </li>
+                                <li class="tree-branch"><div class="tree-item flex-row">Test2</div></li>
+                                <li class="tree-branch"><div class="tree-item flex-row">Test3</div></li> -->
+                            </ul>
+                            <button onclick="createNote()" style="margin: 24px 0;">New Note</button>
+                        </div>
+                    </div>
+                    <div class="note-view-panel">
+                        <div id="note-container">
+                            <h1 contenteditable id="note-title"></h1>
+                            <div contenteditable id="note-content"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -241,5 +274,7 @@
 <script defer src = "javascript/state.js"></script>
 <script defer src = "javascript/core.js"></script>
 
+<script defer src = "javascript/tabs/tasksTab.js"></script>
+<script defer src = "javascript/tabs/notesTab.js"></script>
 <script defer src = "javascript/main.js"></script>
 </html>

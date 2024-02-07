@@ -4,6 +4,8 @@
     margin: 0;
     --foreground-colour: rgb(65,65,65);
     --separator-colour: rgb(175, 175, 175);
+    --panel-colour: #e8eded;
+    --button-colour: #359da6;
 }
 
 :root {
@@ -21,6 +23,7 @@ header {
     background: #f0f4f5;
     box-shadow: 0 1px 5px 0px rgba(0,0,0,0.1);
     flex-shrink: 0;
+    z-index: 2;
 }
 
 .placeholder {
@@ -95,9 +98,7 @@ header {
 }
 
 .expanded {
-    display: flex;
     flex-grow: 1;
-    flex-direction: column;
 }
 
 .tab {
@@ -185,7 +186,7 @@ button {
     font-family: Arial, Helvetica, sans-serif;
     color: white;
     /* border: 1px solid rgba(0,0,0,0.1); */
-    background-color: #359da6;
+    background-color: var(--button-colour);
     transition: 0.2s linear;
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
 }
@@ -200,7 +201,7 @@ button:hover {
     padding: 16px;
     border-radius: 24px;
     width: 100%;
-    background-color: #e8eded;
+    background-color: var(--panel-colour);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -445,4 +446,126 @@ input::-moz-color-swatch {
     top: 50%;
     transform: translate(-50%, -50%);
     font-size: 0.8rem;
+}
+
+
+/* notes */
+.note-tab-container {
+    position: relative;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.side-nav-panel {
+    flex-grow: 0;
+    width: 300px;
+    background: var(--panel-colour);
+    flex-shrink: 0;
+    box-shadow: 1px 0 5px 0px rgba(0,0,0,0.2);
+}
+
+.section-header {
+    margin: 16px 12px;
+}
+
+#note-explorer {
+    flex: 1;
+    width: calc(100% - 24px);
+    margin: 0 12px;
+    box-sizing: border-box;
+}
+
+.tree-view {
+    z-index: 5;
+}
+
+.tree-view * {
+    list-style: none;
+}
+
+.tree-item {
+    position: relative;
+    padding: 4px 0;
+    padding-left: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.tree-item:hover {
+    background: rgb(220,220,220);
+}
+
+.tree-item.selected {
+    background: var(--separator-colour);
+}
+
+/* .tree-view .tree-sublist {
+    padding-left: 16px;
+} */
+
+.tree-indent {
+    width: 24px;
+    position: relative;
+}
+
+.tree-indent::before {
+    content: "";
+    /* left: 4px; */
+    width: 2px;
+    top: -4px;
+    left: 6px;
+    height: calc(100% + 8px);
+    background: var(--separator-colour);
+    position: relative;
+    display: block;
+
+}
+
+.tree-item .tree-add-child {
+    display: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.tree-item:hover .tree-add-child {
+    display: flex;
+}
+
+.tree-item .tree-add-child:hover {
+    background: rgba(200,200,200, 0.5);
+}
+
+.note-view-panel {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    flex-basis: 100%;
+}
+
+#note-container {
+    height: 100%;
+    margin: 0 32px;
+    position: relative;
+    flex-grow: 0;
+}
+
+#note-title {
+    margin: 24px 0;
+    outline: none;
+}
+
+#note-content {
+    max-width: 100%;
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+    word-break: break-word;
+    outline: none;
 }

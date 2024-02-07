@@ -1,13 +1,16 @@
 class Project {
     /** @type {TasksHierarchy} */
     tasksHierarchy;
+    /** @type {NotesHierarchy} */
+    notesHierarchy;
 
-    constructor(tasks) {
+    constructor(tasks, notes) {
         this.tasksHierarchy = tasks;
+        this.notesHierarchy = notes;
     }
 
     static new() {
-        return new Project(TasksHierarchy.createNew());
+        return new Project(TasksHierarchy.createNew(), NotesHierarchy.createNew());
     }
 
     /**
@@ -189,6 +192,10 @@ class TreeNode {
         return this.nodeTree.getNode(this.parent);
     }
 
+    getParentId() {
+        return this.parent;
+    }
+
     /**
      * 
      * @param {NodeHierarchyTree} tree 
@@ -254,6 +261,13 @@ class TreeNode {
         
         callback(parent.getId(), parent);
         parent.forEachParent(callback);
+    }
+
+    getParentCount() {
+        let count = 0;
+        this.forEachParent((id, _) => count++);
+
+        return count;
     }
 }
 
@@ -518,4 +532,58 @@ const StatusName = {
     0: "Not Started",
     1: "In Progress",
     2: "Completed"
+}
+
+class NotesHierarchy extends NodeHierarchyTree {
+    
+    constructor(data) {
+        super(data);
+    }
+
+    static createNew() {
+        return new NotesHierarchy(super.newData());
+    }
+
+    nodeBuilder(object) {
+        return new Note(object, this);
+    }
+}
+
+class Note extends TreeNode {
+    /** @type {string}
+     * @private */
+    name;
+    /** @type {string} 
+     * @private */
+    content;
+    
+    constructor(data, tree) {
+        super(data, tree);
+        this.name = data["name"];
+        this.content = data["content"];
+    }
+
+    static createNew(name, content) {
+        const nodeData = super.newData();
+        nodeData["name"] = name;
+        nodeData["content"] = content;
+
+        return new Note(nodeData);
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    setName(name) {
+        this.name = name;
+    }
+
+    getContent() {
+        return this.content;
+    }
+
+    setContent(content) {
+        this.content = content;
+    }
 }

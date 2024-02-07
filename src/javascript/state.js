@@ -28,6 +28,7 @@ class StatefulCollectionBuilder extends Stateful {
     /**
      * @typedef {(state: T) => Object} WidgetBuilder
      * @typedef {(widget: Object, state: T) => boolean} AppendPredicate
+     * @typedef {(builder: StatefulCollectionBuilder, parent: HTMLElement, widget: HTMLElement, state: T) => void} AppendCallback
      * @typedef {(ids: string[]) => string[]} SortCallback
      */
 
@@ -39,17 +40,20 @@ class StatefulCollectionBuilder extends Stateful {
     #builder;
     /** @type {AppendPredicate} */
     #shouldAppendPredicate;
+    /** @type {AppendCallback} */
+    #onAppend;
     /** @type {SortCallback} */
     #sortCallback;
 
     /**
-     * @param {{parent: HTMLElement, builder: WidgetBuilder, shouldAppend: AppendPredicate, sorter: SortCallback}} args
+     * @param {{parent: HTMLElement, builder: WidgetBuilder, shouldAppend: AppendPredicate, sorter: SortCallback, onAppend: AppendCallback}} args
      */
     constructor(args) {
         super();
         this.#items = new Map();
         this.#builder = args.builder;
         this.#shouldAppendPredicate = args.shouldAppend;
+        this.#onAppend = args.onAppend;
         this.#parent = args.parent;
         this.#sortCallback = args.sorter;
     }
@@ -76,6 +80,11 @@ class StatefulCollectionBuilder extends Stateful {
 
         if (args && args.resort && this.#sortCallback)
             this.sortItems();
+    }
+
+    /** @returns {HTMLElement} */
+    getItem(id) {
+        return this.#items.get(id);
     }
 
     sortItems() {
@@ -116,7 +125,11 @@ class StatefulCollectionBuilder extends Stateful {
         
         const widget = this.#builder(state);
 
-        this.#parent.appendChild(widget);
+        if (this.#onAppend)
+            this.#onAppend(this, this.#parent, widget, state);
+        else
+            this.#parent.appendChild(widget);
+    
         this.#items.set(id, widget);
     }
 
