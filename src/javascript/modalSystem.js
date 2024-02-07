@@ -52,7 +52,6 @@ class StaticModal extends Modal {
     }
 
     build() {
-        console.log(this.element);
         return this.element;
     }
 }

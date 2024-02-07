@@ -145,6 +145,15 @@
             </div>
         </modal>
 
+        <modal id="export-dialog" class="modal modal-zoom-animation">
+            <a modal-var="export">Export</a>
+        </modal>
+
+        <modal id="import-dialog" class="modal modal-zoom-animation">
+            <input modal-var="import" type="file"/>
+            <button modal-var="import-btn">Import</button>
+        </modal>
+
         <modal id="tag-select-modal" class="modal modal-zoom-animation">
             <div class="flex-column">
                 <div class="tag-select-container flex-column" style="gap: 4px" modal-var="tag-container">
@@ -165,12 +174,19 @@
         </svg>
 
     </div>
+
+
+
+
+    <!-- MAIN PAGE -->
     <div id="wrapper">
         <header>
             <ul class="navbar tab-controller" tab-controller-id="main-nav">
                 <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
                 <li class="selectable-tab selectable-tab-active" tab-id="tasks">Tasks</li>
                 <li class="selectable-tab" tab-id="notes">Notes</li>
+                <button onclick="exportClicked()">Export (temp)</button>
+                <button onclick="importClicked()">Import (temp)</button>
             </ul>
             <svg width = "0" height = "0" viewBox="0 0 0 0">
                 <defs>

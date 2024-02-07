@@ -3,7 +3,6 @@
 */
 class Stateful {
     /**
-     * 
      * @param {string} id 
      * @param {T} state
      * @abstract
@@ -11,11 +10,15 @@ class Stateful {
     setItem(id, state, args) {};
 
     /**
-     * 
      * @param {string} id
      * @abstract 
      */
     hasItem(id) {};
+
+    /**
+     * @abstract
+     */
+    clear() {}
 }
 
 /**
@@ -108,9 +111,10 @@ class StatefulCollectionBuilder extends Stateful {
     }
 
     appendItem(id, state) {
-        const widget = this.#builder(state);
         if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))
-            return;
+        return;
+        
+        const widget = this.#builder(state);
 
         this.#parent.appendChild(widget);
         this.#items.set(id, widget);
@@ -118,6 +122,15 @@ class StatefulCollectionBuilder extends Stateful {
 
     hasItem(id) {
         return this.#items.has(id);
+    }
+
+    clear() {
+        for (const [id, widget] of this.#items.entries())
+        {
+            widget.remove();
+        }
+
+        this.#items.clear();
     }
 }
 
@@ -142,6 +155,8 @@ class StatefulListener extends Stateful {
     hasItem(id) {
         return true;
     }
+
+    clear() {}
 }
 
 // class StatefulBuilder extends Stateful {
@@ -215,9 +230,12 @@ class StatefulDistributor extends Stateful {
 
     removeFromAll(id) {
         for (const [_, group] of this.statefulGroups.entries())
-        {
             group.setItem(id, null);
-        }
+    }
+
+    clear() {
+        for (const [_, group] of this.statefulGroups.entries())
+            group.clear();
     }
 }
 
@@ -252,8 +270,13 @@ class StateNotifier {
      */
     setState(id, state, args) {
         for (const builder of this.#notifyList)
-        {
             builder.setItem(id, state, args);
-        }
+    }
+
+    flush() {
+        for (const stateful of this.#notifyList)
+            stateful.clear();
+
+        this.#notifyList = [];
     }
 }

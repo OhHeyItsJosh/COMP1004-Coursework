@@ -2,20 +2,94 @@ class Project {
     /** @type {TasksHierarchy} */
     tasksHierarchy;
 
-    constructor() {
-        this.tasksHierarchy = new TasksHierarchy();
+    constructor(tasks) {
+        this.tasksHierarchy = tasks;
+    }
+
+    static new() {
+        return new Project(TasksHierarchy.createNew());
+    }
+
+    /**
+     * @returns {string}
+     */
+    serialise() {
+        const obj = {
+            "tasks": this.tasksHierarchy.toSerialisableStructure()
+        }
+
+        return JSON.stringify(obj, null, 2);
+    }
+
+    /**
+     * @param {string} jsonString
+     * @returns {Project}
+     */
+    static deserialise(jsonString) {
+        const obj = JSON.parse(jsonString);
+        const tasksHierarchy = new TasksHierarchy(obj["tasks"] ?? {});
+
+        return new Project(tasksHierarchy);
     }
 }
 
 class NodeHierarchyTree {
+    /** @typedef {{nodes: Map<string, Object>, root_nodes: string[]}} TreeHierarchyData */
+
     /** @type {Map<string, TreeNode>} */
     nodeMap;
     /** @type {string[]} */
     rootNodes;
 
-    constructor() {
+    /**
+     * @param {TreeHierarchyData} data 
+     */
+    constructor(data) {
         this.nodeMap = new Map();
-        this.rootNodes = [];
+        
+        this.addNodeData(data.nodes);
+        this.rootNodes = data.root_nodes.map((id) => id.toString());
+    }
+
+    static newData() {
+        return {
+            nodes: {},
+            root_nodes: []
+        };
+    }
+
+    toSerialisableStructure() {
+        const nodesObject = {};
+        for (const [key, node] of this.nodeMap.entries())
+        {
+            nodesObject[key] = node.toSerialisableStructure();
+        }
+
+        return {
+            "nodes": nodesObject,
+            "root_nodes": this.rootNodes 
+        }
+    }
+
+    /**
+     * 
+     * @param {Object} object
+     * @returns {TreeNode} 
+     */
+    nodeBuilder(object) {
+        return new TreeNode(object, this);
+    }
+
+    /**
+     * 
+     * @param {Object[]} nodeData 
+     */
+    addNodeData(nodeData) {
+        for (const [id, data] of Object.entries(nodeData))
+        {
+            const node = this.nodeBuilder(data);
+            this.nodeMap.set(id, node);
+        }
     }
 
     /**
@@ -48,9 +122,20 @@ class NodeHierarchyTree {
         const pred = this.rootNodes.indexOf(id) != -1;
         return pred;
     }
+
+    /**
+     * 
+     * @param {(id: string, node: TreeNode)} callback 
+     */
+    forEachNode(callback) {
+        for (const [id, node] of this.nodeMap.entries())
+            callback(id, node);
+    }
 }
 
 class TreeNode {
+    /** @typedef {{id: string, children_ids: string[], parent_id: string}} NodeData */
+
     /** @type {string} 
      * @protected */
     id;
@@ -64,11 +149,36 @@ class TreeNode {
      * @protected */
     parent;
 
-    constructor() {
-        this.id = Math.floor(Math.random() * 1000000); // temporary, switch to better id assigner later on
-        this.nodeTree = null;
-        this.children = [];
-        this.parent = null;
+    /**
+     * @param {NodeData} data
+     * @param {NodeHierarchyTree} tree 
+     */
+    constructor(data, tree) {
+        this.id = data.id.toString();
+        this.nodeTree = tree;
+        this.children = data.children_ids.map((id) => id.toString());
+        this.parent = (data.parent_id ?? "").toString();
+    }
+
+    static createNew() {
+        return new TreeNode(TreeNode.newData(), null);
+    }
+
+    /** @protected */
+    static newData() {
+        return {
+            id: Math.floor(Math.random() * 1000000).toString(), // temporary, switch to better id assigner later on,
+            children_ids: [],
+            parent_id: null
+        };
+    }
+
+    toSerialisableStructure() {
+        return {
+            "id": this.id,
+            "children_ids": this.children,
+            "parent_id": this.parent
+        }
     }
 
     getId() {
@@ -148,12 +258,32 @@ class TreeNode {
 }
 
 class TasksHierarchy extends NodeHierarchyTree {
-    /** @type {Map<number, Tag>} @private */
+    /** @type {Map<string, Tag>} @private */
     tagRepo;
 
-    constructor() {
-        super();
-        this.tagRepo = new Map();
+    constructor(data) {
+        super(data);
+        this.tagRepo = new Map(Object.entries(data.tags));
+     }
+
+     /** @override */
+     static createNew() {
+        const data = super.newData();
+        data.tags = new Map();
+
+        return new TasksHierarchy(data);
+     }
+
+     /** @override */
+     nodeBuilder(object) {
+        return new Task(object, this);
+     }
+
+     toSerialisableStructure() {
+        const treeJSON = super.toSerialisableStructure();
+        treeJSON["tags"] = Object.fromEntries(this.tagRepo.entries());
+
+        return treeJSON;
      }
 
      getSavedTags() {
@@ -161,7 +291,7 @@ class TasksHierarchy extends NodeHierarchyTree {
      }
 
      getTag(id) {
-        return this.tagRepo.get(id);
+        return this.tagRepo.get(id.toString());
      }
 
      #nextTagId() {
@@ -181,7 +311,7 @@ class TasksHierarchy extends NodeHierarchyTree {
       */
      createTag(text, color) {
         const tag = new Tag(this.#nextTagId(), text, color);
-        this.tagRepo.set(tag.id, tag);
+        this.tagRepo.set(tag.id.toString(), tag);
 
         return tag;
      }
@@ -205,6 +335,8 @@ class Tag {
 }
 
 class Task extends TreeNode {
+    /** @typedef {{name: string, description: string, start_date: number, end_date: number, tags: string[], status_code: number}} TaskData */
+
     /** @type {string}
      * @private */
     name;
@@ -233,22 +365,47 @@ class Task extends TreeNode {
     status;
 
     /**
-     * 
+     * @param {TaskData} data 
+     */
+    constructor(data, tree) {
+        super(data, tree);
+        this.name = data.name;
+        this.description = data.description;
+        this.startDate = data.start_date;
+        this.endDate = data.end_date;
+        
+        this.tags = data.tags ?? [];
+        this.status = data.status_code ?? Status.NOT_STARTED;
+    }
+
+    /**
      * @param {string}  name 
      * @param {string} description
      * @param {number} startDate 
      * @param {number} endDate 
      */
-    constructor(name, description, startDate, endDate) {
-        super();
-        this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        
-        this.tags = [];
-        this.status = Status.NOT_STARTED;
+    static createNew(name, description, startDate, endDate) {
+        const nodeData = TreeNode.newData();
+        nodeData["name"] = name;
+        nodeData["description"] = description;
+        nodeData["start_date"] = startDate;
+        nodeData["end_date"] = endDate;
+
+        return new Task(nodeData, null);
     }
+
+    toSerialisableStructure() {
+        const nodeJSON = super.toSerialisableStructure();
+        nodeJSON["name"] = this.name;
+        nodeJSON["description"] = this.description;
+        nodeJSON["start_date"] = this.startDate;
+        nodeJSON["end_date"] = this.endDate;
+        nodeJSON["tags"] = this.tags;
+        nodeJSON["status_code"] = this.status;
+
+        return nodeJSON;
+    }
+
 
     getName() {
         return this.name;

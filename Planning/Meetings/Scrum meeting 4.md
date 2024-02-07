@@ -5,6 +5,6 @@
 
 ### Plans for the next sprint
 
-- abstract part of the modal template system into a template system that can be used for more than just modals.
-- start working on the underlying system for the tasks.
-- create UI prototype for the create task modal.
+- [x] abstract part of the modal template system into a template system that can be used for more than just modals.
+- [x] start working on the underlying system for the tasks.
+- [x]  create UI prototype for the create task modal.

@@ -6,7 +6,7 @@ const completedTaskContainer = document.getElementById("completed-task-container
 const inProgressTaskContainer = document.getElementById("in-progress-task-container");
 const notStartedTaskContainer = document.getElementById("not-started-task-container");
 
-const activeProject = new Project();
+let activeProject = Project.new();
 
 function taskBuilderToContainer(container, inverseSort) {
     return new StatefulCollectionBuilder({
@@ -59,16 +59,25 @@ const taskDistributorBuilder = new StatefulDistributor({
  */
 const taskStateNotifier = new StateNotifier();
 
-function init() {
+function onProjectLoad() {
+    taskStateNotifier.flush();
+
     taskStateNotifier.addBuilder(taskDistributorBuilder);
+    activeProject.tasksHierarchy.forEachNode((id, node) => {
+        taskStateNotifier.setState(id, node);
+    });
+}
+
+function init() {
+    onProjectLoad();
 
     // create example data
-    const exampleTask = new Task("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
+    const exampleTask = Task.createNew("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
     activeProject.tasksHierarchy.addRootLevelNode(exampleTask);
     const newTag = activeProject.tasksHierarchy.createTag("Test Tag", "#ff55AA");
     exampleTask.addTag(newTag.id);
     
-    const nestedTask = new Task("Nested Task", "This is a test for nesting tasks", Date.now(), Date.now());
+    const nestedTask = Task.createNew("Nested Task", "This is a test for nesting tasks", Date.now(), Date.now());
     exampleTask.addChildNode(nestedTask);
 
     taskStateNotifier.setState(exampleTask.getId(), exampleTask);
@@ -393,7 +402,7 @@ class CreateTaskModal extends Modal {
         if (isNaN(startDate) || isNaN(endDate))
             return null;
 
-        const task = new Task(name, description, startDate, endDate);
+        const task = Task.createNew(name, description, startDate, endDate);
         return task;
     }
 }
@@ -512,6 +521,36 @@ function buildProgressIndicator(size, thickness) {
 
 function completionToOffset(completion, circumference) {
     return circumference - Math.round((completion.completed / completion.count) * circumference);
+}
+
+function exportClicked() {
+    const dataBlob = new Blob([activeProject.serialise()], {type: "type/plain"});
+
+    const modalBuilder = fetchPrefab("export-dialog");
+    const exportAnchor = modalBuilder.getVariable("export");
+    exportAnchor.setAttribute("href", URL.createObjectURL(dataBlob));
+    exportAnchor.setAttribute("download", `project.json`);
+
+    showModal(new StaticModal(modalBuilder.getElement()));
+}
+
+function importClicked() {
+    const modalBuilder = fetchPrefab("import-dialog");
+    const fileInput = modalBuilder.getVariable("import");
+    
+    modalBuilder.setVariableClickListener("import-btn", () => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            activeProject = Project.deserialise(event.target.result);
+            console.log(activeProject);
+            onProjectLoad();
+        }
+       
+        reader.readAsText(fileInput.files[0]);
+        popHighestModal();
+    })
+
+    showModal(new StaticModal(modalBuilder.getElement()));
 }
 
 init();
