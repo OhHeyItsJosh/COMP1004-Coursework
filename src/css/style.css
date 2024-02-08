@@ -490,6 +490,7 @@ input::-moz-color-swatch {
     padding-left: 8px;
     cursor: pointer;
     border-radius: 8px;
+    text-overflow: ellipsis;
 }
 
 .tree-item:hover {

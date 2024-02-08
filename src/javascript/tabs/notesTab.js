@@ -149,7 +149,9 @@ noteTitle.addEventListener("keydown", (event) => {
         noteTitle.blur();
         event.preventDefault();
 
-        const newTitle = noteTitle.innerHTML;
+        let newTitle = noteTitle.innerHTML;
+        newTitle = newTitle.replace("<br>", "");
+
         // TODO: sanitise
         
         const note = getSelctedNote();

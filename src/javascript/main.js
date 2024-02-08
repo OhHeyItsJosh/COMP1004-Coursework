@@ -18,7 +18,7 @@ function onProjectLoad() {
     noteStateNotifier.addBuilder(noteExplorerBuilder);
     activeProject.notesHierarchy.forEachNode((id, node) => {
         noteStateNotifier.setState(id, node);
-    })
+    });
 }
 
 function init() {

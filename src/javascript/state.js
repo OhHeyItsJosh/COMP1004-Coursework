@@ -103,7 +103,9 @@ class StatefulCollectionBuilder extends Stateful {
             return;
 
         const rebuiltWidget = this.#builder(state);
-        currentWidget.innerHTML = rebuiltWidget.innerHTML;
+        currentWidget.replaceWith(rebuiltWidget);
+
+        this.#items.set(id, rebuiltWidget);
     }
 
     removeItem(id) {
