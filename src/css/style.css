@@ -218,7 +218,7 @@ button:hover {
     flex-direction: column;
     row-gap: 16px;
     width: 100%;
-    overflow: scroll;
+    overflow: auto;
     padding: 8px 8px;
     margin: -8px;
     border-radius: 16px;
@@ -462,7 +462,7 @@ input::-moz-color-swatch {
     width: 300px;
     background: var(--panel-colour);
     flex-shrink: 0;
-    box-shadow: 1px 0 5px 0px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 1px 0px rgba(0,0,0,0.1);
 }
 
 .section-header {
@@ -471,13 +471,23 @@ input::-moz-color-swatch {
 
 #note-explorer {
     flex: 1;
+    overflow-y: auto;
     width: calc(100% - 24px);
     margin: 0 12px;
     box-sizing: border-box;
+    /* box-shadow: inset 0 -2px 0px 0 rgba(0,0,0,0.2); */
 }
 
 .tree-view {
     z-index: 5;
+}
+
+.tree-sublist {
+    transition: 0.3s ease-in-out;
+}
+
+.tree-sublist.collpased {
+    display: none;
 }
 
 .tree-view * {
@@ -486,19 +496,69 @@ input::-moz-color-swatch {
 
 .tree-item {
     position: relative;
-    padding: 4px 0;
+    padding: 2px 0;
     padding-left: 8px;
     cursor: pointer;
     border-radius: 8px;
+    overflow: hidden;
+    flex-wrap: nowrap;
+}
+
+.tree-item * {
+    flex-shrink: 0;
+}
+
+.tree-item .label {
+    flex-shrink: 1;
+    text-wrap: nowrap;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 0.925rem;
 }
 
 .tree-item:hover {
     background: rgb(220,220,220);
+    user-select: none;
+}
+
+.tree-collapse-arrow, .arrow-spacer {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    margin-right: 4px;
+    margin-top: 0.1rem;
+    transition: 0.1s ease-in-out;
+}
+
+.tree-collapse-arrow.closed {
+    transform: rotate(-90deg);
+}
+
+.tree-collapse-arrow::before {
+    content: "";
+    width: 8px;
+    height: 2px;
+    position: absolute;
+    left: 1px;
+    top: 50%;
+    transform: rotate(45deg);
+    background: var(--separator-colour);
+}
+
+.tree-collapse-arrow::after {
+    content: "";
+    width: 8px;
+    height: 2px;
+    position: absolute;
+    right: 1px;
+    top: 50%;
+    transform: rotate(-45deg);
+    background: var(--separator-colour);
 }
 
 .tree-item.selected {
-    background: var(--separator-colour);
+    background: rgb(210,210,210);
 }
 
 /* .tree-view .tree-sublist {
@@ -506,7 +566,7 @@ input::-moz-color-swatch {
 } */
 
 .tree-indent {
-    width: 24px;
+    width: 16px;
     position: relative;
 }
 
@@ -521,6 +581,20 @@ input::-moz-color-swatch {
     position: relative;
     display: block;
 
+}
+.tree-indent.last::before {
+    height: 90%;
+}
+
+.tree-indent.last::after {
+    content: "";
+    width: 10px;
+    height: 2px;
+    position: relative;
+    display: block;
+    background: var(--separator-colour);
+    left: 6px;
+    bottom: calc(10% + 3px);
 }
 
 .tree-item .tree-add-child {

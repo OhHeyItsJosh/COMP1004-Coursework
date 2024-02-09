@@ -14,30 +14,51 @@ let selectedNoteId;
 */
 const noteExplorerBuilder = new StatefulCollectionBuilder({
     parent: noteExplorer,
-    builder: (state) => {
-        const widget = document.createElement("div");
-        widget.classList.add("tree-item");
-        widget.classList.add("flex-row");
-        // widget.classList.add("flex-align-center");
+    builder: (state, args) => {
+        const widget = elementWithClasses("div", ["tree-item", "flex-row"])
         widget.setAttribute("note-id", state.getId());
 
-        
-        for (let i = 0; i < state.getParentCount(); i++)
+        const parentCount = state.getParentCount();
+        for (let i = 0; i < parentCount; i++)
         {
-            const indent = document.createElement("div");
-            indent.classList.add("tree-indent");
+            const indent = elementWithClasses("div", ["tree-indent"]);
+
+            // mark last element
+            // if (currentParent.indexOfChild(state.getId()) == currentParent.childCount() - 1)
+            //     indent.classList.add("last");
 
             widget.appendChild(indent);
+
+            // if (i + 1 < parentCount) 
+            //     currentParent = currentParent.getParent();
         }
 
-        widget.innerHTML += state.getName();
+        if (state.hasChildren()) {
+            const collapseBtn = elementWithClasses("div", ["tree-collapse-arrow"]);
+            collapseBtn.onclick = (event) => {
+                event.stopPropagation();
+                const branch = findAdjacentElement(widget, (el) => el.classList.contains("tree-sublist"));
+                if (!branch)
+                    return;
+    
+                collapseBtn.classList.toggle("closed");
+                branch.classList.toggle("collpased");
+            };
+            widget.appendChild(collapseBtn);
+        }
+        else {
+            const spacer = elementWithClasses("div", ["arrow-spacer"]);
+            widget.appendChild(spacer);
+        }
 
-        const expanded = document.createElement("div");
-        expanded.classList.add("expanded");
+        const label = elementWithClasses("div", ["label"]);
+        label.innerHTML = state.getName();
+        widget.appendChild(label);
+
+        const expanded = elementWithClasses("div", ["expanded"])
         widget.appendChild(expanded);
 
-        const addBtn = document.createElement("p");
-        addBtn.classList.add("tree-add-child");
+        const addBtn = elementWithClasses("p", ["tree-add-child"]);
         addBtn.innerHTML = "+";
         addBtn.addEventListener("click", (event) => {
             createNote(state);
@@ -49,6 +70,10 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
         widget.onclick = () => {
             selectNote(state.getId());
         }
+
+        if (args.isSelected)
+            widget.classList.add("selected");
+
         return widget;
     },
     onAppend: (builder, parent, widget, state) => {
@@ -59,15 +84,49 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
             return;
         }
 
+        const nodeParent = state.getParent();
+        if (nodeParent.childCount() == 1) {
+            builder.setItem(parentId, nodeParent);
+        }
+
         /** @type {HTMLElement} */
         const parentItem = builder.getItem(state.getParentId());
-        const parentBranch = parentItem.parentElement;
-
-        const sublist = parentBranch.getElementsByClassName("tree-sublist")[0];
+        const sublist = findAdjacentElement(parentItem, (el) => el.classList.contains("tree-sublist"));
+        
         const newBranch = createTreeBranch(widget);
         sublist.appendChild(newBranch);
     }
 });
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ * @param {(element: HTMLElement) => boolean} predicate 
+ * @returns 
+ */
+function findAdjacentElement(element, predicate) {
+    let currentElement = element.nextElementSibling;
+    while (currentElement)
+    {
+        if (predicate(currentElement))
+            return currentElement;
+
+        currentElement = currentElement.nextElementSibling;
+    }
+
+    return null;
+}
+
+/** @return {HTMLElement} */
+function elementWithClasses(element, classes) {
+    const el = document.createElement(element);
+    for (const clazz of classes)
+    {
+        el.classList.add(clazz);
+    }
+
+    return el;
+}
 
 function createTreeBranch(item) {
     const branch = document.createElement("li");
@@ -106,7 +165,6 @@ function createNote(parentNote) {
     if (!parentNote) {
         activeProject.notesHierarchy.addRootLevelNode(newNote);
     }
-
     else {
         parentNote.addChildNode(newNote);
     }
@@ -156,7 +214,8 @@ noteTitle.addEventListener("keydown", (event) => {
         
         const note = getSelctedNote();
         note.setName(newTitle);
-        updateNote(note);
+        noteStateNotifier.setState(note.getId(), note, {}, { isSelected: true });
+
 
         // select content
         if (event.code == "Enter")
@@ -164,7 +223,13 @@ noteTitle.addEventListener("keydown", (event) => {
     }
 });
 
-noteContent.addEventListener("keydown", (event) => blurOnKeys(["Escape"], event, noteContent));
+noteContent.addEventListener("keydown", (event) => {
+    blurOnKeys(["Escape"], event, noteContent);
+});
+
+noteContent.addEventListener("input", (event) => {
+    console.log(event);
+});
 
 // noteTitle.addEventListener("blur", (e) => {
 
@@ -182,6 +247,6 @@ noteContent.addEventListener("blur", (_) => {
  * 
  * @param {Note} note 
  */
-function updateNote(note) {
-    noteStateNotifier.setState(note.getId(), note);
-}
+// function updateNote(note) {
+//     noteStateNotifier.setState(note.getId(), note);
+// }

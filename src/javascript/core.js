@@ -18,7 +18,8 @@ class Project {
      */
     serialise() {
         const obj = {
-            "tasks": this.tasksHierarchy.toSerialisableStructure()
+            "tasks": this.tasksHierarchy.toSerialisableStructure(),
+            "notes": this.notesHierarchy.toSerialisableStructure()
         }
 
         return JSON.stringify(obj, null, 2);
@@ -31,8 +32,9 @@ class Project {
     static deserialise(jsonString) {
         const obj = JSON.parse(jsonString);
         const tasksHierarchy = new TasksHierarchy(obj["tasks"] ?? {});
+        const notesHierarchy = new NotesHierarchy(obj["notes"] ?? {});
 
-        return new Project(tasksHierarchy);
+        return new Project(tasksHierarchy, notesHierarchy);
     }
 }
 
@@ -50,8 +52,8 @@ class NodeHierarchyTree {
     constructor(data) {
         this.nodeMap = new Map();
         
-        this.addNodeData(data.nodes);
-        this.rootNodes = data.root_nodes.map((id) => id.toString());
+        this.addNodeData(data.nodes ?? {});
+        this.rootNodes = (data.root_nodes ?? []).map((id) => id.toString());
     }
 
     static newData() {
@@ -131,8 +133,13 @@ class NodeHierarchyTree {
      * @param {(id: string, node: TreeNode)} callback 
      */
     forEachNode(callback) {
-        for (const [id, node] of this.nodeMap.entries())
-            callback(id, node);
+        // for (const [id, node] of this.nodeMap.entries())
+        //     callback(id, node);
+        for (const rootNodeId of this.rootNodes)
+        {
+            const node = this.nodeMap.get(rootNodeId);
+            node.traverseChildNodes(callback);
+        }
     }
 }
 
@@ -250,6 +257,22 @@ class TreeNode {
         return this.children.length > 0;
     }
 
+    getChildAtIndex(index) {
+        const childId = this.children[index];
+        if (!childId)
+            return null;
+
+        return this.nodeTree.getNode(childId);
+    }
+
+    childCount() {
+        return this.children.length;
+    }
+
+    indexOfChild(childId) {
+        return this.children.indexOf(childId);
+    }
+
     /**
      * 
      * @param {(id: string, node: TreeNode) => void} callback 
@@ -268,6 +291,17 @@ class TreeNode {
         this.forEachParent((id, _) => count++);
 
         return count;
+    }
+
+    /**
+     * 
+     * @param {(id: string, note: TreeNode) => void} callback 
+     */
+    traverseChildNodes(callback) {
+        callback(this.getId(), this);
+        
+        for (const child of this.getChildren())
+            child.traverseChildNodes(callback);
     }
 }
 
@@ -569,6 +603,14 @@ class Note extends TreeNode {
         nodeData["content"] = content;
 
         return new Note(nodeData);
+    }
+
+    toSerialisableStructure() {
+        const nodeJSON = super.toSerialisableStructure();
+        nodeJSON["name"] = this.name;
+        nodeJSON["content"] = this.content;
+
+        return nodeJSON;
     }
 
     getName() {

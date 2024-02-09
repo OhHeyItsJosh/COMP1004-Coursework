@@ -7,7 +7,7 @@ class Stateful {
      * @param {T} state
      * @abstract
      */
-    setItem(id, state, args) {};
+    setItem(id, state, args, builderArgs) {};
 
     /**
      * @param {string} id
@@ -26,7 +26,7 @@ class Stateful {
  */
 class StatefulCollectionBuilder extends Stateful {
     /**
-     * @typedef {(state: T) => Object} WidgetBuilder
+     * @typedef {(state: T, args: any) => Object} WidgetBuilder
      * @typedef {(widget: Object, state: T) => boolean} AppendPredicate
      * @typedef {(builder: StatefulCollectionBuilder, parent: HTMLElement, widget: HTMLElement, state: T) => void} AppendCallback
      * @typedef {(ids: string[]) => string[]} SortCallback
@@ -65,18 +65,20 @@ class StatefulCollectionBuilder extends Stateful {
      * @param {{resort: boolean}} args 
      * @returns 
      */
-    setItem(id, state, args) {
+    setItem(id, state, args, builderArgs) {
+        builderArgs = builderArgs ?? {};
+
         if (this.#items.has(id))
         {
             if (state == null)
                 this.removeItem(id);
             else
-                this.rebuildItem(id, state);
+                this.rebuildItem(id, state, builderArgs);
         }
         else if (state == null)
             return;
         else
-            this.appendItem(id, state);
+            this.appendItem(id, state, builderArgs, builderArgs);
 
         if (args && args.resort && this.#sortCallback)
             this.sortItems();
@@ -97,12 +99,12 @@ class StatefulCollectionBuilder extends Stateful {
         }
     }
 
-    rebuildItem(id, state) {
+    rebuildItem(id, state, builderArgs) {
         const currentWidget = this.#items.get(id);
         if (!currentWidget)
             return;
 
-        const rebuiltWidget = this.#builder(state);
+        const rebuiltWidget = this.#builder(state, builderArgs);
         currentWidget.replaceWith(rebuiltWidget);
 
         this.#items.set(id, rebuiltWidget);
@@ -121,11 +123,11 @@ class StatefulCollectionBuilder extends Stateful {
 
     }
 
-    appendItem(id, state) {
+    appendItem(id, state, builderArgs) {
         if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))
         return;
         
-        const widget = this.#builder(state);
+        const widget = this.#builder(state, builderArgs);
 
         if (this.#onAppend)
             this.#onAppend(this, this.#parent, widget, state);
@@ -156,15 +158,15 @@ class StatefulListener extends Stateful {
     #setItemCallback
 
     /**
-     * @param {(id: string, state: T, args: any)} setItemCallback 
+     * @param {(id: string, state: T, args: any, builderArgs: any)} setItemCallback 
      */
     constructor(setItemCallback) {
         super();
         this.#setItemCallback = setItemCallback;
     }
 
-    setItem(id, state, args) {
-        this.#setItemCallback(id, state, args);
+    setItem(id, state, args, builderArgs) {
+        this.#setItemCallback(id, state, args, builderArgs);
     }
 
     hasItem(id) {
@@ -223,20 +225,20 @@ class StatefulDistributor extends Stateful {
         this.sortToGroup = sortCallback;
     }
 
-    setItem(id, state, args) {
+    setItem(id, state, args, builderArgs) {
         // sort
         const groupId = this.sortToGroup(id, state);
         const sortedGroup = this.statefulGroups.get(groupId);
 
         // presence check in sorted group
         if (sortedGroup.hasItem(id)) {
-            sortedGroup.setItem(id, state, args);
+            sortedGroup.setItem(id, state, args, builderArgs);
             return;
         }
 
         // remove from all groups and re-append item
         this.removeFromAll(id);
-        sortedGroup.setItem(id, state, args);
+        sortedGroup.setItem(id, state, args, builderArgs);
     }
 
     hasItem(id) {
@@ -283,9 +285,9 @@ class StateNotifier {
      * @param {string} id 
      * @param {T} state 
      */
-    setState(id, state, args) {
+    setState(id, state, args, builderArgs) {
         for (const builder of this.#notifyList)
-            builder.setItem(id, state, args);
+            builder.setItem(id, state, args, builderArgs);
     }
 
     flush() {
