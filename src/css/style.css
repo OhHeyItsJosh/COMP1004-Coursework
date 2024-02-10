@@ -5,7 +5,8 @@
     --foreground-colour: rgb(65,65,65);
     --separator-colour: rgb(175, 175, 175);
     --panel-colour: #e8eded;
-    --button-colour: #359da6;
+    --accent-colour: #359da6;
+    --card-bg-colour: #f5f7f7;
 }
 
 :root {
@@ -20,10 +21,12 @@ html, body {
 header {
     width: 100%;
     height: 80px;
-    background: #f0f4f5;
-    box-shadow: 0 1px 5px 0px rgba(0,0,0,0.1);
+    background: #dbdfde;
+    /* border-bottom: 1px solid #c5c9c8; */
+    box-shadow: 0 1px 2px 0px rgba(0,0,0,0.2);
     flex-shrink: 0;
     z-index: 2;
+    /* color: white; */
 }
 
 .placeholder {
@@ -90,7 +93,7 @@ header {
     position: absolute;
     width: 50%;
     height: 3px;
-    background: #247d8f;
+    background: var(--accent-colour);
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -156,6 +159,10 @@ header {
     align-items: center;
 }
 
+.flex-align-stretched {
+    align-items: stretch;
+}
+
 .space-between-row {
     display: flex;
     flex-direction: row;
@@ -186,7 +193,7 @@ button {
     font-family: Arial, Helvetica, sans-serif;
     color: white;
     /* border: 1px solid rgba(0,0,0,0.1); */
-    background-color: var(--button-colour);
+    background-color: var(--accent-colour);
     transition: 0.2s linear;
     box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
 }
@@ -229,7 +236,7 @@ button:hover {
 .task-card {
     display: flex;
     flex-direction: column;
-    background: #f5f7f7;
+    background: var(--card-bg-colour);
     padding: 16px;
     border-radius: 16px;
     /* overflow: hidden; */
@@ -350,7 +357,7 @@ input[type="text"]:focus, textarea, input[type="date"] {
     max-height: 85vh;
 }
 
-.horizontal-spacer {
+.horizontal-seporator {
     width: 100%;
     height: 1px;
     position: relative;
@@ -376,6 +383,7 @@ input[type="text"]:focus, textarea, input[type="date"] {
     width: 1px;
     background: var(--separator-colour);
     position: relative;
+    flex-shrink: 0;
 }
 
 .nested-tasks-container, .related-notes-container {
@@ -392,12 +400,26 @@ input[type="text"]:focus, textarea, input[type="date"] {
 input[type="color"] {
     width: 30px;
     border: 2px solid var(--separator-colour);
+    height: auto;
     outline: none;
     border-radius: 12px;
     overflow: hidden;
 }
 
 input::-moz-color-swatch {
+    border: none;
+}
+
+input::-webkit-color-swatch-wrapper {
+    position: relative;
+}
+
+input::-webkit-color-swatch {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     border: none;
 }
 
@@ -457,12 +479,26 @@ input::-moz-color-swatch {
     overflow: hidden;
 }
 
-.side-nav-panel {
+.side-panel {
+    display: flex;
+}
+
+.left-nav-panel {
     flex-grow: 0;
-    width: 300px;
-    background: var(--panel-colour);
+    background: var(--card-bg-colour);
     flex-shrink: 0;
-    box-shadow: 2px 0 1px 0px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 1px 0px rgba(0,0,0,0.05);
+}
+
+.right-nav-panel {
+    flex-shrink: 0;
+    background: var(--card-bg-colour);
+    box-shadow: -2px 0 1px 0px rgba(0,0,0,0.05);
+    /* border-left: 1px solid var(--separator-colour); */
+}
+
+.side-panel-content {
+    margin: 0 12px;
 }
 
 .section-header {
@@ -472,8 +508,8 @@ input::-moz-color-swatch {
 #note-explorer {
     flex: 1;
     overflow-y: auto;
-    width: calc(100% - 24px);
-    margin: 0 12px;
+    /* width: calc(100% - 24px); */
+    width: 100%;
     box-sizing: border-box;
     /* box-shadow: inset 0 -2px 0px 0 rgba(0,0,0,0.2); */
 }
@@ -644,3 +680,4 @@ input::-moz-color-swatch {
     word-break: break-word;
     outline: none;
 }
+
