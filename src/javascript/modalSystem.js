@@ -86,6 +86,14 @@ async function popHighestModal() {
     modalContainerChangedState();
 }
 
+async function popAllModals() {
+    const modalCount = modalStack.length;
+    for (let i = 0; i < modalCount; i++)
+    {
+        popHighestModal();
+    }
+}
+
 function modalContainerChangedState() {
     const hasChildren = modalContainer.children.length ?? false;
     

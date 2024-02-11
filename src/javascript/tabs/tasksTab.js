@@ -66,12 +66,19 @@ const StatusClassMap = {
 /**
  * 
  * @param {Task} task 
+ * @returns {HTMLElement}
  */
 function buildTaskCard(task) {
     const taskCard = fetchPrefab("task-card-prefab");
 
     taskCard.setVariableContent("name", task.getName());
-    taskCard.setVariableContent("description", task.getDescription());
+
+    const descriptionLength = 100;
+    let description = task.getDescription().substring(0, 100);
+    if (description.length == descriptionLength)
+        description += "...";
+
+    taskCard.setVariableContent("description", description);
     taskCard.setVariableContent("deadline", `${getDateString(task.getEndDate())}`);
 
     if (task.getChildren().length == 0)
@@ -129,6 +136,8 @@ class TaskViewModal extends Modal {
     tagBuilder;
     /** @type {StatefulCollectionBuilder<Task>} */
     nestedTasksBuilder;
+    /** @type {StatefulCollectionBuilder<Note>} */
+    relatedNotesBuilder;
     /** @type {StatefulListener<Task>} */
     progressChangeListener;
 
@@ -248,6 +257,30 @@ class TaskViewModal extends Modal {
         this.task.getChildren().forEach((child) => {
             this.nestedTasksBuilder.appendItem(child.getId(), child);
         })
+
+        // related notes
+        const relatedNotesContainer = modalBuilder.getVariable("notes-container");
+
+        this.relatedNotesBuilder = new StatefulCollectionBuilder({
+            parent: relatedNotesContainer,
+            builder: (state, args) => {
+                const card = createNoteCard(state);
+                card.onclick = () => {
+                    selectNote(state.getId());
+                    popAllModals();
+                    getTabHandler("main-nav").switchTab("notes");
+                }
+                
+                return card;
+            },
+            shouldAppend: (widget, state) => {
+                return activeProject.taskNoteRelationship.isRelated(this.task.getId(), state.getId());
+            }
+        });
+
+        activeProject.getRelatedNotesForTask(this.task.getId()).forEach((note) => {
+            this.relatedNotesBuilder.setItem(note.getId(), note);
+        });
 
         // render progress indicator if there are subtasks
         if (this.task.hasChildren()) {

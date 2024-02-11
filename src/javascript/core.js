@@ -3,14 +3,25 @@ class Project {
     tasksHierarchy;
     /** @type {NotesHierarchy} */
     notesHierarchy;
+    /** @type {ManyToManyNodeRelationship<TasksHierarchy, NotesHierarchy>} */
+    taskNoteRelationship;
 
-    constructor(tasks, notes) {
+    constructor(tasks, notes, taskNoteRelationship) {
         this.tasksHierarchy = tasks;
         this.notesHierarchy = notes;
+
+        if (taskNoteRelationship)
+            this.taskNoteRelationship = taskNoteRelationship;
+        else
+            this.taskNoteRelationship = ManyToManyNodeRelationship.createNew(this.tasksHierarchy, this.notesHierarchy);
     }
 
     static new() {
-        return new Project(TasksHierarchy.createNew(), NotesHierarchy.createNew());
+        return new Project(
+            TasksHierarchy.createNew(), 
+            NotesHierarchy.createNew(),
+            null
+        );
     }
 
     /**
@@ -35,6 +46,17 @@ class Project {
         const notesHierarchy = new NotesHierarchy(obj["notes"] ?? {});
 
         return new Project(tasksHierarchy, notesHierarchy);
+    }
+
+    // first relation = task
+    // second relation = note
+
+    getRelatedNotesForTask(taskId) {
+        return this.taskNoteRelationship.getRelationsForFirst(taskId).map((id) => this.notesHierarchy.getNode(id));
+    }
+
+    getRelatedTasksForNote(noteId) {
+        return this.taskNoteRelationship.getRelationsForSecond(noteId).map((id) => this.tasksHierarchy.getNode(id));
     }
 }
 
@@ -627,5 +649,88 @@ class Note extends TreeNode {
 
     setContent(content) {
         this.content = content;
+    }
+}
+
+/** 
+ * @template F
+ * @template S
+ */
+class ManyToManyNodeRelationship {
+    /** @type {NodeHierarchyTree} */
+    struct_F;
+    /** @type {NodeHierarchyTree} */
+    struct_S;
+
+    /**
+     * 
+     * @param {NodeHierarchyTree} first 
+     * @param {NodeHierarchyTree} second 
+     */
+    constructor(data) {
+        this.relations_F = new Map(Object.entries(data["relations_f"] ?? {}));
+        this.relations_S = new Map(Object.entries(data["relations_s"] ?? {}));
+    }
+
+    static createNew() {
+        return new ManyToManyNodeRelationship({});
+    }
+
+    toSerialisableStructure() {
+        return {
+            "relations_f": Object.fromEntries(this.relations_F.entries()),
+            "relations_s": Object.fromEntries(this.relations_S.entries())           
+        }
+    }
+
+    addRelationship(firstId, secondId) {
+        this.addToRelations(this.relations_F, firstId, secondId);
+        this.addToRelations(this.relations_S, secondId, firstId);
+    }
+
+    /**
+     * 
+     * @param {Map<string, string[]>} relations 
+     * @param {string} targetId 
+     * @param {string} newId 
+     */
+    addToRelations(relationsMap, targetId, newId) {
+        // add to relations map if not included
+        if (relationsMap.has(targetId)) {
+            const relationList = relationsMap.get(targetId);
+            if (relationList.includes(newId))
+                return;
+
+            relationList.push(newId);
+        }
+        // create new entry in relations map
+        else {
+            relationsMap.set(targetId, [newId]);
+        }
+    }
+
+    containsRelation(relationsMap, targetId, compareId) {
+        const relationList = relationsMap.get(targetId);
+        if (!relationList)
+            return false;
+
+        if (relationList.includes(compareId))
+            return true;
+        else
+            return false;
+    }
+
+    /** @return {string[]} */
+    getRelationsForFirst(firstId) {
+        return (this.relations_F.get(firstId) ?? []);
+    }
+
+    /** @return {string[]} */
+    getRelationsForSecond(secondId) {
+        return (this.relations_S.get(secondId) ?? []);
+    }
+
+    isRelated(firstId, secondId) {
+        return (this.containsRelation(this.relations_F, firstId, secondId) || this.containsRelation(this.relations_S, secondId, firstId));
     }
 }

@@ -19,6 +19,8 @@ function onProjectLoad() {
     activeProject.notesHierarchy.forEachNode((id, node) => {
         noteStateNotifier.setState(id, node);
     });
+
+    buildNoteContent();
 }
 
 function init() {
@@ -47,6 +49,9 @@ function init() {
     const extraNestedNote = Note.createNew("Really Nested Note", "Bruh");
     nestedNote.addChildNode(extraNestedNote);
 
+    activeProject.taskNoteRelationship.addRelationship(exampleTask.getId(), exampleNote.getId());
+    activeProject.taskNoteRelationship.addRelationship(nestedTask.getId(), exampleNote.getId());
+    activeProject.taskNoteRelationship.addRelationship(nestedTask.getId(), nestedNote.getId());
     onProjectLoad();
 }
 

@@ -27,17 +27,17 @@
         </modal>
 
         <!-- task card widget -->
-        <div class="task-card" id = "task-card-prefab">
+        <div class="card" id = "task-card-prefab">
             <div class="space-between-row">
                 <div class="flex-row" style="align-items: center;">
-                    <h3 class="task-title" modal-var="name">Task name</h3>
+                    <h3 class="card-title" modal-var="name">Task name</h3>
                     <p class="task-deadline" modal-var="deadline">Deadline</p>
                 </div>
                 <div class="task-status-display" modal-var="status">Completed</div>
             </div>
             <div class="task-body-row">
                 <div class="space-between-column" style="flex: 1">
-                    <p class="task-description" modal-var="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
+                    <p class="card-description" modal-var="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi obcaecati harum quisquam et, numquam, culpa, aliquam assumenda laudantium quibusdam suscipit nemo tempora repellendus enim dolorum.</p>
                     <div modal-var="tags" class="tag-row" style="margin-top: 8px">
                     </div>
                 </div>
@@ -47,6 +47,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="card note-card" id="note-card">
+            <h3 modal-var="title">Title</h3>
+            <p class="card-description" modal-var="content">Content</p>
         </div>
 
         <!-- create task modal -->
@@ -102,7 +107,7 @@
                                 </div>
                                 <button modal-var="add-tag-btn">Edit Tags</button>
                             </div>
-                            <p class="task-description" modal-var="description">(Description)</p>
+                            <p class="card-description" modal-var="description">(Description)</p>
                         </div>
                         <div class="flex-row flex-align-center" style="margin-top: 16px;">
                             <h4 style="white-space: pre;" modal-var="date-display">(Date)</h4>
@@ -132,7 +137,7 @@
                         <h3>Nested Tasks:</h3>
                         <button modal-var="add-task">Add Task</button>
                     </div>
-                    <div class="nested-tasks-container task-container" modal-var="tasks-container"></div>
+                    <div class="nested-tasks-container card-container" modal-var="tasks-container"></div>
                 </div>
                 <div class="vertical-separator"></div>
                 <div class="related-notes-section">
@@ -140,7 +145,7 @@
                         <h3>Related Notes:</h3>
                         <button modal-var="add-note">Link Note</button>
                     </div>
-                    <div class="related-notes-container" modal-var="notes-container"></div>
+                    <div class="related-notes-container card-container" modal-var="notes-container"></div>
                 </div>
             </div>
         </modal>
@@ -193,6 +198,7 @@
                 <div class="expanded"></div>
                 <h3 style="margin: 0 32px">[Options]</h3>
             </div>
+
             <svg width = "0" height = "0" viewBox="0 0 0 0">
                 <defs>
                     <linearGradient id ="stroke">
@@ -223,16 +229,16 @@
                     <div class="flex-row flex-centered" style = "gap: 16px; flex-grow: 1; overflow: hidden; padding: 16px; margin: -16px;">
                         <div class="task-group">
                             <h3 class="task-header">Completed</h3>
-                            <div class="task-container" id="completed-task-container">
+                            <div class="card-container" id="completed-task-container">
                             </div>
                         </div>
                         <div class="task-group">
                             <h3 class="task-header">In Progress</h3>
-                            <div class="task-container" id="in-progress-task-container"></div>
+                            <div class="card-container" id="in-progress-task-container"></div>
                         </div>
                         <div class="task-group">
                             <h3 class="task-header">Not Started</h3>
-                            <div class="task-container" id="not-started-task-container"></div>
+                            <div class="card-container" id="not-started-task-container"></div>
                         </div>
                     </div>
                 </div>
@@ -250,23 +256,39 @@
                             <button onclick="createNote()" style="margin: 24px 0;">Create Note</button>
                         </div>
                     </div>
-                    <div class="note-view-panel">
-                        <div id="note-container">
+                    <div id="note-container" class="flex-row">
+                        <div class="note-view-panel flex-column">
                             <h1 contenteditable id="note-title"></h1>
                             <div contenteditable id="note-content"></div>
                         </div>
-                    </div>
 
-                    <div class="right-nav-panel side-panel" style="width: 350px;">
-                        <div class="flex-column flex-align-center expanded side-panel-content">
-                            <div style="flex: 55;" class="flex-column side-group">
-                            <h4 class="section-header">Nested Notes</h4>
-                            </div>
-                            <div class="horizontal-seporator"></div>
-                            <div style="flex: 45;" class="flex-column side-group">
-                                <h4 class="section header">Related Tasks</h4>
+                        <div class="right-nav-panel side-panel" style="width: 350px;">
+                            <div class="flex-column flex-align-center expanded side-panel-content">
+
+                                <div style="flex: 50;" class="flex-column side-group flex-align-center">
+                                    <div class="flex-column flex-align-center side-group-header">
+                                        <h4 class="section-header">Nested Notes</h4>
+                                        <button id="add-nested-note-btn">Add</button>
+                                    </div>
+                                    <div id="nested-notes-container" class="card-container expanded"></div>
+                                </div>
+
+                                <div class="horizontal-seporator"></div>
+
+                                <div style="flex: 50;" class="flex-column side-group flex-align-center">
+                                    <div class="flex-column flex-align-center side-group-header">
+                                        <h4 class="section header">Related Tasks</h4>
+                                        <div class="button-row flex-row">
+                                            <button>Create Task</button>
+                                            <button onclick="linkTest()">Link Task</button>
+                                        </div>
+                                    </div>
+                                    <div id="related-tasks-container" class="card-container" row-gap></div>
+                                </div>
+
                             </div>
                         </div>
+                        <h2 id="note-unselected">No Note Selected</h2>
                     </div>
                 </div>
             </div>

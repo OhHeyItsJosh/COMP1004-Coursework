@@ -73,7 +73,7 @@ class TabHandler {
     }
 }
 
-function init() {
+function initTabSystem() {
     initTabHandlers();
     bindTabViews();
 
@@ -133,4 +133,9 @@ function bindSelectableTabToHandler(selectableTabObj, controllerId) {
     });
 }
 
-init();
+/** @returns {TabHandler} */
+function getTabHandler(id) {
+    return tabHandlers.get(id);
+}
+
+initTabSystem();
