@@ -14,6 +14,8 @@ function onProjectLoad() {
         taskStateNotifier.setState(id, node);
     });
 
+    selectedNoteId = null;
+
     noteStateNotifier.flush();
     noteStateNotifier.addBuilder(noteExplorerBuilder);
     activeProject.notesHierarchy.forEachNode((id, node) => {

@@ -30,7 +30,8 @@ class Project {
     serialise() {
         const obj = {
             "tasks": this.tasksHierarchy.toSerialisableStructure(),
-            "notes": this.notesHierarchy.toSerialisableStructure()
+            "notes": this.notesHierarchy.toSerialisableStructure(),
+            "task_note_relationships": this.taskNoteRelationship.toSerialisableStructure()
         }
 
         return JSON.stringify(obj, null, 2);
@@ -44,8 +45,9 @@ class Project {
         const obj = JSON.parse(jsonString);
         const tasksHierarchy = new TasksHierarchy(obj["tasks"] ?? {});
         const notesHierarchy = new NotesHierarchy(obj["notes"] ?? {});
+        const taskNoteRelationship = new ManyToManyNodeRelationship(obj["task_note_relationships"] ?? {});
 
-        return new Project(tasksHierarchy, notesHierarchy);
+        return new Project(tasksHierarchy, notesHierarchy, taskNoteRelationship);
     }
 
     // first relation = task

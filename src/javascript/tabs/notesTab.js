@@ -156,7 +156,8 @@ function selectNote(id) {
     // remove selected class from current select element in explorer
     if (selectedNoteId) {
         const explorerItem = noteExplorerBuilder.getItem(selectedNoteId);
-        explorerItem.classList.remove("selected");
+        if (explorerItem)
+            explorerItem.classList.remove("selected");
     }
 
     // set selected class in explorer
