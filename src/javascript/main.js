@@ -106,4 +106,105 @@ function importClicked() {
     showModal(new StaticModal(modalBuilder.getElement()));
 }
 
+
+/** @template T */
+class SearchSelector extends StatefulCollectionBuilder {
+
+    /** T[] */
+    items;
+    searchItemProvider;
+    idProvider;
+    selectCallback;
+
+    /**
+     * @typedef {{itemBuilder: WidgetBuilder, items: T[], getSearchItem: (item: T) => string, getId: (item: T) => string, onSelect: (item: T) => void}} SearchSelectorArgs
+     * @param {SearchSelectorArgs} args 
+     */ 
+    constructor(args, container) {
+        super({
+            builder: (state, builderArgs) => {
+                const widget = args.itemBuilder(state, builderArgs);
+                widget.onclick = (event) => {
+                    this.selectCallback(state);
+                    popHighestModal();
+                }
+
+                return widget;
+            },
+            parent: container
+        });
+
+        this.selectCallback = args.onSelect;
+        this.items = args.items;
+        this.searchItemProvider = args.getSearchItem;
+        this.idProvider = args.getId;
+    }
+
+    buildItems() {
+        for (const item of this.items)
+        {
+            super.setItem(this.idProvider(item), item);
+        }
+    }
+
+    searchTerm(term) {
+        for (const item of this.items)
+        {
+            const searchBy = this.searchItemProvider(item).toLowerCase();
+            const widget = this.getItem(this.idProvider(item));
+
+            if (!searchBy.includes(term.toLowerCase()))
+                widget.classList.add("hidden");
+            else
+                widget.classList.remove("hidden");
+        }
+    }
+}
+
+/** @template T */
+class SearchSelectorModal extends Modal {
+
+    selectorArgs;
+    /** @type {SearchSelector} */
+    selectorBuilder;
+
+    /**
+     * 
+     * @param {SearchSelectorArgs} args 
+     */
+    constructor(args) {
+        super();
+        this.selectorArgs = args;
+    }
+
+    build() {
+        const modalBuilder = fetchPrefab("search-modal");
+
+        const itemContainer = modalBuilder.getVariable("item-container");
+        this.selectorBuilder = new SearchSelector(this.selectorArgs, itemContainer);
+        this.selectorBuilder.buildItems();
+
+        const inputBox = modalBuilder.getVariable("search-input");
+        
+        inputBox.addEventListener("keydown", (event) => {
+            if (event.key == "Enter")
+                this.search(inputBox);
+        });
+        modalBuilder.setVariableClickListener("search-button", () => this.search(inputBox));
+
+        setTimeout(() => {
+            inputBox.focus();
+        }, 10)
+        return modalBuilder.getElement();
+    }
+
+    search(inputBox) {
+        this.selectorBuilder.searchTerm(inputBox.value);
+    }
+    
+    onClose() {
+
+    }
+}
+
 init();

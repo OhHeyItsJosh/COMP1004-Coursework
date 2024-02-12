@@ -316,6 +316,28 @@ function createNoteCard(note) {
     return noteCard.getElement();
 }
 
-function linkTest() {
-    console.log(activeProject.getRelatedTasksForNote(selectedNoteId));
+function linkTaskToNote() {
+    const note = getSelctedNote();
+    const relatedTasks = activeProject.getRelatedTasksForNote(note.getId());
+
+    /** @type {SearchSelectorModal<Task>}*/
+    const selectorModal = new SearchSelectorModal({
+        items: activeProject.tasksHierarchy.getAllNodes(),
+        itemBuilder: (state, args) => {
+            const card = buildTaskCard(state, args);
+            if (relatedTasks.includes(state))
+                card.classList.add("related");
+
+            return card;
+        },
+        getId: (item) => item.getId(),
+        getSearchItem: (item) => item.getName(),
+        onSelect: (task) => {
+            // create relationship + update builder
+            activeProject.taskNoteRelationship.toggleRelationship(task.getId(), note.getId());
+            relatedTasksBuilder.setItem(task.getId(), task);
+        }
+    })
+
+    showModal(selectorModal);
 }

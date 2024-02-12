@@ -11,4 +11,8 @@
 
 ### Half-way additional plans for sprint
 
-- Begin working on the notes tab
+Development during this sprint has been rapid, I have managed to meet all of my set goals in the first week.
+A mid-sprint meeting was held to append additional plans to this sprint:
+
+- [x] Begin working on the functionality for the notes tab.
+- [x] Develop relationship aspect between tasks and notes.

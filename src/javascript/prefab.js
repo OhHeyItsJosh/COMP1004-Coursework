@@ -52,6 +52,7 @@ class PrefabBuilder {
         element.onclick = listener;
     }
 
+    /** @returns {HTMLElement} */
     getElement() {
         return this.element;
     }

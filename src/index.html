@@ -130,7 +130,7 @@
                     <!-- <div class="placeholder" style="width:225px; height: 175px; flex-shrink: 0;"></div> -->
                 </div>
             </div>
-            <div class="horizontal-seporator"></div>
+            <div class="horizontal-separator"></div>
             <div class="task-relations-wrapper">
                 <div class="nested-tasks-section">
                     <div class="space-between-row">
@@ -143,7 +143,7 @@
                 <div class="related-notes-section">
                     <div class="space-between-row">
                         <h3>Related Notes:</h3>
-                        <button modal-var="add-note">Link Note</button>
+                        <button modal-var="add-note">Link / Unlink Note</button>
                     </div>
                     <div class="related-notes-container card-container" modal-var="notes-container"></div>
                 </div>
@@ -171,6 +171,18 @@
             </div>
         </modal>
 
+        <modal id="search-modal" class="modal modal-zoom-animation search-modal">
+            <div class="flex-column flex-align-center" style="gap: 16px">
+                <h1 modal-var="title">Search</h1>
+                <div class="flex-row" style="gap: 8px; width: 100%">
+                    <input modal-var="search-input" type="text" class="expanded"/>
+                    <button modal-var="search-button">Search</button>
+                </div>
+
+                <div modal-var="item-container" class="card-container" style="max-height: 75vh"></div>
+            </div>
+        </modal>
+
         <svg id="progress-indicator" class="progress-indicator" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
             <use xlink:href="#stroke"/>
 
@@ -193,7 +205,7 @@
                     <li class="selectable-tab" tab-id="tasks">Tasks</li>
                     <li class="selectable-tab selectable-tab-active" tab-id="notes">Notes</li>
                 </ul>
-                <div style="margin: 0 32px; height: calc(100% - 16px);" class="vertical-separator"></div>
+                <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
                 <h4 >[Project Name]</h4>
                 <div class="expanded"></div>
                 <h3 style="margin: 0 32px">[Options]</h3>
@@ -273,14 +285,14 @@
                                     <div id="nested-notes-container" class="card-container expanded"></div>
                                 </div>
 
-                                <div class="horizontal-seporator"></div>
+                                <div class="horizontal-separator"></div>
 
                                 <div style="flex: 50;" class="flex-column side-group flex-align-center">
                                     <div class="flex-column flex-align-center side-group-header">
                                         <h4 class="section header">Related Tasks</h4>
                                         <div class="button-row flex-row">
-                                            <button>Create Task</button>
-                                            <button onclick="linkTest()">Link Task</button>
+                                            <!-- <button>Create Task</button> -->
+                                            <button onclick="linkTaskToNote()">Link / Unlink Task</button>
                                         </div>
                                     </div>
                                     <div id="related-tasks-container" class="card-container" row-gap></div>

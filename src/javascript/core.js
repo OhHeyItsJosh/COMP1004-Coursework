@@ -9,18 +9,14 @@ class Project {
     constructor(tasks, notes, taskNoteRelationship) {
         this.tasksHierarchy = tasks;
         this.notesHierarchy = notes;
-
-        if (taskNoteRelationship)
-            this.taskNoteRelationship = taskNoteRelationship;
-        else
-            this.taskNoteRelationship = ManyToManyNodeRelationship.createNew(this.tasksHierarchy, this.notesHierarchy);
+        this.taskNoteRelationship = taskNoteRelationship;
     }
 
     static new() {
         return new Project(
             TasksHierarchy.createNew(), 
             NotesHierarchy.createNew(),
-            null
+            ManyToManyNodeRelationship.createNew()
         );
     }
 
@@ -164,6 +160,10 @@ class NodeHierarchyTree {
             const node = this.nodeMap.get(rootNodeId);
             node.traverseChildNodes(callback);
         }
+    }
+
+    getAllNodes() {
+        return Array.from(this.nodeMap.values());
     }
 }
 
@@ -685,9 +685,21 @@ class ManyToManyNodeRelationship {
         }
     }
 
+    toggleRelationship(firstId, secondId) {
+        if (this.isRelated(firstId, secondId))
+            this.removeRelationship(firstId, secondId);
+        else
+            this.addRelationship(firstId, secondId);
+    }
+
     addRelationship(firstId, secondId) {
         this.addToRelations(this.relations_F, firstId, secondId);
         this.addToRelations(this.relations_S, secondId, firstId);
+    }
+
+    removeRelationship(firstId, secondId) {
+        this.removeFromRelations(this.relations_F, firstId, secondId);
+        this.removeFromRelations(this.relations_S, secondId, firstId);
     }
 
     /**
@@ -709,6 +721,19 @@ class ManyToManyNodeRelationship {
         else {
             relationsMap.set(targetId, [newId]);
         }
+    }
+
+    removeFromRelations(relationsMap, targetId, newId) {
+        if (!relationsMap.has(targetId))
+            return;
+
+        const relationList = relationsMap.get(targetId);
+        const itemIndex = relationList.indexOf(newId);
+
+        if (itemIndex == -1)
+            return;
+
+        relationList.splice(itemIndex, 1);
     }
 
     containsRelation(relationsMap, targetId, compareId) {

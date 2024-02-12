@@ -104,6 +104,12 @@ class StatefulCollectionBuilder extends Stateful {
         if (!currentWidget)
             return;
 
+        // remove the item if it should not be appended
+        if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state)) {
+            this.removeItem(id);
+            return;
+        }
+
         const rebuiltWidget = this.#builder(state, builderArgs);
         currentWidget.replaceWith(rebuiltWidget);
 
@@ -148,6 +154,16 @@ class StatefulCollectionBuilder extends Stateful {
         }
 
         this.#items.clear();
+    }
+
+    /**
+     * 
+     * @param {(id: string, state: HTMLElement) => void} callback 
+     */
+    forEachItem(callback) {
+        this.#items.forEach((value, key) => {
+            callback(key, value);
+        })
     }
 }
 

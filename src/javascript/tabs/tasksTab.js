@@ -92,7 +92,7 @@ function buildTaskCard(task) {
     task.getTags().forEach((tag) => tagContainer.appendChild(renderTag(tag)));
 
     const taskElement = taskCard.getElement();
-    taskElement.addEventListener("click", () => showModal(new TaskViewModal(task)));
+    taskElement.onclick = () => showModal(new TaskViewModal(task));
 
     // progress indicator
     const completion = task.getSubtaskCompletion();
@@ -280,6 +280,32 @@ class TaskViewModal extends Modal {
 
         activeProject.getRelatedNotesForTask(this.task.getId()).forEach((note) => {
             this.relatedNotesBuilder.setItem(note.getId(), note);
+        });
+
+        // bind add note button
+        modalBuilder.setVariableClickListener("add-note", () => {
+            const relatedNotes = activeProject.getRelatedNotesForTask(this.task.getId());
+
+            showModal(new SearchSelectorModal({
+                items: activeProject.notesHierarchy.getAllNodes(),
+                getId: (item) => item.getId(),
+                getSearchItem: (item) => item.getName(),
+                itemBuilder: (state, args) => {
+                    const card = createNoteCard(state, args);
+                    if (relatedNotes.includes(state))
+                        card.classList.add("related");
+
+                    return card;
+                },
+                onSelect: (note) => {
+                    // create the relationship + update necessary builders
+                    activeProject.taskNoteRelationship.toggleRelationship(this.task.getId(), note.getId());
+                    this.relatedNotesBuilder.setItem(note.getId(), note);
+    
+                    if (relatedTasksBuilder)
+                        relatedTasksBuilder.setItem(this.task.getId(), this.task);
+                }
+            }))
         });
 
         // render progress indicator if there are subtasks

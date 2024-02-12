@@ -6,6 +6,7 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] Begin development in the note tab functionality:<br><br>- [x] create navigation tree UI component for notes<br>- [x] allow notes to be selected from the navigation tree and displayed to the note content area<br>- [x] add ability to create top-level and nested notes
 - [ ] Begin development on the task tab functionality:<br><br>- [x] add ability to create tasks<br>- [x] add ability to create tasks within tasks<br>- [x] add tag system for tasks<br>- [x] add status toggle and subtask status indicator
 - [ ] Begin prototyping for the tasks tab
 - [ ] [[Scrum meeting 3|Sprint 3 spec]]
@@ -24,6 +25,7 @@ kanban-plugin: basic
 
 ## In Progress
 
+- [ ] Task - Note relationship system:<br><br>- [x] implement data structure for relationship<br>- [x] allow relationships to be created in code and displayed on the UI<br>- [x] allow relationships to be created by the user
 
 
 ## Sprint Backlog

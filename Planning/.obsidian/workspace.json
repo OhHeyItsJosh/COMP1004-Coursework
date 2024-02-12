@@ -1,14 +1,24 @@
 {
   "main": {
-    "id": "b9d7b093d6a86171",
+    "id": "c22aed55800ef4cd",
     "type": "split",
     "children": [
       {
-        "id": "151263dab4411714",
+        "id": "60e28aec73d69e0a",
         "type": "tabs",
         "children": [
           {
-            "id": "b6e950cd2fc2b1d9",
+            "id": "7376df5ab99cab67",
+            "type": "leaf",
+            "state": {
+              "type": "kanban",
+              "state": {
+                "file": "Progress tracker.md"
+              }
+            }
+          },
+          {
+            "id": "9e1a1ae36b9332d3",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -18,16 +28,6 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "202f702580c14782",
-            "type": "leaf",
-            "state": {
-              "type": "kanban",
-              "state": {
-                "file": "Progress tracker.md"
-              }
-            }
           }
         ]
       }
@@ -35,15 +35,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "da5fc65e6fb91586",
+    "id": "343308ac9ec0ccc4",
     "type": "split",
     "children": [
       {
-        "id": "9132596f0eb0c655",
+        "id": "5ff8deeb5a43bc6f",
         "type": "tabs",
         "children": [
           {
-            "id": "59cfd2050c779cf3",
+            "id": "fe27de7f050df5de",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -53,7 +53,7 @@
             }
           },
           {
-            "id": "cee88c030a203cf4",
+            "id": "29b0d3091275180a",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -68,7 +68,7 @@
             }
           },
           {
-            "id": "86be184b8b6b3aa9",
+            "id": "3d5a0878ff97718a",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -79,23 +79,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 317.5
+    "width": 300
   },
   "right": {
-    "id": "4a5d875b3dda9c4e",
+    "id": "7642e4b3e57e9298",
     "type": "split",
     "children": [
       {
-        "id": "b86fe414e8890ade",
+        "id": "c9b7a80a16f939db",
         "type": "tabs",
         "children": [
           {
-            "id": "64bfb63e31b2cf95",
+            "id": "8800845c14858d93",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Meetings/Scrum meeting 4.md",
+                "file": "Progress tracker.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -107,19 +107,19 @@
             }
           },
           {
-            "id": "bf872c6ae19032ee",
+            "id": "f894b78047b650bb",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Meetings/Scrum meeting 4.md",
+                "file": "Progress tracker.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "08e1a4f99e293fc2",
+            "id": "82e9e5e43dfd276f",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -130,17 +130,16 @@
             }
           },
           {
-            "id": "b95de83d728dd70d",
+            "id": "ce1a3c7507d25f0d",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Meetings/Scrum meeting 4.md"
+                "file": "Progress tracker.md"
               }
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
@@ -157,20 +156,9 @@
       "command-palette:Open command palette": false
     }
   },
-<<<<<<< HEAD
-  "active": "b6e950cd2fc2b1d9",
-=======
-  "active": "b95de83d728dd70d",
->>>>>>> temp
+  "active": "7376df5ab99cab67",
   "lastOpenFiles": [
-    "Progress tracker.md",
     "Meetings/Scrum meeting 4.md",
-    "Meetings/Scrum meeting 3.md",
-    "Meetings/Scrum meeting 2.md",
-    "Meetings/Scrum meeting 1 -  01_11_23.md",
-    "Meetings/Scrum meeting 2 - agenda.md",
-    "Sprints",
-    "Meetings",
-    "Untitled.canvas"
+    "Progress tracker.md"
   ]
 }
