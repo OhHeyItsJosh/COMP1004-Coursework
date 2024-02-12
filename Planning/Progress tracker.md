@@ -6,6 +6,9 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] Begin development on the task tab functionality:<br><br>- [x] add ability to create tasks<br>- [x] add ability to create tasks within tasks<br>- [x] add tag system for tasks<br>- [x] add status toggle and subtask status indicator
+- [ ] Begin prototyping for the tasks tab
+- [ ] [[Scrum meeting 3|Sprint 3 spec]]
 - [ ] Improve UI design with CSS
 - [ ] [[Scrum meeting 2|Sprint 2 spec]]
 - [ ] Create use case diagram and table<br>- [x] use case diagram<br>- [x] use case table
@@ -21,18 +24,16 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Begin prototyping for the tasks tab
 
 
 ## Sprint Backlog
 
-- [ ] [[Scrum meeting 3|Sprint 3 spec]]
+- [ ] [[Scrum Meeting 4 |Sprint 4 Spec]]
 - [ ] Create sequence diagram
 
 
 ## Project Backlog
 
-- [ ] Begin development on the underlying structures and begin to implement the user stories into the app.
 - [ ] Implement ability to create and open project
 - [ ] Initial task system
 - [ ] Initial notes system

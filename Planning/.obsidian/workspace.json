@@ -139,7 +139,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -156,7 +157,11 @@
       "command-palette:Open command palette": false
     }
   },
+<<<<<<< HEAD
   "active": "b6e950cd2fc2b1d9",
+=======
+  "active": "b95de83d728dd70d",
+>>>>>>> temp
   "lastOpenFiles": [
     "Progress tracker.md",
     "Meetings/Scrum meeting 4.md",
