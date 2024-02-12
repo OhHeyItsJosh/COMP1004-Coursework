@@ -8,3 +8,7 @@
 - [x] abstract part of the modal template system into a template system that can be used for more than just modals.
 - [x] start working on the underlying system for the tasks.
 - [x]  create UI prototype for the create task modal.
+
+### Half-way additional plans for sprint
+
+- Begin working on the notes tab
