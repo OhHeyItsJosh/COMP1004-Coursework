@@ -6,6 +6,8 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] [[Scrum Meeting 4 |Sprint 4 Spec]]
+- [ ] Task - Note relationship system:<br><br>- [x] implement data structure for relationship<br>- [x] allow relationships to be created in code and displayed on the UI<br>- [x] allow relationships to be created by the user
 - [ ] Begin development in the note tab functionality:<br><br>- [x] create navigation tree UI component for notes<br>- [x] allow notes to be selected from the navigation tree and displayed to the note content area<br>- [x] add ability to create top-level and nested notes
 - [ ] Begin development on the task tab functionality:<br><br>- [x] add ability to create tasks<br>- [x] add ability to create tasks within tasks<br>- [x] add tag system for tasks<br>- [x] add status toggle and subtask status indicator
 - [ ] Begin prototyping for the tasks tab
@@ -25,24 +27,18 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Task - Note relationship system:<br><br>- [x] implement data structure for relationship<br>- [x] allow relationships to be created in code and displayed on the UI<br>- [x] allow relationships to be created by the user
+- [ ] Implement ability to create and open project (a project selection menu):<br>- [x] Prototype project selection menu with wireframes<br>- [ ] Implement the project selection menu in the application
 
 
 ## Sprint Backlog
 
-- [ ] [[Scrum Meeting 4 |Sprint 4 Spec]]
+- [ ] [[Scrum meeting 5|Sprint 5 spec]]
+- [ ] Implement initial dashboard layout and content
 - [ ] Create sequence diagram
 
 
 ## Project Backlog
 
-- [ ] Implement ability to create and open project
-- [ ] Initial task system
-- [ ] Initial notes system
-- [ ] Nesting for both tasks and notes
-- [ ] Implement the many to many relationship between tasks and notes
-- [ ] Implement initial dashboard layout and content
-- [ ] Allow for a project to be imported and exported using a JSON format
 
 
 

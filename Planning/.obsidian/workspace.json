@@ -18,6 +18,18 @@
             }
           },
           {
+            "id": "e6ab91c64d7f244d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meetings/Scrum meeting 5.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "9e1a1ae36b9332d3",
             "type": "leaf",
             "state": {
@@ -159,6 +171,7 @@
   "active": "7376df5ab99cab67",
   "lastOpenFiles": [
     "Meetings/Scrum meeting 4.md",
+    "Meetings/Scrum meeting 5.md",
     "Progress tracker.md"
   ]
 }
