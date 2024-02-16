@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        <div class="card note-card" id="note-card">
+        <div class="card generic-card" id="generic-card">
             <h3 modal-var="title">Title</h3>
             <p class="card-description" modal-var="content">Content</p>
         </div>
@@ -183,6 +183,26 @@
             </div>
         </modal>
 
+        <modal id="project-select-modal" class="modal modal-zoom-animation project-select-modal">
+            <div class="flex-column">
+                <div class="space-between-row">
+                    <h2 modal-var="current-project-name">Project Name</h2>
+                    <button onclick="tempSave()">save (temp)</button>
+                    <button onclick="clearTemp()">clear (temp)</button>
+                    <button modal-var="export-project-btn">Export Project</button>
+                </div>
+                <div class="horizontal-separator"></div>
+                <div style="margin-bottom: 16px;" class="space-between-row">
+                    <h2>Saved Projects:</h2>
+                    <div class="flex-row button-row">
+                        <button>New</button>
+                        <button>Import Project</button>
+                    </div>
+                </div>
+                <div modal-var="project-list" class="card-container"></div>
+            </div>
+        </modal>
+
         <svg id="progress-indicator" class="progress-indicator" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
             <use xlink:href="#stroke"/>
 
@@ -201,12 +221,12 @@
             <div class="flex-row flex-align-center" style="height: 100%">
                 <h3 style="margin: 0 32px;">[LOGO]</h3>
                 <ul class="navbar tab-controller" tab-controller-id="main-nav">
-                    <li class="selectable-tab" tab-id = "dashboard">Dashboard</li>
-                    <li class="selectable-tab" tab-id="tasks">Tasks</li>
-                    <li class="selectable-tab selectable-tab-active" tab-id="notes">Notes</li>
+                    <li class="selectable-tab navbar-btn" tab-id = "dashboard">Dashboard</li>
+                    <li class="selectable-tab navbar-btn" tab-id="tasks">Tasks</li>
+                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id="notes">Notes</li>
                 </ul>
                 <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
-                <h4 >[Project Name]</h4>
+                <h4 id="project-settings" class="navbar-btn" onclick="openProjectPanel()">[Project Name]</h4>
                 <div class="expanded"></div>
                 <h3 style="margin: 0 32px">[Options]</h3>
             </div>
@@ -312,6 +332,7 @@
 <script defer src = "javascript/modalSystem.js"></script>
 <script defer src = "javascript/state.js"></script>
 <script defer src = "javascript/core.js"></script>
+<script defer src = "javascript/localProjectStorage.js"></script>
 
 <script defer src = "javascript/tabs/tasksTab.js"></script>
 <script defer src = "javascript/tabs/notesTab.js"></script>

@@ -57,7 +57,7 @@ header {
     height: 100%;
 }
 
-.navbar li {
+.navbar-btn {
     float: left;
     list-style: none;
     display: flex;
@@ -69,14 +69,13 @@ header {
     transition: 0.2s ease-in;
 }
 
-.navbar li:hover {
+.navbar-btn:hover {
     background: rgba(20, 24, 27, 0.1);
     cursor: pointer;
     user-select: none;
 }
 
 .selectable-tab-active {
-    display: block;
     position: relative;
 }
 
@@ -748,4 +747,8 @@ input::-webkit-color-swatch {
 
 .hidden {
     display: none;
+}
+
+.project-select-modal {
+    width: 700px;
 }

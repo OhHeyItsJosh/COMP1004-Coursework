@@ -1,4 +1,8 @@
 class Project {
+    /** @type {string} */
+    id;
+    /** @type {string} */
+    name;
     /** @type {TasksHierarchy} */
     tasksHierarchy;
     /** @type {NotesHierarchy} */
@@ -6,14 +10,18 @@ class Project {
     /** @type {ManyToManyNodeRelationship<TasksHierarchy, NotesHierarchy>} */
     taskNoteRelationship;
 
-    constructor(tasks, notes, taskNoteRelationship) {
+    constructor(id, name, tasks, notes, taskNoteRelationship) {
+        this.id = id;
+        this.name = name;
         this.tasksHierarchy = tasks;
         this.notesHierarchy = notes;
         this.taskNoteRelationship = taskNoteRelationship;
     }
 
-    static new() {
+    static new(name) {
         return new Project(
+            Date.now(), // TODO: add better id assigner
+            name,
             TasksHierarchy.createNew(), 
             NotesHierarchy.createNew(),
             ManyToManyNodeRelationship.createNew()
@@ -25,6 +33,8 @@ class Project {
      */
     serialise() {
         const obj = {
+            "id": this.id,
+            "name": this.name,
             "tasks": this.tasksHierarchy.toSerialisableStructure(),
             "notes": this.notesHierarchy.toSerialisableStructure(),
             "task_note_relationships": this.taskNoteRelationship.toSerialisableStructure()
@@ -39,11 +49,17 @@ class Project {
      */
     static deserialise(jsonString) {
         const obj = JSON.parse(jsonString);
+
+        const id = obj["id"];
+        if (!id)
+            throw Error("project id not found");
+
+        const name = obj["name"] ?? "(name not found)";
         const tasksHierarchy = new TasksHierarchy(obj["tasks"] ?? {});
         const notesHierarchy = new NotesHierarchy(obj["notes"] ?? {});
         const taskNoteRelationship = new ManyToManyNodeRelationship(obj["task_note_relationships"] ?? {});
 
-        return new Project(tasksHierarchy, notesHierarchy, taskNoteRelationship);
+        return new Project(id, name, tasksHierarchy, notesHierarchy, taskNoteRelationship);
     }
 
     // first relation = task
@@ -164,6 +180,10 @@ class NodeHierarchyTree {
 
     getAllNodes() {
         return Array.from(this.nodeMap.values());
+    }
+
+    nodeCount() {
+        return this.nodeMap.size;
     }
 }
 

@@ -4,9 +4,11 @@
 ///<reference path="tabs/tasksTab.js"/>
 ///<reference path="tabs/notesTab.js"/>
 
-let activeProject = Project.new();
+let activeProject;
 
 function onProjectLoad() {
+    document.getElementById("project-settings").innerText = activeProject.name;
+
     taskStateNotifier.flush();
 
     taskStateNotifier.addBuilder(taskDistributorBuilder);
@@ -26,6 +28,9 @@ function onProjectLoad() {
 }
 
 function init() {
+    // load active project
+    activeProject = Project.new("test");
+
     // create example data
     const exampleTask = Task.createNew("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
     activeProject.tasksHierarchy.addRootLevelNode(exampleTask);
@@ -74,8 +79,6 @@ function modalTest() {
 }
 
 
-
-
 function exportClicked() {
     const dataBlob = new Blob([activeProject.serialise()], {type: "type/plain"});
 
@@ -104,6 +107,48 @@ function importClicked() {
     })
 
     showModal(new StaticModal(modalBuilder.getElement()));
+}
+
+function openProjectPanel() {
+    showModal(new ProjectSelectModal(activeProject));
+}
+
+class ProjectSelectModal extends Modal {
+
+    /** @type {Project} */
+    project;
+
+    constructor(project) {
+        super();
+        this.project = project;
+    }
+
+    build() {
+        const modal = fetchPrefab("project-select-modal");
+        modal.setVariableContent("current-project-name", this.project.name);
+
+        const projectList = modal.getVariable("project-list");
+        for (const projectDetails of getSavedProjects())
+        {
+            const cardBuilder = fetchPrefab("generic-card");
+            cardBuilder.setVariableContent("title", projectDetails.name);
+            cardBuilder.setVariableContent("content", `Tasks: ${projectDetails.taskCount}, Notes: ${projectDetails.noteCount}`);
+
+            cardBuilder.getElement().onclick = () => {
+                const project = getProjectFromLocalStroage(projectDetails.id);
+                if (!project)
+                    return;
+
+                activeProject = project;
+                onProjectLoad();
+                popHighestModal();
+            }
+
+            projectList.appendChild(cardBuilder.getElement());
+        }
+
+        return modal.getElement();
+    }
 }
 
 
@@ -205,6 +250,14 @@ class SearchSelectorModal extends Modal {
     onClose() {
 
     }
+}
+
+function tempSave() {
+    saveProjectToLocalStorage(activeProject);
+}
+
+function clearTemp() {
+    localStorage.clear();
 }
 
 init();

@@ -303,7 +303,7 @@ noteContentElement.addEventListener("blur", (_) => {
  * @param {Note} note 
  */
 function createNoteCard(note) {
-    const noteCard = fetchPrefab("note-card");
+    const noteCard = fetchPrefab("generic-card");
     noteCard.setVariableContent("title", note.getName());
 
     const maxLength = 50;

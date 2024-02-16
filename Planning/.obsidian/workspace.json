@@ -41,7 +41,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -107,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Progress tracker.md",
+                "file": "Meetings/Scrum meeting 5.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -124,7 +125,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Progress tracker.md",
+                "file": "Meetings/Scrum meeting 5.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -147,7 +148,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Progress tracker.md"
+                "file": "Meetings/Scrum meeting 5.md"
               }
             }
           }
@@ -168,10 +169,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7376df5ab99cab67",
+  "active": "e6ab91c64d7f244d",
   "lastOpenFiles": [
+    "Progress tracker.md",
     "Meetings/Scrum meeting 4.md",
-    "Meetings/Scrum meeting 5.md",
-    "Progress tracker.md"
+    "Meetings/Scrum meeting 5.md"
   ]
 }
