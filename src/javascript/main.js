@@ -4,11 +4,30 @@
 ///<reference path="tabs/tasksTab.js"/>
 ///<reference path="tabs/notesTab.js"/>
 
+/** @type {Project} */
 let activeProject;
+let dirty = false;
+
+const contentWrapper = document.getElementById("wrapper");
+
+const projectDetailsNotifier = new StateNotifier();
 
 function onProjectLoad() {
-    document.getElementById("project-settings").innerText = activeProject.name;
+    dirty = false;
 
+    // hide ui if no project is loaded
+    if (!activeProject) {
+        contentWrapper.classList.add("hidden");
+        showModal(new ProjectSelectModal(null), { canClickOff: false });
+
+        return;
+    }
+    else {
+        contentWrapper.classList.remove("hidden");
+    }
+
+    // updateUIProjectName();
+    projectDetailsNotifier.setState(activeProject.id, activeProject);
     taskStateNotifier.flush();
 
     taskStateNotifier.addBuilder(taskDistributorBuilder);
@@ -27,39 +46,31 @@ function onProjectLoad() {
     buildNoteContent();
 }
 
+// function updateUIProjectName() {
+//     document.getElementById("project-settings").innerText = activeProject.name;
+// }
+
 function init() {
-    // load active project
-    activeProject = Project.new("test");
+    projectDetailsNotifier.addBuilder(new StatefulListener((id, state) => {
+        if (id != activeProject.id)
+            return;
 
-    // create example data
-    const exampleTask = Task.createNew("Example Task", "Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat totam, a hic laboriosam debitis impedit itaque est eaque ducimus sed rerum aliquam eius, ab perferendis?", Date.now(), Date.now() + (1000 * 60 * 60 * 24));
-    activeProject.tasksHierarchy.addRootLevelNode(exampleTask);
-    const newTag = activeProject.tasksHierarchy.createTag("Test Tag", "#ff55AA");
-    exampleTask.addTag(newTag.id);
-    
-    const nestedTask = Task.createNew("Nested Task", "This is a test for nesting tasks", Date.now(), Date.now());
-    exampleTask.addChildNode(nestedTask);
+        document.getElementById("project-settings").innerText = state.name;
+    }));
 
-    taskStateNotifier.setState(exampleTask.getId(), exampleTask);
-    // taskStatefulBuilder.appendItem(exampleTask.getId(), exampleTask);
-
-    // create example notes data
-    const exampleNote = Note.createNew("Test Note", "Test Description");
-    activeProject.notesHierarchy.addRootLevelNode(exampleNote);
-    const nestedNote = Note.createNew("Nested Note", "Test Description");
-    const nestedNote2 = Note.createNew("Nested Note", "Test Description");
-    const nestedNote3 = Note.createNew("Nested Note", "Test Description");
-    exampleNote.addChildNode(nestedNote);
-    exampleNote.addChildNode(nestedNote2);
-    exampleNote.addChildNode(nestedNote3);
-
-    const extraNestedNote = Note.createNew("Really Nested Note", "Bruh");
-    nestedNote.addChildNode(extraNestedNote);
-
-    activeProject.taskNoteRelationship.addRelationship(exampleTask.getId(), exampleNote.getId());
-    activeProject.taskNoteRelationship.addRelationship(nestedTask.getId(), exampleNote.getId());
-    activeProject.taskNoteRelationship.addRelationship(nestedTask.getId(), nestedNote.getId());
     onProjectLoad();
+}
+
+function saveActiveProject() {
+    if (!activeProject)
+        return;
+
+    saveProjectToLocalStorage(activeProject);
+}
+
+function changeMade() {
+    console.log("change made");
+    dirty = true;
 }
 
 function modalTest() {
@@ -85,7 +96,7 @@ function exportClicked() {
     const modalBuilder = fetchPrefab("export-dialog");
     const exportAnchor = modalBuilder.getVariable("export");
     exportAnchor.setAttribute("href", URL.createObjectURL(dataBlob));
-    exportAnchor.setAttribute("download", `project.json`);
+    exportAnchor.setAttribute("download", `${activeProject.name}.json`);
 
     showModal(new StaticModal(modalBuilder.getElement()));
 }
@@ -96,21 +107,163 @@ function importClicked() {
     
     modalBuilder.setVariableClickListener("import-btn", () => {
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = (event) => 
+        {
+            // import the project
             activeProject = Project.deserialise(event.target.result);
-            console.log(activeProject);
+            saveActiveProject();
             onProjectLoad();
         }
        
         reader.readAsText(fileInput.files[0]);
-        popHighestModal();
+        popAllModals();
     })
 
     showModal(new StaticModal(modalBuilder.getElement()));
 }
 
 function openProjectPanel() {
+    saveActiveProject();
     showModal(new ProjectSelectModal(activeProject));
+}
+
+function newProjectClicked() {
+    const nameInputModal = new TextInputModal({
+        title: "Project Name",
+        submitText: "Create",
+        allowEmpty: false,
+        onSubmit: (name) => {
+            activeProject = Project.new(name);
+            saveActiveProject();
+            onProjectLoad();
+
+            popHighestModal();
+        }
+    });
+
+    showModal(nameInputModal);
+}
+
+function onRenameProject() {
+    if (!activeProject)
+        return;
+
+    showModal(new TextInputModal({
+        title: "Project Name",
+        submitText: "Rename",
+        existingText: activeProject.name,
+        allowEmpty: false,
+        onSubmit: (name) => {
+            activeProject.name = name;
+            saveActiveProject();
+
+            projectDetailsNotifier.setState(activeProject.id, activeProject);
+        }
+
+    }));
+}
+
+function onDeleteProject() {
+    showModal(new ConfirmationDialog({
+        title: "Delete this project?",
+        description: `Are you sure you want to delete this project? <br>It will be permanently removed from local storage.`,
+        onConfirm: async () => {
+            removeProjectFromLocalStorage(activeProject);
+            
+            activeProject = null;
+            
+            await popAllModals();
+            onProjectLoad();
+        }
+    }))
+}
+
+class TextInputModal extends Modal {
+    
+    title;
+    submitText;
+    onSubmit;
+    allowEmpty;
+    existingText;
+
+    textInputRef;
+
+    /**
+     * @param {{title: string, submitText: string, onSubmit: (input: string) => boolean, allowEmpty: boolean, existingText: string}} args 
+     */
+    constructor(args) {
+        super();
+
+        this.title = args.title;
+        this.submitText = args.submitText;
+        this.onSubmit = args.onSubmit;
+        this.allowEmpty = args.allowEmpty ?? false;
+        this.existingText = args.existingText;
+    }
+
+    build() {
+        const builder = fetchPrefab("text-input-modal");
+        
+        if (this.title) builder.setVariableContent("title", this.title);
+        if (this.submitText) builder.setVariableContent("submit-btn", this.submitText);
+
+        this.textInputRef = builder.getVariable("text-input");
+        if (this.existingText)
+            this.textInputRef.value = this.existingText;
+
+        this.textInputRef.addEventListener("keydown", (event) => {
+            if (event.key == "Enter")
+                this.runOnSubmit();
+        });
+
+        builder.setVariableClickListener("submit-btn", () => this.runOnSubmit());
+        
+        setTimeout(() => this.textInputRef.focus(), 10);
+        return builder.getElement();
+    }
+
+    runOnSubmit() {
+        const inputText = this.textInputRef.value;
+
+        if (!this.allowEmpty && inputText == "")
+            return;
+
+        if (!(this.onSubmit(inputText) ?? true))
+            return;
+
+        popHighestModal();
+    }
+}
+
+class ConfirmationDialog extends Modal {
+
+    title;
+    description;
+    onConfirm;
+
+    /**
+     * @param {{title: string, description: string, onConfirm: () => void}} args 
+     */
+    constructor(args) {
+        super();
+
+        this.title = args.title;
+        this.description = args.description;
+        this.onConfirm = args.onConfirm;
+    }
+
+    build() {
+        const builder = fetchPrefab("confirmation-dialog");
+        
+        if (this.title) builder.setVariableContent("title", this.title);
+        if (this.description) builder.setVariableContent("description", this.description);
+        builder.setVariableClickListener("confirm-btn", () => {
+            this.onConfirm();
+            popHighestModal();
+        });
+
+        return builder.getElement();
+    }
 }
 
 class ProjectSelectModal extends Modal {
@@ -118,36 +271,77 @@ class ProjectSelectModal extends Modal {
     /** @type {Project} */
     project;
 
+    /** @type {StatefulListener} */
+    projectDetailsListener;
+
     constructor(project) {
         super();
         this.project = project;
     }
 
     build() {
-        const modal = fetchPrefab("project-select-modal");
-        modal.setVariableContent("current-project-name", this.project.name);
+        const builder = fetchPrefab("project-select-modal");
 
-        const projectList = modal.getVariable("project-list");
-        for (const projectDetails of getSavedProjects())
-        {
-            const cardBuilder = fetchPrefab("generic-card");
-            cardBuilder.setVariableContent("title", projectDetails.name);
-            cardBuilder.setVariableContent("content", `Tasks: ${projectDetails.taskCount}, Notes: ${projectDetails.noteCount}`);
-
-            cardBuilder.getElement().onclick = () => {
-                const project = getProjectFromLocalStroage(projectDetails.id);
-                if (!project)
-                    return;
-
-                activeProject = project;
-                onProjectLoad();
-                popHighestModal();
-            }
-
-            projectList.appendChild(cardBuilder.getElement());
+        if (!this.project) {
+            builder.getVariable("project-specific").remove();
         }
 
-        return modal.getElement();
+        const projectList = builder.getVariable("project-list");
+        const projectListBuilder = new StatefulCollectionBuilder({
+            parent: projectList,
+            builder: (state, args) => {
+                const cardBuilder = fetchPrefab("generic-card");
+                cardBuilder.setVariableContent("title", state.name);
+                cardBuilder.setVariableContent("content", `Tasks: ${state.taskCount}, Notes: ${state.noteCount}`);
+    
+                cardBuilder.getElement().onclick = () => {
+                    const project = getProjectFromLocalStroage(state.id);
+                    if (!project)
+                        return;
+    
+                    activeProject = project;
+                    onProjectLoad();
+                    popHighestModal();
+                }
+
+                return cardBuilder.getElement();
+            }
+        });
+
+        const projectName = builder.getVariable("current-project-name");
+        this.updateProjectName(projectName);
+        this.buildProjectCards(projectListBuilder);
+        
+        // create listener for when project details are updated
+        this.projectDetailsListener = new StatefulListener((id, _) => {
+            if (id != activeProject.id)
+                return;
+
+            this.updateProjectName(projectName);
+            this.buildProjectCards(projectListBuilder);
+        });
+
+        projectDetailsNotifier.addBuilder(this.projectDetailsListener);
+
+        return builder.getElement();
+    }
+
+    updateProjectName(object) {
+        if (!this.project)
+            return;
+
+        object.innerHTML = this.project.name;
+    }
+
+    buildProjectCards(listBuilder) {
+        for (const projectDetails of getSavedProjects())
+        {
+            listBuilder.setItem(projectDetails.id, projectDetails);
+        }
+    }
+
+    onClose() {
+        projectDetailsNotifier.removeBuilder(this.projectNameListener);
     }
 }
 
@@ -259,5 +453,23 @@ function tempSave() {
 function clearTemp() {
     localStorage.clear();
 }
+
+window.addEventListener("beforeunload", () => {
+    try {
+        document.activeElement.blur();
+    } catch (e) {}
+
+    saveActiveProject();
+});
+
+// autosave
+setInterval(() => {
+    if (dirty) {
+        console.log("[autosave] saved active project")
+        saveActiveProject();
+
+        dirty = false;
+    }
+}, 1000 * 60)
 
 init();

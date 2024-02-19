@@ -50,12 +50,7 @@ function getProjectLSid(projectId) {
 
 /** @returns {ProjectDetails[]} */
 function getSavedProjects() {
-    const savedProjects = JSON.parse(localStorage.getItem(PROJECT_DETAILS_KEY)) ?? {};
-    if (typeof savedProjects != "object" || Array.isArray(savedProjects))
-        return [];
-
-    console.log(savedProjects);
-
+    const savedProjects = _loadSavedProjectsObject();
     return Object.values(savedProjects).map((projectString) => ProjectDetails.deserialise(projectString));
 }
 
@@ -67,13 +62,33 @@ function saveProjectToLocalStorage(project) {
     localStorage.setItem(getProjectLSid(project.id), project.serialise());
 
     // set project details
-    var savedProjectDetails = JSON.parse(localStorage.getItem(PROJECT_DETAILS_KEY)) ?? {};
-    if (typeof savedProjectDetails != "object" || Array.isArray(savedProjectDetails))
-        savedProjectDetails = {};
+    const savedProjectDetails = _loadSavedProjectsObject();
 
     savedProjectDetails[project.id] = ProjectDetails.fromProject(project).serialise();
     const savedProjectsString = JSON.stringify(savedProjectDetails);
     localStorage.setItem(PROJECT_DETAILS_KEY, savedProjectsString);
+}
+
+/**
+ * @param {Project} project 
+ */
+function removeProjectFromLocalStorage(project) {
+    // remove project data
+    localStorage.removeItem(getProjectLSid(project.id));
+
+    // remove project details
+    const savedProjectDetails = _loadSavedProjectsObject();
+    delete savedProjectDetails[project.id];
+
+    localStorage.setItem(PROJECT_DETAILS_KEY, JSON.stringify(savedProjectDetails));
+}
+
+function _loadSavedProjectsObject() {
+    const savedProjectDetails = JSON.parse(localStorage.getItem(PROJECT_DETAILS_KEY)) ?? {};
+    if (typeof savedProjectDetails != "object" || Array.isArray(savedProjectDetails))
+        return {};
+
+    return savedProjectDetails;
 }
 
 /** @returns {Project} */

@@ -185,21 +185,49 @@
 
         <modal id="project-select-modal" class="modal modal-zoom-animation project-select-modal">
             <div class="flex-column">
-                <div class="space-between-row">
-                    <h2 modal-var="current-project-name">Project Name</h2>
-                    <button onclick="tempSave()">save (temp)</button>
-                    <button onclick="clearTemp()">clear (temp)</button>
-                    <button modal-var="export-project-btn">Export Project</button>
+                <div modal-var="project-specific">
+                    <div class="space-between-row">
+                        <h2 modal-var="current-project-name">Project Name</h2>
+                        <div class="flex-row button-row">
+                            <!-- <button onclick="tempSave()">save (temp)</button> -->
+                            <!-- <button onclick="clearTemp()">clear (temp)</button> -->
+                            <button onclick="onRenameProject()">Rename</button>
+                            <button onclick="onDeleteProject()">Delete</button>
+                            <button modal-var="export-project-btn" onclick="exportClicked()">Export</button>
+                        </div>
+                    </div>
+                    <div class="horizontal-separator"></div>
                 </div>
-                <div class="horizontal-separator"></div>
                 <div style="margin-bottom: 16px;" class="space-between-row">
                     <h2>Saved Projects:</h2>
                     <div class="flex-row button-row">
-                        <button>New</button>
-                        <button>Import Project</button>
+                        <button onclick="newProjectClicked()">New</button>
+                        <button onclick="importClicked()">Import</button>
                     </div>
                 </div>
                 <div modal-var="project-list" class="card-container"></div>
+            </div>
+        </modal>
+
+        <modal id="text-input-modal" class="modal modal-zoom-animation">
+            <div class="flex-column flex-align-center">
+                <h1 modal-var="title">Enter Text</h1>
+                <input modal-var="text-input" class="modal-content" style="width:500px;" type="text" name="" id="">
+                <div class="flex-row button-row">
+                    <button onclick="popHighestModal()">Cancel</button>
+                    <button modal-var="submit-btn">Submit</button>
+                </div>
+            </div>
+        </modal>
+
+        <modal id="confirmation-dialog" style="max-width: 60vw" class="modal modal-zoom-animation">
+            <div class="flex-column flex-align-center">
+                <h1 modal-var="title">Title</h1>
+                <p class="modal-content" style="text-align: center" modal-var="description">[...]</p>
+                <div class="flex-row button-row">
+                    <button onclick="popHighestModal()">Cancel</button>
+                    <button modal-var="confirm-btn">Confirm</button>
+                </div>
             </div>
         </modal>
 
@@ -222,8 +250,8 @@
                 <h3 style="margin: 0 32px;">[LOGO]</h3>
                 <ul class="navbar tab-controller" tab-controller-id="main-nav">
                     <li class="selectable-tab navbar-btn" tab-id = "dashboard">Dashboard</li>
-                    <li class="selectable-tab navbar-btn" tab-id="tasks">Tasks</li>
-                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id="notes">Notes</li>
+                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id="tasks">Tasks</li>
+                    <li class="selectable-tab navbar-btn" tab-id="notes">Notes</li>
                 </ul>
                 <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
                 <h4 id="project-settings" class="navbar-btn" onclick="openProjectPanel()">[Project Name]</h4>
@@ -252,7 +280,7 @@
                 </div>
             </div>
 
-            <div class="tab" tab-id="tasks">
+            <div class="tab tab-active" tab-id="tasks">
                 <div class="flex-column expanded" style="padding: 16px; overflow: hidden;">
                     <div class="space-between-row" style = "margin-bottom: 16px">
                         <h2>Tasks</h2>
@@ -278,7 +306,7 @@
             </div>
 
 
-            <div class="tab tab-active" tab-id="notes">
+            <div class="tab" tab-id="notes">
                 <div class="flex-row expanded note-tab-container">
                     <div class="left-nav-panel side-panel" style="width: 300px;">
                         <div class="flex-column flex-align-center expanded side-panel-content" style="height: 100%">

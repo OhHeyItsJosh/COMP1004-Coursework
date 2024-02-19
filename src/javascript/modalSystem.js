@@ -1,3 +1,4 @@
+/** @type {Modal} */
 const modalStack = [];
 const recognisedAnimationClasses = new Set(["modal-zoom-animation"]);
 
@@ -7,6 +8,8 @@ const ANIM_DURATION = 300;
 class Modal {
     element;
     animation;
+
+    canClickOff = true;
 
     constructor() {
         if (this.constructor == Modal)
@@ -26,6 +29,10 @@ class Modal {
                 return animationName;
             }
         }
+    }
+
+    setCanClickOff(flag) {
+        this.canClickOff = flag;
     }
 
     /** @abstract */
@@ -64,7 +71,14 @@ function wait(ms) {
 
 const modalContainer = document.getElementById("modal-container");
 
-function showModal(modal) {
+/**
+ * 
+ * @param {Modal} modal 
+ * @param {{canClickOff: boolean}} args 
+ */
+function showModal(modal, args = {}) {
+    modal.setCanClickOff(args.canClickOff ?? true);
+
     modal.initialise();
     modalStack.push(modal);
     modalContainer.appendChild(modal.element);
@@ -77,6 +91,8 @@ function showModal(modal) {
 
 async function popHighestModal() {
     const highest = modalStack.pop();
+    if (!highest)
+        return;
 
     highest.closeAnim();
     highest.onClose();
@@ -88,10 +104,14 @@ async function popHighestModal() {
 
 async function popAllModals() {
     const modalCount = modalStack.length;
+    const promises = new Array(modalCount);
+
     for (let i = 0; i < modalCount; i++)
     {
-        popHighestModal();
+        promises[i] = popHighestModal();
     }
+
+    await Promise.all(promises);
 }
 
 function modalContainerChangedState() {
@@ -108,6 +128,6 @@ function modalContainerChangedState() {
 // indexModalPrefabs();
 window.addEventListener("click", (event) => {
     const target = event.composedPath()[0];
-    if (target.classList.contains("modal-container-active"))
+    if (target.classList.contains("modal-container-active") && modalStack[modalStack.length - 1].canClickOff)
         popHighestModal();
 });

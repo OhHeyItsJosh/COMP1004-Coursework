@@ -189,7 +189,10 @@ function createNote(parentNote) {
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
+
     noteTitleElement.focus();
+
+    changeMade();
 }
 
 const addNestedNoteButton = document.getElementById("add-nested-note-btn");
@@ -281,6 +284,7 @@ noteTitleElement.addEventListener("keydown", (event) => {
         
         const note = getSelctedNote();
         note.setName(newTitle);
+        changeMade();
         noteStateNotifier.setState(note.getId(), note, {}, { isSelected: true });
 
 
@@ -296,6 +300,7 @@ noteContentElement.addEventListener("blur", (_) => {
 
     const note = getSelctedNote();
     note.setContent(newContent);
+    changeMade();
     // updateNote(note);
 });
 
@@ -336,6 +341,7 @@ function linkTaskToNote() {
             // create relationship + update builder
             activeProject.taskNoteRelationship.toggleRelationship(task.getId(), note.getId());
             relatedTasksBuilder.setItem(task.getId(), task);
+            changeMade();
         }
     })
 

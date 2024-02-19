@@ -176,7 +176,7 @@ header {
 }
 
 .button-row {
-    gap: 16px;
+    gap: 8px;
 }
 
 
@@ -746,9 +746,13 @@ input::-webkit-color-swatch {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .project-select-modal {
     width: 700px;
+}
+
+.modal-content {
+    margin: 16px 0;
 }

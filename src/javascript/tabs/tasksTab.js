@@ -122,6 +122,7 @@ function createTaskClicked() {
     showModal(new CreateTaskModal((task) => 
     {
         activeProject.tasksHierarchy.addRootLevelNode(task);
+        changeMade();
         taskDistributorBuilder.setItem(task.getId(), task, { resort: true });
         
         popHighestModal();
@@ -177,6 +178,7 @@ class TaskViewModal extends Modal {
                 this.task.setName(editedTask.getName());
                 this.task.setDescription(editedTask.getDescription());
                 this.task.setDates(editedTask.getStartDate(), editedTask.getEndDate());
+                changeMade();
 
                 // re-render static text + update task state
                 this.renderStaticText(modalBuilder);
@@ -197,6 +199,8 @@ class TaskViewModal extends Modal {
         statusSelectBox.onchange = (event) => {
             const status = parseInt(statusSelectBox.value);
             this.task.setStatus(status);
+            changeMade();
+
             statusSelectBox.setAttribute("selected", `${status}`);
             taskStateNotifier.setState(this.task.getId(), this.task, { resort: true });
 
@@ -246,6 +250,8 @@ class TaskViewModal extends Modal {
         modalBuilder.setVariableClickListener("add-task", () => showModal(new CreateTaskModal((task) => 
         {
             this.task.addChildNode(task);
+            changeMade();
+
             this.nestedTasksBuilder.appendItem(task.getId(), task);
             taskStateNotifier.setState(this.task.getId(), this.task);
             
@@ -301,6 +307,7 @@ class TaskViewModal extends Modal {
                     // create the relationship + update necessary builders
                     activeProject.taskNoteRelationship.toggleRelationship(this.task.getId(), note.getId());
                     this.relatedNotesBuilder.setItem(note.getId(), note);
+                    changeMade();
     
                     if (relatedTasksBuilder)
                         relatedTasksBuilder.setItem(this.task.getId(), this.task);
@@ -450,6 +457,8 @@ class TagEditModal extends Modal {
             const tagElement = renderTag(tag);
             tagElement.onclick = () => {
                 this.toggleTag(tag);
+                changeMade();
+
                 popHighestModal();
             }
 
@@ -466,6 +475,7 @@ class TagEditModal extends Modal {
 
             const createdTag = activeProject.tasksHierarchy.createTag(tagText, tagColour);
             this.toggleTag(createdTag);
+            changeMade();
 
             popHighestModal();
         });
