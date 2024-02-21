@@ -5,7 +5,7 @@
 - JSON serialisation and deserialisation was added for projects.
 ### Plans for next sprint
 
-- [ ] Implement the project system.
-	- [ ] Allow the user to create, open, import and export projects.
+- [x] Implement the project system.
+	- [x] Allow the user to create, open, delete, import and export projects.
 - [ ] Get started on the functionality for the dashboard tab.
 - [ ] Create that sequence diagram that I forgot to do.

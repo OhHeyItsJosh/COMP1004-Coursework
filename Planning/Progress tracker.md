@@ -6,6 +6,7 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] Implement ability to create and open project (a project selection menu):<br>- [x] Prototype project selection menu with wireframes<br>- [x] Implement the project selection menu in the application
 - [ ] [[Scrum Meeting 4 |Sprint 4 Spec]]
 - [ ] Task - Note relationship system:<br><br>- [x] implement data structure for relationship<br>- [x] allow relationships to be created in code and displayed on the UI<br>- [x] allow relationships to be created by the user
 - [ ] Begin development in the note tab functionality:<br><br>- [x] create navigation tree UI component for notes<br>- [x] allow notes to be selected from the navigation tree and displayed to the note content area<br>- [x] add ability to create top-level and nested notes
@@ -27,13 +28,12 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Implement ability to create and open project (a project selection menu):<br>- [x] Prototype project selection menu with wireframes<br>- [ ] Implement the project selection menu in the application
+- [ ] Implement initial dashboard layout and content:<br><br>- [ ] Make some additional prototypes for what elements such as progress graphs should look like<br>- [ ] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [ ] Create and implement the graph functionality
 
 
 ## Sprint Backlog
 
 - [ ] [[Scrum meeting 5|Sprint 5 spec]]
-- [ ] Implement initial dashboard layout and content
 - [ ] Create sequence diagram
 
 
