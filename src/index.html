@@ -249,8 +249,8 @@
             <div class="flex-row flex-align-center" style="height: 100%">
                 <h3 style="margin: 0 32px;">[LOGO]</h3>
                 <ul class="navbar tab-controller" tab-controller-id="main-nav">
-                    <li class="selectable-tab navbar-btn" tab-id = "dashboard">Dashboard</li>
-                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id="tasks">Tasks</li>
+                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id = "dashboard">Dashboard</li>
+                    <li class="selectable-tab navbar-btn" tab-id="tasks">Tasks</li>
                     <li class="selectable-tab navbar-btn" tab-id="notes">Notes</li>
                 </ul>
                 <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
@@ -271,16 +271,27 @@
         <div class="tab-view" tab-controller-id="main-nav">
 
             
-            <div class="tab" tab-id="dashboard">
-                <h1>This is dashboard tab</h1>
+            <div class="tab tab-active" tab-id="dashboard">
+                <div class="flex-row expanded" style="padding: 16px; overflow: hidden; gap: 16px">
+                    <div class="flex-column" style="flex: 45; gap: 16px">
+                        <div class="flex-column" style="flex: 35; min-height: 200px">
+                            <h1>Weekly Progress</h1>
+                        </div>
+                        <div class="flex-column" style="flex: 65">
+                            <h1>Upcoming Tasks</h1>
+                        </div>
+                    </div>
+                    <div class="placeholder" style="flex: 55"></div>
+                </div>
+                <!-- <h1>This is dashboard tab</h1>
                 <div style="display:block;">
                     <button onclick="modalTest()">Modal Test</button>
                     <button onclick="exportClicked()">Export (temp)</button>
                     <button onclick="importClicked()">Import (temp)</button>
-                </div>
+                </div> -->
             </div>
 
-            <div class="tab tab-active" tab-id="tasks">
+            <div class="tab" tab-id="tasks">
                 <div class="flex-column expanded" style="padding: 16px; overflow: hidden;">
                     <div class="space-between-row" style = "margin-bottom: 16px">
                         <h2>Tasks</h2>
