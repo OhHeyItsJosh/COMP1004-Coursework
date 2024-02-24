@@ -73,10 +73,7 @@ function buildTaskCard(task) {
 
     taskCard.setVariableContent("name", task.getName());
 
-    const descriptionLength = 100;
-    let description = task.getDescription().substring(0, 100);
-    if (description.length == descriptionLength)
-        description += "...";
+    const description = capString(task.getDescription(), 100);
 
     taskCard.setVariableContent("description", description);
     taskCard.setVariableContent("deadline", `${getDateString(task.getEndDate())}`);
@@ -84,9 +81,7 @@ function buildTaskCard(task) {
     if (task.getChildren().length == 0)
         taskCard.getVariable("progress-indicator").remove();
     
-    const statusDisplay = taskCard.getVariable("status");
-    statusDisplay.innerHTML = StatusName[task.getStatus()];
-    statusDisplay.classList.add(StatusClassMap[task.getStatus()]);
+    applyTaskStatusToElement(taskCard.getVariable("status"), task);
 
     const tagContainer = taskCard.getVariable("tags");
     task.getTags().forEach((tag) => tagContainer.appendChild(renderTag(tag)));
@@ -103,6 +98,11 @@ function buildTaskCard(task) {
     taskCard.setVariableContent("progress-label", completion.toString());
 
     return taskElement;
+}
+
+function applyTaskStatusToElement(element, task) {
+    element.innerHTML = StatusName[task.getStatus()];
+    element.classList.add(StatusClassMap[task.getStatus()]);
 }
 
 /**
@@ -177,7 +177,7 @@ class TaskViewModal extends Modal {
                 // apply new data to task
                 this.task.setName(editedTask.getName());
                 this.task.setDescription(editedTask.getDescription());
-                this.task.setDates(editedTask.getStartDate(), editedTask.getEndDate());
+                this.task.setDates(editedTask.getStartDateRaw(), editedTask.getEndDateRaw());
                 changeMade();
 
                 // re-render static text + update task state

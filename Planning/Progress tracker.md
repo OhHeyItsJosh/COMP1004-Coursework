@@ -28,7 +28,7 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Implement initial dashboard layout and content:<br><br>- [ ] Make some additional prototypes for what elements such as progress graphs should look like<br>- [ ] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [ ] Create and implement the graph functionality
+- [ ] Implement initial dashboard layout and content:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [ ] Make some additional prototypes for what elements such as progress graphs should look like<br>- [ ] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [ ] Create and implement the graph functionality
 
 
 ## Sprint Backlog

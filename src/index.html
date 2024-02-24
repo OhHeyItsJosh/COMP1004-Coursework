@@ -231,6 +231,22 @@
             </div>
         </modal>
 
+        <div id="calendar-task" class="calendar-task-container flex-row" style="gap: 8px;">
+            <div class="flex-column expanded flex-centered">
+                <h3 class="single-line-text" modal-var="name">Task</h3>
+                <p class="single-line-text" modal-var="description">Description</p>
+            </div>
+
+            <div class="flex-column flex-centered" style="flex-shrink: 0;">
+                <div modal-var="status" class="task-status-display">Status</div>
+            </div>
+        </div>
+
+        <div id="calender-subtask" class="calendar-task-container sub-task flex-row flex-align-center" style="gap: 8px">
+            <h3 modal-var="name" class="expanded single-line-text">Subtask</h3>
+            <div modal-var="status" class="task-status-display">Status</div>
+        </div>
+
         <svg id="progress-indicator" class="progress-indicator" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
             <use xlink:href="#stroke"/>
 
@@ -272,16 +288,42 @@
 
             
             <div class="tab tab-active" tab-id="dashboard">
-                <div class="flex-row expanded" style="padding: 16px; overflow: hidden; gap: 16px">
-                    <div class="flex-column" style="flex: 45; gap: 16px">
+                <div class="flex-row expanded" style="padding: 16px; overflow: hidden; gap: 32px">
+                    <div class="flex-column" style="flex: 40; gap: 16px;">
                         <div class="flex-column" style="flex: 35; min-height: 200px">
                             <h1>Weekly Progress</h1>
                         </div>
-                        <div class="flex-column" style="flex: 65">
-                            <h1>Upcoming Tasks</h1>
+                        <div class="flex-column" style="flex: 65; gap: 16px; overflow: hidden; padding: 8px; margin: -8px;">
+                            <div class="flex-row flex-align-center" style="gap: 16px">
+                                <h1>Upcoming Tasks - </h1>
+                                <h1 class="accent-text" id="upcoming-task-count">0</h1>
+                            </div>
+                                <div id="upcoming-tasks-container" class="card-container"></div>
                         </div>
                     </div>
-                    <div class="placeholder" style="flex: 55"></div>
+
+                    <div id="task-calendar-container" class="flex-column" style="flex: 60">
+                        <div id="calendar-background" class="flex-row flex-space-evenly">
+                            <div class="vertical-separator"></div>
+                            <div class="vertical-separator"></div>
+                            <div class="vertical-separator"></div>
+                            <div class="vertical-separator"></div>
+                            <div class="vertical-separator"></div>
+                            <div class="vertical-separator"></div>
+                        </div>
+                        <div id="calendar-header" class="week-divided">
+                            <h3>Sun</h3>
+                            <h3>Mon</h3>
+                            <h3>Tue</h3>
+                            <h3>Wed</h3>
+                            <h3>Thu</h3>
+                            <h3>Fri</h3>
+                            <h3>Sat</h3>
+                        </div>
+                        <div class="flex-column expanded" id="calendar-content">
+                        </div>
+                    </div>
+
                 </div>
                 <!-- <h1>This is dashboard tab</h1>
                 <div style="display:block;">
@@ -375,5 +417,6 @@
 
 <script defer src = "javascript/tabs/tasksTab.js"></script>
 <script defer src = "javascript/tabs/notesTab.js"></script>
+<script defer src = "javascript/tabs/dashboardTab.js"></script>
 <script defer src = "javascript/main.js"></script>
 </html>

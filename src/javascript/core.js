@@ -243,6 +243,10 @@ class TreeNode {
         return this.nodeTree.getNode(this.parent);
     }
 
+    hasParent() {
+        return this.parent != null && this.parent != "";
+    }
+
     getParentId() {
         return this.parent;
     }
@@ -408,7 +412,24 @@ class TasksHierarchy extends NodeHierarchyTree {
         return tag;
      }
 
-    getActiveTasks() {}
+     /**
+      * @param {number} dateLow 
+      * @param {number} dateHigh 
+      */
+     /// As this is only a simple app, i am going to use a linear O(N) apparoch where I iterate over each task and compare it.
+     /// This approach should be sufficient as won't be working with a ton of data and this method won't get called that often.
+     /// In a more professional context I might consider setting up an index system to index each task by their start and end date,
+     /// this would scale better with more tasks as it would allow me to lookup tasks by date with O(logN) complexity. 
+     getTasksInDateRange(dateLow, dateHigh) {
+        const matchingTasks = [];
+
+        this.forEachNode((id, /** @type {Task}*/ task) => {
+            if (task.isInDateRange(dateLow, dateHigh))
+                matchingTasks.push(task);
+        });
+
+        return matchingTasks;
+     }
 }
 
 class Tag {
@@ -515,6 +536,14 @@ class Task extends TreeNode {
         this.description = description;
     }
 
+    getStartDateRaw() {
+        return this.startDate;
+    }
+
+    getEndDateRaw() {
+        return this.endDate;
+    }
+
     getStartDate() {
         return new Date(this.startDate);
     }
@@ -581,6 +610,16 @@ class Task extends TreeNode {
         }
 
         return report;
+    }
+
+    isInDateRange(dateLow, dateHigh) {
+        const taskStart = this.startDate;
+        const taskEnd = this.endDate;
+
+        // console.log(`${dateLow} - ${dateHigh}, ${taskStart} : ${taskEnd}`);
+
+        // check if either start or end is in bounds
+        return ( taskStart > dateLow && taskStart < dateHigh ) || ( taskEnd > dateLow && taskEnd < dateHigh ) || ( taskStart < dateLow && taskEnd > dateHigh );
     }
 
     // /** @return {string[]} */

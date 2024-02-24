@@ -11,9 +11,11 @@
             "id": "7376df5ab99cab67",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "Progress tracker.md"
+                "file": "Feature Planning/Task calendar and progress view graphics.md",
+                "mode": "source",
+                "source": false
               }
             }
           },
@@ -21,11 +23,9 @@
             "id": "e6ab91c64d7f244d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "kanban",
               "state": {
-                "file": "Meetings/Scrum meeting 5.md",
-                "mode": "source",
-                "source": false
+                "file": "Progress tracker.md"
               }
             }
           },
@@ -41,7 +41,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -168,10 +169,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7376df5ab99cab67",
+  "active": "e6ab91c64d7f244d",
   "lastOpenFiles": [
-    "Meetings/Scrum meeting 5.md",
+    "Feature Planning/Task calendar and progress view graphics.md",
     "Progress tracker.md",
+    "Meetings/Scrum meeting 5.md",
+    "Feature Planning",
     "Meetings/Scrum meeting 4.md"
   ]
 }

@@ -311,12 +311,7 @@ function createNoteCard(note) {
     const noteCard = fetchPrefab("generic-card");
     noteCard.setVariableContent("title", note.getName());
 
-    const maxLength = 50;
-    let content = note.getContent().substring(0, maxLength);
-    if (content.length == maxLength)
-        content += "...";
-
-    noteCard.setVariableContent("content", content);
+    noteCard.setVariableContent("content", capString(note.getContent(), 50));
 
     return noteCard.getElement();
 }

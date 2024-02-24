@@ -30,17 +30,25 @@ function onProjectLoad() {
     projectDetailsNotifier.setState(activeProject.id, activeProject);
     taskStateNotifier.flush();
 
-    taskStateNotifier.addBuilder(taskDistributorBuilder);
-    activeProject.tasksHierarchy.forEachNode((id, node) => {
-        taskStateNotifier.setState(id, node);
-    });
-
+    // notes
     selectedNoteId = null;
 
     noteStateNotifier.flush();
     noteStateNotifier.addBuilder(noteExplorerBuilder);
     activeProject.notesHierarchy.forEachNode((id, node) => {
         noteStateNotifier.setState(id, node);
+    });
+
+    // dashboard
+    taskStateNotifier.addBuilder(calendarItemBuilder);
+    taskStateNotifier.addBuilder(upcomingTasksBuilder);    
+
+    updateUpcomingTaskCount(0);
+
+    // tasks
+    taskStateNotifier.addBuilder(taskDistributorBuilder);
+    activeProject.tasksHierarchy.forEachNode((id, node) => {
+        taskStateNotifier.setState(id, node);
     });
 
     buildNoteContent();
@@ -444,6 +452,14 @@ class SearchSelectorModal extends Modal {
     onClose() {
 
     }
+}
+
+function capString(string, length) {
+    let capped = string.substring(0, length);
+    if (capped.length == length)
+        capped += "...";
+
+    return capped;
 }
 
 function tempSave() {

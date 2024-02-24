@@ -29,6 +29,10 @@ header {
     /* color: white; */
 }
 
+.noverflow, .noverflow * {
+    overflow: hidden;
+}
+
 .placeholder {
     position: relative;
     background: gray;
@@ -154,6 +158,10 @@ header {
     justify-content: space-between;
 }
 
+.flex-space-evenly {
+    justify-content: space-evenly;
+}
+
 .flex-align-center {
     align-items: center;
 }
@@ -260,7 +268,7 @@ button:hover {
     /* font-weight: 700; */
 }
 
-.card .task-status-display {
+.task-status-display {
     padding: 4px 6px;
     border-radius: 8px;
     font-weight: bold;
@@ -268,6 +276,7 @@ button:hover {
     font-size: .8em;
     height: fit-content;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .status-completed, select[selected="2"]  {
@@ -311,6 +320,7 @@ button:hover {
     font-weight: bold;
     color: white;
     border-radius: 8px;
+    text-align: center;
 }
 
 textarea {
@@ -756,3 +766,107 @@ input::-webkit-color-swatch {
 .modal-content {
     margin: 16px 0;
 }
+
+#task-calendar-container {
+    /* background-color: var(--panel-colour); */
+    border: 2px solid var(--separator-colour);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.2);;
+}
+
+#task-calendar-container * {
+    z-index: 2;
+}
+
+#calendar-header {
+    text-align: center;
+    position: relative;
+    border-radius: 12px;
+    /* border: 2px solid var(--separator-colour); */
+    background: var(--panel-colour);
+    box-shadow: 0 0 0 2px var(--separator-colour),
+                0 2px 3px 1px rgba(0,0,0,0.2);
+}
+
+#calendar-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#calendar-header * {
+    padding: 8px 0;
+}
+
+#task-calendar-container .week-divided {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+#calendar-content {
+    row-gap: 16px;
+    padding: 16px 0;
+    overflow-y: auto;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 24px;
+}
+
+.calendar-task-container {
+    border-radius: 16px;
+    background: var(--card-bg-colour);
+    height: 100px;
+    margin: 0 8px;
+    box-shadow: 2px 4px 3px -1px rgba(0,0,0,0.3);
+    padding: 8px 16px;
+    box-sizing: border-box;
+    user-select: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.calendar-task-container * {
+    overflow: hidden;
+}
+
+.single-line-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sub-task {
+    height: 55px;
+}
+
+.grid-test {
+    display: block;
+    background: red;
+    margin: 0 8px;
+    height: 10px;
+}
+
+.current-day {
+    position: relative;
+    background: var(--accent-colour);
+    border-radius: 12px;
+    color: white;
+}
+
+.accent-text {
+    color: var(--accent-colour);
+    font-weight: bold;
+}
+
+/* .current-day::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    width: 75%;
+    left: 12.5%;
+    height: 3px;
+    background-color: var(--accent-colour);
+    border-radius: 4px;
+} */
