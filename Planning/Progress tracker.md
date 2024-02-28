@@ -6,6 +6,8 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] [[Scrum meeting 5|Sprint 5 spec]]
+- [ ] Initial Calendar view
 - [ ] Implement ability to create and open project (a project selection menu):<br>- [x] Prototype project selection menu with wireframes<br>- [x] Implement the project selection menu in the application
 - [ ] [[Scrum Meeting 4 |Sprint 4 Spec]]
 - [ ] Task - Note relationship system:<br><br>- [x] implement data structure for relationship<br>- [x] allow relationships to be created in code and displayed on the UI<br>- [x] allow relationships to be created by the user
@@ -28,17 +30,21 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Implement initial dashboard layout and content:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [ ] Make some additional prototypes for what elements such as progress graphs should look like<br>- [ ] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [ ] Create and implement the graph functionality
+- [ ] Dashboard requirements:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [x] Make a prototype for the calendar view<br>- [x] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [x] Create and implement the calendar view functionality<br>- [ ] Make a prototype wireframe for the progress graph<br>- [ ] Create and implement progress graph
 
 
 ## Sprint Backlog
 
-- [ ] [[Scrum meeting 5|Sprint 5 spec]]
-- [ ] Create sequence diagram
+- [ ] [[Scrum meeting 6|Sprint 6 spec]]
+- [ ] Calendar view fine tuning
+- [ ] Task view graph implementation
+- [ ] Add ability to delete:<br>- [ ] tasks<br>- [ ] notes<br>- [ ] tags
+- [ ] Visual improvements:<br>- [ ] Adding icons<br>- [ ] Improving some buttons<br>- [ ] Adding logo<br>- [ ] Adding dark mode
 
 
 ## Project Backlog
 
+- [ ] Create sequence diagram
 
 
 

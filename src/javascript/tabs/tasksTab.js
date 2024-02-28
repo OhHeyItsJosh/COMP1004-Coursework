@@ -123,7 +123,7 @@ function createTaskClicked() {
     {
         activeProject.tasksHierarchy.addRootLevelNode(task);
         changeMade();
-        taskDistributorBuilder.setItem(task.getId(), task, { resort: true });
+        taskStateNotifier.setState(task.getId(), task, { resort: true });
         
         popHighestModal();
     }));
