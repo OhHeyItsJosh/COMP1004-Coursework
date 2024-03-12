@@ -6,6 +6,8 @@
 
 /** @type {Project} */
 let activeProject;
+/** @type {ProgressTrackerData} */
+let progressTracker;
 let dirty = false;
 
 const contentWrapper = document.getElementById("wrapper");
@@ -25,6 +27,9 @@ function onProjectLoad() {
     else {
         contentWrapper.classList.remove("hidden");
     }
+
+    // create progress tracker
+    progressTracker = new ProgressTrackerData(Date.now() - (DAY_LENGTH_MS * 7), activeProject);
 
     // updateUIProjectName();
     projectDetailsNotifier.setState(activeProject.id, activeProject);
@@ -49,9 +54,12 @@ function onProjectLoad() {
     taskStateNotifier.addBuilder(taskDistributorBuilder);
     activeProject.tasksHierarchy.forEachNode((id, node) => {
         taskStateNotifier.setState(id, node);
+        // progressTracker.trackTaskChange(node);
     });
 
     buildNoteContent();
+    // console.log(progressTracker);
+    // console.log(progressTracker.progressStartedIndecies.map((id) => activeProject.tasksHierarchy.getNode(id).getStartedAt()).join(", "));
 }
 
 // function updateUIProjectName() {

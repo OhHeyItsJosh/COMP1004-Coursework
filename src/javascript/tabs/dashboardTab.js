@@ -15,18 +15,14 @@ function computeDateRange() {
     const start = Date.now() - timeIntoWeek;
     const end = start + (7 * DAY_LENGTH_MS);
 
-    return [ start, end ];
+    return { start, end };
 }
 
 /** @type {{start: number, end: number}} */
 let currentDateRange;
 
 function initDashboard() {
-    const [start, end] = computeDateRange();
-    currentDateRange = {
-        start: start,
-        end: end
-    };
+    currentDateRange = computeDateRange();
 
     // highlight current day in header
     calendarHeader.children[new Date(Date.now()).getDay()].classList.add("current-day");

@@ -448,7 +448,7 @@ class Tag {
 }
 
 class Task extends TreeNode {
-    /** @typedef {{name: string, description: string, start_date: number, end_date: number, tags: string[], status_code: number}} TaskData */
+    /** @typedef {{name: string, description: string, start_date: number, end_date: number, tags: string[], status_code: number, started_at: number, completed_at: number}} TaskData */
 
     /** @type {string}
      * @private */
@@ -477,6 +477,14 @@ class Task extends TreeNode {
      * @private */
     status;
 
+    /** @type {number}
+     * @private */
+    startedAt;
+    
+    /** @type {number}
+     * @private */
+    completedAt;
+
     /**
      * @param {TaskData} data 
      */
@@ -486,6 +494,9 @@ class Task extends TreeNode {
         this.description = data.description;
         this.startDate = data.start_date;
         this.endDate = data.end_date;
+
+        this.startedAt = data.started_at;
+        this.completedAt = data.completed_at;
         
         this.tags = data.tags ?? [];
         this.status = data.status_code ?? Status.NOT_STARTED;
@@ -515,6 +526,8 @@ class Task extends TreeNode {
         nodeJSON["end_date"] = this.endDate;
         nodeJSON["tags"] = this.tags;
         nodeJSON["status_code"] = this.status;
+        nodeJSON["started_at"] = this.startedAt;
+        nodeJSON["completed_at"] = this.completedAt;
 
         return nodeJSON;
     }
@@ -585,8 +598,45 @@ class Task extends TreeNode {
         return this.status;
     }
 
+    getStatusDetails() {
+        // get start / completion time based of current status
+        const timestamp = (() => {
+            switch(this.status) {
+                case Status.COMPLETED:
+                    return this.completedAt;
+                case Status.IN_PROGRESS:
+                    return this.startedAt;
+                default: 
+                    return null;
+            }
+        })();
+
+        return {
+            status: this.status,
+            timestamp: timestamp
+        }
+    }
+
     setStatus(status) {
         this.status = status;
+
+        switch(status) {
+            case Status.COMPLETED:
+                this.completedAt = Date.now();
+                break;
+
+            case Status.IN_PROGRESS:
+                this.startedAt = Date.now();
+                break;
+        }
+    }
+
+    getStartedAt() {
+        return this.startedAt;
+    }
+
+    getCompletedAt() {
+        return this.completedAt;
     }
 
     getSubtaskCompletion() {
@@ -819,4 +869,176 @@ class ManyToManyNodeRelationship {
     isRelated(firstId, secondId) {
         return (this.containsRelation(this.relations_F, firstId, secondId) || this.containsRelation(this.relations_S, secondId, firstId));
     }
+}
+
+class ProgressTrackerData {
+    /** @type {number} */
+    lowerDateBounds;
+    /** @type {number} */
+    upperDateBounds;
+
+    /** @type {string[]} */
+    progressStartedIndecies;
+    /** @type {string[]} */
+    completionIndecies;
+    /** @type {Map<string, _TaskProgressRef>} */
+    taskRefs;
+
+    /** @type {Project} */
+    projectContext;
+
+    /**
+     * @param {number} lowerBounds 
+     * @param {Project} projectContext
+     */
+    constructor(lowerBounds, projectContext) {
+        this.progressStartedIndecies = [];
+        this.completionIndecies = [];
+        this.taskRefs = new Map();
+
+        this.lowerDateBounds = lowerBounds;
+        this.upperDateBounds = Date.now();
+
+        this.projectContext = projectContext;
+    }
+
+    /**
+     * @param {Task} task 
+     */
+    trackTaskChange(task) {
+        const progressRef = this.taskRefs.get(task.getId()) ?? 
+        // create new task ref
+        (() => {
+            if (!task.getStartedAt() && !task.getCompletedAt())
+                return null;
+
+            const newTaskRef = new _TaskProgressRef();
+            this.taskRefs.set(task.getId(), newTaskRef);
+
+            return newTaskRef;
+        })();
+
+        if (!progressRef)
+            return;
+
+        if (task.getStartedAt())
+            progressRef.startedIndex = this._reindexTask(this.progressStartedIndecies, task, progressRef.startedIndex, (task) => task.getStartedAt());
+        
+        if (task.getCompletedAt())
+            progressRef.completedIndex = this._reindexTask(this.completionIndecies, task, progressRef.completedIndex, (task) => task.getCompletedAt());
+    }
+
+    /**
+     * 
+     * @param {string[]} indexList 
+     * @param {Task} task
+     * @param {number} existingIndex
+     * @param {(task: Task) => number} controlValueProvider
+     * @returns {number}
+     */
+    _reindexTask(indexList, task, existingIndex, controlValueProvider) {
+        const taskControlValue = controlValueProvider(task);
+
+        const idToTask = (id) => {
+            return controlValueProvider(this.projectContext.tasksHierarchy.getNode(id));
+        }
+
+        if (existingIndex) {
+            // check whether existing index is correct
+            if (
+                controlValueProvider(idToTask(this._boundSafeIndex(indexList, existingIndex - 1))) 
+                <= taskControlValue <= 
+                controlValueProvider(idToTask(this._boundSafeIndex(indexList, existingIndex + 1)))
+            )
+                return existingIndex;
+
+            // remove existing value
+            indexList.splice(existingIndex, 1);
+        }
+        
+
+        // reinsert item to correct index
+        const index = this._binarySearch(indexList, taskControlValue, idToTask, true);
+        indexList.splice(index, 0, task.getId());
+
+        console.log(`index was ${index}`);
+        console.log(indexList);
+
+        return index;
+    }
+
+    /**
+     * 
+     * @param {string[]} list 
+     * @param {string} controlValue 
+     * @param {(id: string) => number} controlValueProvider 
+     * @param {boolean} insertion 
+     * @returns 
+     */
+    _binarySearch(list, controlValue, controlValueProvider, insertion)  {
+        let found = false;
+        let top = list.length - 1;
+        let bottom = 0;
+        let middle;
+        let itrCount = 0;
+
+        
+        if (list.length == 0)
+            return 0;
+        
+    while (!found)
+        {
+            // TODO: RETHINK
+            let hasShifted = false;
+            console.log(`top: ${top}, bottom: ${bottom}`)
+
+            if (itrCount > list.length)
+                throw Error("Binary search isn't working");
+
+            middle = Math.floor((top + bottom) / 2);
+            const currentControlValue = controlValueProvider(list[middle]);
+
+            // if value is found
+            if (currentControlValue == controlValue)
+                return middle;
+
+            // check right
+            if (currentControlValue < controlValue) {
+                bottom = Math.min(middle + 1, list.length - 1);
+                hasShifted = true;
+            }
+
+            // check left
+            if (currentControlValue > controlValue) {
+                top = middle;
+                hasShifted = true;
+            }
+
+            // if search has concluded
+            if (top == bottom && !hasShifted) {
+                if (insertion)
+                    return bottom;
+                else
+                    return null;
+            }
+
+            itrCount++;
+        }
+    }
+
+    _boundSafeIndex(list, index) {
+        if (index < 0)
+            return list[0];
+        else if (index >= list.length)
+            return list[list.length - 1];
+        else
+            return list[index];
+    }
+}
+
+class _TaskProgressRef {
+    /** @type {string} */
+    startedIndex;
+    /** @type {string} */
+    completedIndex;
 }
