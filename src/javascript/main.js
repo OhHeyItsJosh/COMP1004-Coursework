@@ -29,7 +29,8 @@ function onProjectLoad() {
     }
 
     // create progress tracker
-    progressTracker = new ProgressTrackerData(Date.now() - (DAY_LENGTH_MS * 7), activeProject);
+    const week = computeDateRange();
+    progressTracker = new ProgressTrackerData(week.start, week.end, activeProject);
 
     // updateUIProjectName();
     projectDetailsNotifier.setState(activeProject.id, activeProject);
@@ -54,10 +55,16 @@ function onProjectLoad() {
     taskStateNotifier.addBuilder(taskDistributorBuilder);
     activeProject.tasksHierarchy.forEachNode((id, node) => {
         taskStateNotifier.setState(id, node);
-        // progressTracker.trackTaskChange(node);
+        progressTracker.trackTaskChange(node);
     });
 
     buildNoteContent();
+
+    progressTracker.addUpdateCallback((_) => redrawProgressGraph());
+    redrawProgressGraph();
+
+    taskStateNotifier.addBuilder(new StatefulListener((id, state) => progressTracker.trackTaskChange(state)));
+    // console.log(progressTracker.progressStartedIndecies.map(item => item.date));
     // console.log(progressTracker);
     // console.log(progressTracker.progressStartedIndecies.map((id) => activeProject.tasksHierarchy.getNode(id).getStartedAt()).join(", "));
 }
@@ -75,6 +82,7 @@ function init() {
     }));
 
     onProjectLoad();
+    initDashboard();
 }
 
 function saveActiveProject() {
@@ -461,6 +469,15 @@ class SearchSelectorModal extends Modal {
 
     }
 }
+
+/**
+ * 
+ * @param {Date} date 
+ */
+function getDateString(date, includeTime) {
+    return `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getFullYear().toString()} ${includeTime ? `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}` : ``}`;
+}
+
 
 function capString(string, length) {
     let capped = string.substring(0, length);

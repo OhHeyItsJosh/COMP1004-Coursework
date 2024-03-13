@@ -231,6 +231,19 @@
             </div>
         </modal>
 
+        <modal id="progress-view-modal" class="modal modal-zoom-animation">
+            <div class="flex-column flex-align-center">
+                <h1 modal-var="title">Progress</h1>
+                <div class="flex-column" style="max-height: 80vh; margin: 16px 0; gap: 16px">
+                    <h2 modal-var="started-lbl">Started</h2>
+                    <div class="card-container" modal-var="started-tasks"></div>
+                    
+                    <h2 modal-var="completed-lbl">Completed</h2>
+                    <div class="card-container" modal-var="completed-tasks"></div>
+                </div>
+            </div>
+        </modal>
+
         <div id="calendar-task" class="calendar-task-container flex-row" style="gap: 8px;">
             <div class="flex-column expanded flex-centered">
                 <h3 class="single-line-text" modal-var="name">Task</h3>
@@ -292,6 +305,29 @@
                     <div class="flex-column" style="flex: 40; gap: 16px;">
                         <div class="flex-column" style="flex: 35; min-height: 200px">
                             <h1>Weekly Progress</h1>
+                            <div id="weekly-progress-graph">
+                                <div class="flex-row keep-height">
+                                    <div class="pg-left-col">
+                                        <h4 class="vertical-text">Task Progress</h4>
+                                    </div>
+                                    <div class="flex-column expanded keep-height">
+                                        <div class="flex-row expanded" style="position: relative">
+                                            <div class="pg-graph-backdrop flex-column" id="pg-rows">
+                                                <div class="pg-labeled-row flex">6</div>
+                                                <div class="pg-labeled-row flex">4</div>
+                                                <div class="pg-labeled-row flex">2</div>
+                                                <div class="flex"></div>
+                                            </div>
+                                            <div style="width: 16px"></div> 
+                                            <div class="progress-graph-area expanded" id="pg-columns">
+                                            </div>
+                                        </div>
+                                        <div class="pg-day-labels flex-row" id="pg-labels">
+                                            <div style="width: 16px"></div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex-column" style="flex: 65; gap: 16px; overflow: hidden; padding: 8px; margin: -8px;">
                             <div class="flex-row flex-align-center" style="gap: 16px">

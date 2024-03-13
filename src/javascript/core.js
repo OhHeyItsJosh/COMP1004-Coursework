@@ -639,6 +639,11 @@ class Task extends TreeNode {
         return this.completedAt;
     }
 
+    resetCompletion() {
+        this.startedAt = undefined;
+        this.completedAt = undefined;
+    }
+
     getSubtaskCompletion() {
         const report = new SubtaskReport();
         return this.getCompletionRecursive(report);
@@ -871,15 +876,27 @@ class ManyToManyNodeRelationship {
     }
 }
 
+class _TaskDatePair {
+    /** @type {Task} */
+    task;
+    /** @type {number} */
+    date;
+
+    constructor(task, date) {
+        this.task = task;
+        this.date = date;
+    }
+}
+
 class ProgressTrackerData {
     /** @type {number} */
     lowerDateBounds;
     /** @type {number} */
     upperDateBounds;
 
-    /** @type {string[]} */
+    /** @type {_TaskDatePair[]} */
     progressStartedIndecies;
-    /** @type {string[]} */
+    /** @type {_TaskDatePair[]} */
     completionIndecies;
     /** @type {Map<string, _TaskProgressRef>} */
     taskRefs;
@@ -887,19 +904,32 @@ class ProgressTrackerData {
     /** @type {Project} */
     projectContext;
 
+    /** @typedef {(task: Task) => void} UpdateCallback */
+    /** @type {UpdateCallback[]} */
+    updateCallbacks;
+
     /**
      * @param {number} lowerBounds 
+     * @param {number} upperBounds
      * @param {Project} projectContext
      */
-    constructor(lowerBounds, projectContext) {
+    constructor(lowerBounds, upperBounds, projectContext) {
         this.progressStartedIndecies = [];
         this.completionIndecies = [];
         this.taskRefs = new Map();
 
         this.lowerDateBounds = lowerBounds;
-        this.upperDateBounds = Date.now();
+        this.upperDateBounds = upperBounds;
 
         this.projectContext = projectContext;
+        this.updateCallbacks = [];
+    }
+
+    /**
+     * @param {UpdateCallback} callback 
+     */
+    addUpdateCallback(callback) {
+        this.updateCallbacks.push(callback);
     }
 
     /**
@@ -921,61 +951,113 @@ class ProgressTrackerData {
         if (!progressRef)
             return;
 
-        if (task.getStartedAt())
-            progressRef.startedIndex = this._reindexTask(this.progressStartedIndecies, task, progressRef.startedIndex, (task) => task.getStartedAt());
+        let changeMade = false;
+
+        // reindex for started date
+        if (task.getStartedAt()) {
+            const {ref, didChange} = this._reindexTask(this.progressStartedIndecies, task, task.getStartedAt(), progressRef.startedDateRef);
+            progressRef.startedDateRef = ref;
+            changeMade = changeMade || didChange;
+        }
         
-        if (task.getCompletedAt())
-            progressRef.completedIndex = this._reindexTask(this.completionIndecies, task, progressRef.completedIndex, (task) => task.getCompletedAt());
+        // reindex for completion date
+        if (task.getCompletedAt()) {
+            const {ref, didChange} = this._reindexTask(this.completionIndecies, task, task.getCompletedAt(), progressRef.completedDateRef);
+            progressRef.completedDateRef = ref;
+            changeMade = changeMade || didChange;
+        }
+
+        if (changeMade)
+            this.updateCallbacks.forEach((callback) => callback(task));
+    }
+
+    getTaskProgressInDateRange(lowerDate, upperDate) {
+        // console.log(`${new Date(lowerDate)} --- ${new Date(upperDate)}`);
+
+        return {
+            "started": this._getItemsInDateRange(this.progressStartedIndecies, lowerDate, upperDate).map(e => e.task),
+            "completed": this._getItemsInDateRange(this.completionIndecies, lowerDate, upperDate).map(e => e.task)
+        }
     }
 
     /**
      * 
-     * @param {string[]} indexList 
-     * @param {Task} task
-     * @param {number} existingIndex
-     * @param {(task: Task) => number} controlValueProvider
-     * @returns {number}
+     * @param {_TaskDatePair[]} list 
+     * @param {number} lowerDate 
+     * @param {number} upperDate 
      */
-    _reindexTask(indexList, task, existingIndex, controlValueProvider) {
-        const taskControlValue = controlValueProvider(task);
+    _getItemsInDateRange(list, lowerDate, upperDate) {
+        // find lower bound
+        const beginIndex = this._binarySearch(list, lowerDate, true);
+        let rangeLength = 0;
+        let finished = false;
 
-        const idToTask = (id) => {
-            return controlValueProvider(this.projectContext.tasksHierarchy.getNode(id));
+        if (beginIndex == list.length)
+            return [];
+
+        // increment until out of upper bound range
+        while (!finished)
+        {
+            if (list[beginIndex + rangeLength].date <= upperDate)
+                rangeLength++;
+            else
+                finished = true;
+
+            if (beginIndex + rangeLength >= list.length) 
+                break;
         }
 
-        if (existingIndex) {
+        return list.slice(beginIndex, beginIndex + rangeLength);
+    }
+ 
+    /**
+     * 
+     * @param {_TaskDatePair[]} indexList
+     * @param {Task} task
+     * @param {number} date
+     * @param {_TaskDatePair} existingRef
+     * @returns {{ref: _TaskDatePair, didChange: boolean}}
+     */
+    _reindexTask(indexList, task, date, existingRef) {
+        if (existingRef) {
+            const refIndex = indexList.indexOf(existingRef);
+            console.log(refIndex);
+
             // check whether existing index is correct
             if (
-                controlValueProvider(idToTask(this._boundSafeIndex(indexList, existingIndex - 1))) 
-                <= taskControlValue <= 
-                controlValueProvider(idToTask(this._boundSafeIndex(indexList, existingIndex + 1)))
+                (this._boundSafeIndex(indexList, refIndex - 1).date <= date) && 
+                (date <= this._boundSafeIndex(indexList, refIndex + 1).date)
             )
-                return existingIndex;
+            {
+                console.log("index did not change");
+                return {ref: existingRef, didChange: false}
+            }
 
             // remove existing value
-            indexList.splice(existingIndex, 1);
+            indexList.splice(refIndex, 1);
         }
+
+        if (date < this.lowerDateBounds || date > this.upperDateBounds)
+            return {ref: undefined, didChange: false};
         
 
         // reinsert item to correct index
-        const index = this._binarySearch(indexList, taskControlValue, idToTask, true);
-        indexList.splice(index, 0, task.getId());
+        const index = this._binarySearch(indexList, date, true);
+        const taskDatePair = new _TaskDatePair(task, date);
+        indexList.splice(index, 0, taskDatePair);
 
-        console.log(`index was ${index}`);
-        console.log(indexList);
+        // console.log(`got insertion index: ${index}`);
 
-        return index;
+        return {ref: taskDatePair, didChange: true};
     }
 
     /**
-     * 
-     * @param {string[]} list 
-     * @param {string} controlValue 
-     * @param {(id: string) => number} controlValueProvider 
+     * @param {_TaskDatePair[]} list
+     * @param {number} date
      * @param {boolean} insertion 
-     * @returns 
+     * @returns {number}
      */
-    _binarySearch(list, controlValue, controlValueProvider, insertion)  {
+    _binarySearch(list, date, insertion)  {
         let found = false;
         let top = list.length - 1;
         let bottom = 0;
@@ -986,46 +1068,51 @@ class ProgressTrackerData {
         if (list.length == 0)
             return 0;
         
-    while (!found)
+        while (!found && top > bottom)
         {
-            // TODO: RETHINK
-            let hasShifted = false;
-            console.log(`top: ${top}, bottom: ${bottom}`)
-
+            // protection from infinite loop
             if (itrCount > list.length)
                 throw Error("Binary search isn't working");
 
             middle = Math.floor((top + bottom) / 2);
-            const currentControlValue = controlValueProvider(list[middle]);
+            const currentItem = list[middle];
 
             // if value is found
-            if (currentControlValue == controlValue)
-                return middle;
+            if (currentItem.date == date)
+                found = true;
 
             // check right
-            if (currentControlValue < controlValue) {
-                bottom = Math.min(middle + 1, list.length - 1);
-                hasShifted = true;
+            if (currentItem.date < date) {
+                bottom = middle + 1
             }
 
             // check left
-            if (currentControlValue > controlValue) {
+            if (currentItem.date > date) {
                 top = middle;
-                hasShifted = true;
-            }
-
-            // if search has concluded
-            if (top == bottom && !hasShifted) {
-                if (insertion)
-                    return bottom;
-                else
-                    return null;
             }
 
             itrCount++;
         }
+
+        if (found)
+            return middle;
+
+        if (insertion) {
+            const finalIndex = bottom ?? 0;
+
+            // console.log(`date to be inserted: ${date}, compared to: ${list[middle]}`);
+            return date > list[finalIndex].date
+                ? finalIndex + 1
+                : finalIndex;
+        }
+
+        return null;
     }
 
+    /** @template T
+     * @param {T[]} list
+     * @returns T 
+     */
     _boundSafeIndex(list, index) {
         if (index < 0)
             return list[0];
@@ -1037,8 +1124,8 @@ class ProgressTrackerData {
 }
 
 class _TaskProgressRef {
-    /** @type {string} */
-    startedIndex;
-    /** @type {string} */
-    completedIndex;
+    /** @type {_TaskDatePair} */
+    startedDateRef;
+    /** @type {_TaskDatePair} */
+    completedDateRef;
 }

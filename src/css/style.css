@@ -7,6 +7,9 @@
     --panel-colour: #e8eded;
     --accent-colour: #359da6;
     --card-bg-colour: #f5f7f7;
+    --task-not-started: rgb(143, 4, 4);
+    --task-in-progress: rgb(245, 141, 4);
+    --task-completed: green;
 }
 
 :root {
@@ -27,6 +30,10 @@ header {
     flex-shrink: 0;
     z-index: 2;
     /* color: white; */
+}
+
+.keep-height {
+    height: inherit;
 }
 
 .noverflow, .noverflow * {
@@ -105,6 +112,10 @@ header {
 
 .expanded {
     flex-grow: 1;
+}
+
+.flex {
+    flex: 1;
 }
 
 .tab {
@@ -280,15 +291,15 @@ button:hover {
 }
 
 .status-completed, select[selected="2"]  {
-    background: green;
+    background: var(--task-completed);
 }
 
 .status-progress, select[selected="1"] {
-    background: rgb(245, 141, 4);
+    background: var(--task-in-progress);
 }
 
 .status-not-started, select[selected="0"] {
-    background: rgb(143, 4, 4);
+    background: var(--task-not-started);
 }
 
 .status-container { 
@@ -860,6 +871,89 @@ input::-webkit-color-swatch {
     font-weight: bold;
 }
 
+#weekly-progress-graph {
+    height: 100%;
+    width: 100%;
+    margin-top: 16px;
+    border: 2px solid var(--separator-colour);
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.progress-graph-area {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    position: relative;
+}
+
+.pg-column {
+    flex: 1;
+    margin: 0 2%;
+    background: red;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: 0.2s ease;
+}
+
+.pg-column:hover {
+    filter: brightness(1.1);
+    cursor: pointer;
+}
+
+.pg-started-section {
+    background: var(--task-in-progress)
+}
+
+.pg-completed-section {
+    background: var(--task-completed)
+}
+
+.pg-day-labels {
+    background: var(--panel-colour);
+    box-shadow: -16px 0 0 0 var(--panel-colour); /* lol */
+    border-top: 2px solid var(--separator-colour);
+}
+
+.pg-label {
+    text-align: center;
+    padding: 8px 4px;
+}
+
+.pg-graph-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.pg-labeled-row {
+    border-bottom: 2px solid var(--separator-colour);
+    box-sizing: border-box;
+    display: flex;
+    align-items: end;
+    padding-left: 4px;
+}
+
+.pg-left-col {
+    width: 45px;
+    background: var(--panel-colour);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 0 2px var(--separator-colour);
+    border-radius: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.vertical-text {
+    text-orientation: sideways;
+    writing-mode: sideways-lr;
+    letter-spacing: 0;
+}
 /* .current-day::after {
     content: "";
     position: absolute;
