@@ -6,6 +6,7 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] Task view graph implementation
 - [ ] [[Scrum meeting 5|Sprint 5 spec]]
 - [ ] Initial Calendar view
 - [ ] Implement ability to create and open project (a project selection menu):<br>- [x] Prototype project selection menu with wireframes<br>- [x] Implement the project selection menu in the application
@@ -30,14 +31,13 @@ kanban-plugin: basic
 
 ## In Progress
 
-- [ ] Dashboard requirements:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [x] Make a prototype for the calendar view<br>- [x] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [x] Create and implement the calendar view functionality<br>- [ ] Make a prototype wireframe for the progress graph<br>- [ ] Create and implement progress graph
+- [ ] Calendar view fine tuning
+- [ ] Dashboard requirements:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [x] Make a prototype for the calendar view<br>- [x] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [x] Create and implement the calendar view functionality<br>- [x] Make a prototype wireframe for the progress graph<br>- [x] Create and implement progress graph
 
 
 ## Sprint Backlog
 
 - [ ] [[Scrum meeting 6|Sprint 6 spec]]
-- [ ] Calendar view fine tuning
-- [ ] Task view graph implementation
 - [ ] Add ability to delete:<br>- [ ] tasks<br>- [ ] notes<br>- [ ] tags
 - [ ] Visual improvements:<br>- [ ] Adding icons<br>- [ ] Improving some buttons<br>- [ ] Adding logo<br>- [ ] Adding dark mode
 

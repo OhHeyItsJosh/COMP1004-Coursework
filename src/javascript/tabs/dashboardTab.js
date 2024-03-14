@@ -48,7 +48,7 @@ function initProgressGraph() {
 
         pgColumns.appendChild(column);
 
-        const label = elementWithClasses("h3", ["pg-label", "expanded"]);
+        const label = elementWithClasses("h3", ["pg-label", "flex"]);
         label.innerText = PG_COLUMNS[i];
         pgLabels.appendChild(label);
     }
