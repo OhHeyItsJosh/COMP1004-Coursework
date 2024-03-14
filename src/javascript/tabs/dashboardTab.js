@@ -42,12 +42,14 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 function initProgressGraph() {
     for (let i = 0; i < PG_COLUMNS.length; i++)
     {
+        // create bar columns
         const column = elementWithClasses("div", ["pg-column"]);
         column.appendChild(elementWithClasses("div", ["pg-started-section"]));
         column.appendChild(elementWithClasses("div", ["pg-completed-section"]));
 
         pgColumns.appendChild(column);
 
+        // create labels
         const label = elementWithClasses("h3", ["pg-label", "flex"]);
         label.innerText = PG_COLUMNS[i];
         pgLabels.appendChild(label);
@@ -59,25 +61,30 @@ function redrawProgressGraph() {
     const graphData = new Array(7);
     let highestTaskCount = 0;
 
+    // get progress data for each day
     for (let i = 0; i < 7; i++)
     {
         const dayTS = currentDateRange.start + (DAY_LENGTH_MS * i);
         const dayData = progressTracker.getTaskProgressInDateRange(dayTS, dayTS + DAY_LENGTH_MS);
 
         graphData[i] = dayData;
-
+ 
+        // track highest task count for a day
         const taskCount = dayData.completed.length + dayData.started.length;
         highestTaskCount = Math.max(highestTaskCount, taskCount);
     }
 
-    console.log(graphData);
+    // console.log(graphData);
 
-    const graphMax = Math.ceil(highestTaskCount / 4) * 4;
+    // get max task count that is a multiple of 4
+    const graphMax = Math.max(Math.ceil(highestTaskCount / 4) * 4, 4);
 
+    // set row labels
     pgRows.children[0].innerText = graphMax * 0.75;
     pgRows.children[1].innerText = graphMax * 0.5;
     pgRows.children[2].innerText = graphMax * 0.25;
 
+    // set bar columns for each day
     for (let i = 0; i < 7; i++)
     {
         const column = pgColumns.children[i];
