@@ -860,7 +860,7 @@ input::-webkit-color-swatch {
 }
 
 .side-group-header {
-    gap: 4px;
+    gap: 8px;
 }
 
 .related {
