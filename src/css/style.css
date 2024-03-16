@@ -3,6 +3,7 @@
     padding: 0;
     margin: 0;
     transition: 0.3s ease-in-out;
+    transition-property: background, color, border, box-shadow;
 }
 
 :root {
