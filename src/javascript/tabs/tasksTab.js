@@ -100,8 +100,8 @@ function buildTaskCard(task) {
     return taskElement;
 }
 
-function applyTaskStatusToElement(element, task) {
-    element.innerHTML = StatusName[task.getStatus()];
+function applyTaskStatusToElement(element, task, short) {
+    element.innerHTML = short ? StatusNameShort[task.getStatus()] : StatusName[task.getStatus()];
     element.classList.add(StatusClassMap[task.getStatus()]);
 }
 

@@ -29,7 +29,7 @@ class StatefulCollectionBuilder extends Stateful {
      * @typedef {(state: T, args: any) => Object} WidgetBuilder
      * @typedef {(widget: Object, state: T) => boolean} AppendPredicate
      * @typedef {(builder: StatefulCollectionBuilder, parent: HTMLElement, widget: HTMLElement, state: T) => void} AppendCallback
-     * @typedef {(ids: string[]) => string[]} SortCallback
+     * @typedef {(ids: string[], changedState: T) => string[]} SortCallback
      * @typedef {(builder: StatefulCollectionBuilder, widget: HTMLElement) => void} RemoveCallback
      */
 
@@ -47,6 +47,8 @@ class StatefulCollectionBuilder extends Stateful {
     #onRemove;
     /** @type {SortCallback} */
     #sortCallback;
+    /** @type {string[]} */
+    #orderIndex;
 
     /**
      * @param {{parent: HTMLElement, builder: WidgetBuilder, shouldAppend: AppendPredicate, sorter: SortCallback, onAppend: AppendCallback, onRemove: RemoveCallback}} args
@@ -60,6 +62,7 @@ class StatefulCollectionBuilder extends Stateful {
         this.#onRemove = args.onRemove;
         this.#parent = args.parent;
         this.#sortCallback = args.sorter;
+        this.#orderIndex = [];
     }
 
     /**
@@ -74,18 +77,25 @@ class StatefulCollectionBuilder extends Stateful {
 
         if (this.#items.has(id))
         {
-            if (state == null)
+            // handle removing item
+            if (state == null || (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))) {
                 this.removeItem(id);
-            else
-                this.rebuildItem(id, state, builderArgs);
+                return;
+            }
+            
+            this.rebuildItem(id, state, builderArgs);
         }
         else if (state == null)
             return;
-        else
+        else {
+            if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))
+                return;
+
             this.appendItem(id, state, builderArgs, builderArgs);
+        }
 
         if (args && args.resort && this.#sortCallback)
-            this.sortItems();
+            this.sortItems(state);
     }
 
     /** @returns {HTMLElement} */
@@ -93,13 +103,20 @@ class StatefulCollectionBuilder extends Stateful {
         return this.#items.get(id);
     }
 
-    sortItems() {
-        const ids = Array.from(this.#items.keys());
-        const sortedIds = this.#sortCallback.call(this, ids);
+    sortItems(changedItem) {
+        // console.log("sort being called");
+        // console.log(changedItem);¬
+        this.#orderIndex = this.#sortCallback.call(this, Array.from(this.#orderIndex), changedItem);
 
-        for (const sortedId of sortedIds)
+        for (let i = 0; i < this.#orderIndex.length; i++)
         {
-            this.#parent.appendChild(this.#items.get(sortedId));
+            const item = this.#items.get(this.#orderIndex[i]);
+            if (!item) {
+                this.#orderIndex.splice(i, 1);
+                i--;
+                continue;
+            }
+            this.#parent.appendChild(item);
         }
     }
 
@@ -140,12 +157,10 @@ class StatefulCollectionBuilder extends Stateful {
     }
 
     appendItem(id, state, builderArgs) {
-        if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state))
-        return;
-        
         const widget = this.#builder(state, builderArgs);
 
         this.#items.set(id, widget);
+        this.#orderIndex.push(id);
 
         if (this.#onAppend)
             this.#onAppend(this, this.#parent, widget, state);
@@ -169,6 +184,7 @@ class StatefulCollectionBuilder extends Stateful {
         }
 
         this.#items.clear();
+        this.#orderIndex = [];
     }
 
     /**

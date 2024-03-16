@@ -297,6 +297,28 @@ class TreeNode {
         return this.children.map((child) => this.nodeTree.getNode(child));
     }
 
+    getChildIds() {
+        return this.children;
+    }
+
+    getDescendantIds(set = new Set()) {
+        for (const childId of this.children)
+        {
+            set.add(childId);
+
+            const node = this.nodeTree.getNode(childId);
+            if (node)
+                node.getDescendantIds(set);
+        }
+
+        
+        return set;
+    }
+
+    getTree() {
+        return this.nodeTree;
+    }
+
     isRootLevelNode() {
         return this.nodeTree.isRootLevelNode(this.id);
     }
@@ -319,6 +341,13 @@ class TreeNode {
 
     indexOfChild(childId) {
         return this.children.indexOf(childId);
+    }
+
+    getChildNode(childId) {
+        if (!this.children.includes(childId))
+            return null;
+
+        return this.nodeTree.getNode(childId);
     }
 
     /**
@@ -350,6 +379,13 @@ class TreeNode {
         
         for (const child of this.getChildren())
             child.traverseChildNodes(callback);
+    }
+
+    isSiblingNode(id) {
+        if (id == this.id)
+            return false;
+
+        return this.getParent().getChildren().includes(id);
     }
 }
 
@@ -674,7 +710,7 @@ class Task extends TreeNode {
         // console.log(`${dateLow} - ${dateHigh}, ${taskStart} : ${taskEnd}`);
 
         // check if either start or end is in bounds
-        return ( taskStart > dateLow && taskStart < dateHigh ) || ( taskEnd > dateLow && taskEnd < dateHigh ) || ( taskStart < dateLow && taskEnd > dateHigh );
+        return ( taskStart >= dateLow && taskStart <= dateHigh ) || ( taskEnd >= dateLow && taskEnd <= dateHigh ) || ( taskStart <= dateLow && taskEnd >= dateHigh );
     }
 
     // /** @return {string[]} */
@@ -704,6 +740,12 @@ const StatusName = {
     0: "Not Started",
     1: "In Progress",
     2: "Completed"
+}
+
+const StatusNameShort = {
+    0: "N",
+    1: "P",
+    2: "C"
 }
 
 class NotesHierarchy extends NodeHierarchyTree {

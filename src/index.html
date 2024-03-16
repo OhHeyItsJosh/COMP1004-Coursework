@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="">
     <div id="modal-container">
 
     </div>
@@ -245,7 +245,7 @@
         </modal>
 
         <div id="calendar-task" class="calendar-task-container flex-row" style="gap: 8px;">
-            <div class="flex-column expanded flex-centered">
+            <div class="flex-column expanded flex-centered task-text-content">
                 <h3 class="single-line-text" modal-var="name">Task</h3>
                 <p class="single-line-text" modal-var="description">Description</p>
             </div>
@@ -255,10 +255,10 @@
             </div>
         </div>
 
-        <div id="calender-subtask" class="calendar-task-container sub-task flex-row flex-align-center" style="gap: 8px">
-            <h3 modal-var="name" class="expanded single-line-text">Subtask</h3>
+        <!-- <div id="calender-subtask" class="calendar-task-container sub-task flex-row flex-align-center" style="gap: 8px">
+            <h4 modal-var="name" class="expanded single-line-text">Subtask</h4>
             <div modal-var="status" class="task-status-display">Status</div>
-        </div>
+        </div> -->
 
         <svg id="progress-indicator" class="progress-indicator" xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
             <use xlink:href="#stroke"/>
@@ -285,7 +285,17 @@
                 <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
                 <h4 id="project-settings" class="navbar-btn" onclick="openProjectPanel()">[Project Name]</h4>
                 <div class="expanded"></div>
-                <h3 style="margin: 0 32px">[Options]</h3>
+                <div class="flex-row" style="margin: 0 32px">
+                    <div id="theme-changer">
+                        <!-- svgs from svgrepo.com -->
+                        <svg class="lightmode-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5001M17.6859 17.69L18.5 18.5001M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg class="darkmode-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                            <path d="M3.32031 11.6835C3.32031 16.6541 7.34975 20.6835 12.3203 20.6835C16.1075 20.6835 19.3483 18.3443 20.6768 15.032C19.6402 15.4486 18.5059 15.6834 17.3203 15.6834C12.3497 15.6834 8.32031 11.654 8.32031 6.68342C8.32031 5.50338 8.55165 4.36259 8.96453 3.32996C5.65605 4.66028 3.32031 7.89912 3.32031 11.6835Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
             <svg width = "0" height = "0" viewBox="0 0 0 0">
@@ -305,7 +315,7 @@
                     <div class="flex-column" style="flex: 40; gap: 16px;">
                         <div class="flex-column" style="flex: 35; min-height: 200px">
                             <h1>Weekly Progress</h1>
-                            <div id="weekly-progress-graph">
+                            <div id="weekly-progress-graph" class="light-shadow">
                                 <div class="flex-row keep-height">
                                     <div class="pg-left-col">
                                         <h4 class="vertical-text">Task Progress</h4>
@@ -338,7 +348,7 @@
                         </div>
                     </div>
 
-                    <div id="task-calendar-container" class="flex-column" style="flex: 60">
+                    <div id="task-calendar-container" class="flex-column light-shadow" style="flex: 60">
                         <div id="calendar-background" class="flex-row flex-space-evenly">
                             <div class="vertical-separator"></div>
                             <div class="vertical-separator"></div>
@@ -444,6 +454,7 @@
         </div>
     </div>
 </body>
+<script defer src="javascript/themeChanger.js"></script>
 <script defer src = "javascript/prefab.js"></script>
 <script defer src = "javascript/tabSystem.js"></script>
 <script defer src = "javascript/modalSystem.js"></script>

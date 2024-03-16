@@ -186,11 +186,11 @@ const calendarItemBuilder = new StatefulCollectionBuilder({
         
         const showCompact = Math.abs(startIndex - endIndex) == 0;        
 
-        // const widget = state.hasParent()
-        //     ? buildCalenderSubtask(state, showCompact)
-        //     : buildCalendarTask(state, showCompact)
+        const widget = state.hasParent()
+            ? buildCalenderSubtask(state, showCompact)
+            : buildCalendarTask(state, showCompact)
 
-        const widget = buildCalendarTask(state, showCompact);
+        // const widget = buildCalendarTask(state, showCompact);
 
         widget.onclick = () => {
             showModal(new TaskViewModal(state));
@@ -199,17 +199,81 @@ const calendarItemBuilder = new StatefulCollectionBuilder({
         widget.style["grid-column-start"] = startIndex;
         widget.style["grid-column-end"] = endIndex + 1;
 
-        return widget;
-    },
-    onAppend: (builder, parent, widget, state) => {
         const container = elementWithClasses("div", ["week-divided"]);
         container.appendChild(widget);
 
-        parent.appendChild(container);
+        return container;
     },
     shouldAppend: (widget, state) => state.isInDateRange(currentDateRange.start, currentDateRange.end),
-    onRemove: (builder, widget) => {
-        widget.parentElement.remove();
+    // sorts from lowest to highest end date amoungst siblings
+    // dependant on the list being sorted correctly before the change is made (kinda messy, but it works for now)
+    sorter: (ids, changedState) => {
+        const siblingSet = changedState.isRootLevelNode() ? new Set(changedState.getTree().rootNodes) : new Set(changedState.getParent().getChildIds());
+        const parentId = changedState.getParentId();
+
+        const descendantsOfChanged = changedState.getDescendantIds();
+        
+        let parentIndex;
+        let siblingIndecies = []; // should already be ordered by end date
+        let moveBuffer;
+        for (let i = 0; i < ids.length; i++)
+        {
+            if (ids[i] == changedState.getId()) {
+                let descendantCount = 0;
+                
+                // find proceeding tasks that are descentants of the task being changed
+                while (descendantsOfChanged.has(ids[i + descendantCount + 1]) && i + descendantCount + 1 < ids.length)
+                    descendantCount++;
+
+                // remove task and descant tasks from list
+                moveBuffer = ids.splice(i, 1 + descendantCount);
+                i--;
+                continue;
+            }
+
+            if (ids[i] == parentId)
+                parentIndex = i;
+
+            if (siblingSet.has(ids[i]))
+                siblingIndecies.push(i);
+        }
+
+        // should never happen, but just to be safe
+        if (moveBuffer == undefined) {
+            return ids;
+        }
+
+        // factors in descendant count to find the index a task and its children
+        const getIndexAfterBranch = (index) => {
+            const node = changedState.getTree().getNode(ids[index]);
+            const descendantIds = node.getDescendantIds();
+
+            // get intersection count of descendant ids and ids in collection
+            let count = 0;
+            for (const id of ids)
+            {
+                if (descendantIds.has(id))
+                    count++;
+            }
+
+            return index + count + 1;
+        }
+
+        const insertionIndex = siblingIndecies.length != 0
+            // find index of sibling that the changed task should be placed before (if any)
+            ? siblingIndecies.find((index) => {
+                return changedState.getTree().getNode(ids[index]).getEndDateRaw() > changedState.getEndDateRaw();
+            }) 
+                // if no descendants with higher dates are found, get index after last sibling
+                ?? getIndexAfterBranch(siblingIndecies[siblingIndecies.length - 1])
+
+            // if no siblings, get index after parent
+            : parentIndex + 1 ?? 0
+        
+        // re-insert the changed task along with its descendants at the correct place
+        Array.prototype.splice.apply(ids, [insertionIndex, 0].concat(moveBuffer));
+
+        return ids;
     }
 });
 
@@ -252,12 +316,12 @@ function buildCalendarTask(task, compact) {
     builder.setVariableContent("name", task.getName());
     builder.setVariableContent("description", capString(task.getDescription(), 100));
 
-    applyTaskStatusToElement(builder.getVariable("status"), task);
+    applyTaskStatusToElement(builder.getVariable("status"), task, compact);
 
-    if (compact) {
-        builder.getVariable("description").remove();
-        builder.getVariable("status").remove();
-    }
+    // if (compact) {
+    //     builder.getVariable("description").remove();
+    //     // builder.getVariable("status").remove();
+    // }
 
     return builder.getElement();
 }
@@ -266,14 +330,8 @@ function buildCalendarTask(task, compact) {
  * @param {Task} task 
  */
 function buildCalenderSubtask(task, compact) {
-    const builder = fetchPrefab("calender-subtask");
-    
-    builder.setVariableContent("name", task.getName());
-    applyTaskStatusToElement(builder.getVariable("status"), task);
+    const element = buildCalendarTask(task, compact);
+    element.classList.add("sub-task");
 
-    if (compact) {
-        builder.getVariable("status").remove();
-    }
-
-    return builder.getElement();
+    return element;
 }
