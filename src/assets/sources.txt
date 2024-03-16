@@ -1,2 +1,10 @@
-sun - https://www.svgrepo.com/svg/532889/sun
-moon - https://www.svgrepo.com/svg/532875/moon
+sun icon - https://www.svgrepo.com/svg/532889/sun
+moon icon - https://www.svgrepo.com/svg/532875/moon
+dashboard icon - https://www.svgrepo.com/svg/520684/dashboard
+list icon - https://www.svgrepo.com/svg/532197/list-ul-alt-1
+note icon - https://www.svgrepo.com/svg/502782/note
+spanner icon - https://www.svgrepo.com/svg/479615/spanner
+link icon - https://www.svgrepo.com/svg/529680/link
+pencil icon - https://www.svgrepo.com/svg/532977/pencil
+tag icon - https://www.svgrepo.com/svg/533457/tag
+delete icon - https://www.svgrepo.com/svg/502608/delete-2

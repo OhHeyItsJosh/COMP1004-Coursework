@@ -122,14 +122,15 @@ class StatefulCollectionBuilder extends Stateful {
 
     rebuildItem(id, state, builderArgs) {
         const currentWidget = this.#items.get(id);
-        if (!currentWidget)
-            return;
-
-        // remove the item if it should not be appended
-        if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state)) {
-            this.removeItem(id);
+        if (!currentWidget) {
             return;
         }
+
+        // // remove the item if it should not be appended
+        // if (this.#shouldAppendPredicate && !this.#shouldAppendPredicate(id, state)) {
+        //     this.removeItem(id);
+        //     return;
+        // }
 
         const rebuiltWidget = this.#builder(state, builderArgs);
         currentWidget.replaceWith(rebuiltWidget);

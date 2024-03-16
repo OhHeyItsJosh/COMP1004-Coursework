@@ -3,10 +3,11 @@
     padding: 0;
     margin: 0;
     transition: 0.3s ease-in-out;
-    transition-property: background, color, border, box-shadow;
+    transition-property: background, color, border, box-shadow, stroke, fill;
 }
 
 :root {
+    --base-transition: 0.3s ease-in-out;
     --background-colour: white;
     --foreground-colour: rgb(65,65,65);
     --header-colour: #dbdfde;
@@ -49,6 +50,76 @@ header {
     flex-shrink: 0;
     z-index: 2;
     /* color: white; */
+}
+
+button {
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    /* border: 1px solid rgba(0,0,0,0.1); */
+    background-color: var(--accent-colour);
+    transition: 0.2s linear;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+button:hover, input[type="file"]::file-selector-button:hover {
+    background: #007580;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    padding: 2px 8px;
+    transition: 0.2s linear;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
+    border: none;
+    background-color: var(--accent-colour);
+    float: left;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+}
+
+
+.text-btn {
+    background: none;
+    padding: 0;
+    box-shadow: none;
+    font-weight: 800;
+    color: var(--foreground-colour);
+}
+
+.text-btn:hover {
+    background: none;
+    transform: translateY(-2px);
+}
+
+.text-btn svg {
+    stroke: var(--foreground-colour);
+}
+
+button svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
+    flex-shrink: 0;
+    stroke: white;
+}
+
+.pad-2pt {
+    padding: 2px;
+    box-sizing: border-box;
+}
+
+.compact-icon {
+    width: 20px;
+    height: 20px;
 }
 
 #theme-changer {
@@ -138,6 +209,9 @@ svg {
     background: var(--selected-colour);
     cursor: pointer;
     user-select: none;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
 }
 
 .selectable-tab-active {
@@ -149,6 +223,12 @@ svg {
     transition: 0.2s ease-in;
     height: 0;
     transform: translateX(-50%);
+}
+
+.navbar-btn svg {
+    width: 35px;
+    height: 35px;
+    margin-right: 4px;
 }
 
 .selectable-tab-active::after {
@@ -256,24 +336,6 @@ svg {
 /* .centered-column * {
     text-align: center;
 } */
-
-button {
-    padding: 6px 12px;
-    border-radius: 12px;
-    border: none;
-    font-weight: bold;
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
-    /* border: 1px solid rgba(0,0,0,0.1); */
-    background-color: var(--accent-colour);
-    transition: 0.2s linear;
-    box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.2);
-}
-
-button:hover {
-    background: #007580;
-    cursor: pointer;
-}
 
 .task-group {
     position: relative;
@@ -1018,12 +1080,24 @@ input::-webkit-color-swatch {
 
 .vertical-text {
     text-orientation: sideways;
-    writing-mode: sideways-lr;
+    writing-mode: vertical-rl;
+    rotate: 180deg;
     letter-spacing: 0;
 }
 
 .light-shadow {
     box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.2);
+}
+
+.export-link {
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--foreground-colour);
+}
+
+input[type="file"] {
+    position: relative;
+    font-weight: bold;
 }
 /* .current-day::after {
     content: "";

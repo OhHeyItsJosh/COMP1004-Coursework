@@ -252,8 +252,9 @@ class TaskViewModal extends Modal {
             this.task.addChildNode(task);
             changeMade();
 
-            this.nestedTasksBuilder.appendItem(task.getId(), task);
+            // this.nestedTasksBuilder.appendItem(task.getId(), task);
             taskStateNotifier.setState(this.task.getId(), this.task);
+            taskStateNotifier.setState(task.getId(), task);
             
             this.task.forEachParent((id, task) => {
                 taskStateNotifier.setState(id, task);

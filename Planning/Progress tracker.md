@@ -33,13 +33,13 @@ kanban-plugin: basic
 
 ## In Progress
 
+- [ ] Visual improvements:<br>- [x] Adding icons<br>- [x] Improving some buttons<br>- [ ] Adding logo<br>- [x] Adding dark mode
 
 
 ## Sprint Backlog
 
 - [ ] [[Scrum meeting 6|Sprint 6 spec]]
 - [ ] Add ability to delete:<br>- [ ] tasks<br>- [ ] notes<br>- [ ] tags
-- [ ] Visual improvements:<br>- [ ] Adding icons<br>- [ ] Improving some buttons<br>- [ ] Adding logo<br>- [ ] Adding dark mode
 
 
 ## Project Backlog

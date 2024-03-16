@@ -83,7 +83,7 @@ function init() {
         if (id != activeProject.id)
             return;
 
-        document.getElementById("project-settings").innerText = state.name;
+        document.getElementById("project-settings").querySelector("p").innerText = state.name;
     }));
 
     onProjectLoad();
