@@ -296,7 +296,7 @@ const upcomingTasksBuilder = new StatefulCollectionBuilder({
         updateUpcomingTaskCount(builder.itemCount());
         parent.appendChild(widget);
     },
-    onRemove: (builder, widget) => {
+    onRemove: (id, builder, widget) => {
         updateUpcomingTaskCount(builder.itemCount());
     }
 })

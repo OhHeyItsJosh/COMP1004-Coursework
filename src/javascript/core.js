@@ -66,7 +66,7 @@ class Project {
     // second relation = note
 
     getRelatedNotesForTask(taskId) {
-        return this.taskNoteRelationship.getRelationsForFirst(taskId).map((id) => this.notesHierarchy.getNode(id));
+        return this.taskNoteRelationship.getRelationsForFirst(taskId).map((id) => this.notesHierarchy.getNode(id)).filter(note => note);
     }
 
     getRelatedTasksForNote(noteId) {
@@ -164,6 +164,15 @@ class NodeHierarchyTree {
         return pred;
     }
 
+    deleteNode(id) {
+        this.nodeMap.delete(id);
+
+        // remove from root level nodes
+        const rootIndex = this.rootNodes.indexOf(id);
+        if (rootIndex != -1)
+            this.rootNodes.splice(rootIndex, 1);
+    }
+
     /**
      * 
      * @param {(id: string, node: TreeNode)} callback 
@@ -174,6 +183,9 @@ class NodeHierarchyTree {
         for (const rootNodeId of this.rootNodes)
         {
             const node = this.nodeMap.get(rootNodeId);
+            if (!node)
+                continue;
+
             node.traverseChildNodes(callback);
         }
     }
@@ -293,6 +305,18 @@ class TreeNode {
         this.children.splice(index, 1);
     }
 
+    deleteRecursive() {
+        for (const child of this.getChildren())
+        {
+            child.deleteRecursive();
+        }
+        
+        if (this.parent)
+            this.getParent().removeChildNode(this);
+
+        this.nodeTree.deleteNode(this.id);
+    }
+
     getChildren() {
         return this.children.map((child) => this.nodeTree.getNode(child));
     }
@@ -372,7 +396,7 @@ class TreeNode {
 
     /**
      * 
-     * @param {(id: string, note: TreeNode) => void} callback 
+     * @param {(id: string, node: TreeNode) => void} callback 
      */
     traverseChildNodes(callback) {
         callback(this.getId(), this);
@@ -432,7 +456,7 @@ class TasksHierarchy extends NodeHierarchyTree {
         while (this.tagRepo.has(index))
             { index++; }
 
-        return index;
+        return index.toString();
      }
 
      /**
@@ -446,6 +470,29 @@ class TasksHierarchy extends NodeHierarchyTree {
         this.tagRepo.set(tag.id.toString(), tag);
 
         return tag;
+     }
+
+     /**
+      * 
+      * @param {string} tagId 
+      * @param {(task: Task) => void} removeCallback 
+      * @returns 
+      */
+     deleteTag(tagId, removeCallback) {
+        if (!this.tagRepo.has(tagId))
+            return;
+
+        this.tagRepo.delete(tagId);
+
+        // remove that tag from every node
+        this.forEachNode((id, node) => {
+            if (node.hasTag(tagId)) {
+                node.removeTag(tagId);
+
+                if (removeCallback)
+                    removeCallback(node);
+            }
+        });
      }
 
      /**
@@ -469,7 +516,7 @@ class TasksHierarchy extends NodeHierarchyTree {
 }
 
 class Tag {
-    /** @type {number} */
+    /** @type {string} */
     id;
     /** @type {string} */
     text;
@@ -505,7 +552,7 @@ class Task extends TreeNode {
     endDate;
 
     /**
-     * @type {number[]}
+     * @type {string[]}
      * @private */
     tags;
 
@@ -567,7 +614,6 @@ class Task extends TreeNode {
 
         return nodeJSON;
     }
-
 
     getName() {
         return this.name;
@@ -860,7 +906,7 @@ class ManyToManyNodeRelationship {
 
     /**
      * 
-     * @param {Map<string, string[]>} relations 
+     * @param {Map<string, string[]>} relationsMap 
      * @param {string} targetId 
      * @param {string} newId 
      */
@@ -879,6 +925,13 @@ class ManyToManyNodeRelationship {
         }
     }
 
+    /**
+     * 
+     * @param {Map<string, string[]?} relationsMap 
+     * @param {string} targetId 
+     * @param {string} newId 
+     * @returns 
+     */
     removeFromRelations(relationsMap, targetId, newId) {
         if (!relationsMap.has(targetId))
             return;
@@ -890,6 +943,9 @@ class ManyToManyNodeRelationship {
             return;
 
         relationList.splice(itemIndex, 1);
+
+        if (relationList.length == 0)
+            relationsMap.delete(targetId);
     }
 
     containsRelation(relationsMap, targetId, compareId) {
@@ -978,6 +1034,9 @@ class ProgressTrackerData {
      * @param {Task} task 
      */
     trackTaskChange(task) {
+        if (!task)
+            return;
+
         const progressRef = this.taskRefs.get(task.getId()) ?? 
         // create new task ref
         (() => {
@@ -1011,6 +1070,20 @@ class ProgressTrackerData {
 
         if (changeMade)
             this.updateCallbacks.forEach((callback) => callback(task));
+    }
+
+    removeTrackedTaskData(taskId) {
+        const taskRef = this.taskRefs.get(taskId);
+        if (!taskRef)
+            return;
+
+        if (taskRef.startedDateRef)
+            this.progressStartedIndecies.splice(this.progressStartedIndecies.indexOf(taskRef.startedDateRef), 1);
+
+        if (taskRef.completedDateRef)
+            this.completionIndecies.splice(this.completionIndecies.indexOf(taskRef.completedDateRef), 1);
+
+        this.updateCallbacks.forEach((callback) => callback(null));
     }
 
     getTaskProgressInDateRange(lowerDate, upperDate) {
@@ -1071,7 +1144,6 @@ class ProgressTrackerData {
                 (date <= this._boundSafeIndex(indexList, refIndex + 1).date)
             )
             {
-                console.log("index did not change");
                 return {ref: existingRef, didChange: false}
             }
 

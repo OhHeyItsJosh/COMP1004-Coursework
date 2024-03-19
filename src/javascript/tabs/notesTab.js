@@ -58,15 +58,35 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
         const expanded = elementWithClasses("div", ["expanded"])
         widget.appendChild(expanded);
 
+        const btnRow = elementWithClasses("div", ["tree-button-row"]);
+
+        // create button to delete note
+        const deleteBtn = elementWithClasses("p", ["tree-button"]);
+        deleteBtn.innerHTML = "x";
+        deleteBtn.addEventListener("click", (event) => {
+            showModal(new ConfirmationDialog({
+                title: "Delete Note?",
+                description: "Are you sure you want to delete this note?",
+                onConfirm: () => {
+                    deleteNote(state);
+                }
+            }))
+            event.stopPropagation();
+        })
+
+        btnRow.appendChild(deleteBtn);
+
         // create button to add child note
-        const addBtn = elementWithClasses("p", ["tree-add-child"]);
+        const addBtn = elementWithClasses("p", ["tree-button"]);
         addBtn.innerHTML = "+";
         addBtn.addEventListener("click", (event) => {
             createNote(state);
             event.stopPropagation();
         });
 
-        widget.appendChild(addBtn);
+        btnRow.appendChild(addBtn);
+
+        widget.appendChild(btnRow);
 
         // select the note when it is clicked.
         widget.onclick = () => {
@@ -162,10 +182,40 @@ function selectNote(id) {
 
     // set selected class in explorer
     const selectedExplorerItem = noteExplorerBuilder.getItem(id);
-    selectedExplorerItem.classList.add("selected");
+    if (selectedExplorerItem)
+        selectedExplorerItem.classList.add("selected");
     
     selectedNoteId = id;
     buildNoteContent();
+}
+
+/**
+ * @param {Note} note 
+ */
+function deleteNote(note) {
+    // deselect note if selected
+    if (selectedNoteId == note.getId() || note.getDescendantIds().has(selectedNoteId))
+        selectNote(undefined);
+
+    const parent = note.getParent();
+
+    note.traverseChildNodes((id, _) => {
+        // update UI state
+        noteStateNotifier.setState(id, null);
+
+        // remove relationships
+        const relatedTasks = activeProject.getRelatedTasksForNote(id);
+        for (const relatedTask of relatedTasks)
+        {
+            activeProject.taskNoteRelationship.removeRelationship(id, relatedTask.getId());
+        }
+    })
+
+    note.deleteRecursive();
+
+    // rebuild parent for note explorer, to remove drawer if only child
+    if (parent)
+        noteExplorerBuilder.setItem(parent.getId(), parent);
 }
 
 /**

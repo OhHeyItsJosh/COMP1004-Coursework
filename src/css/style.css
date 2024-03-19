@@ -782,23 +782,29 @@ input::-webkit-color-swatch {
     bottom: calc(10% + 3px);
 }
 
-.tree-item .tree-add-child {
+.tree-item .tree-button-row {
+    margin-right: 8px;
     display: none;
+}
+
+.tree-item .tree-button {
+    display: flex;
     width: 1.2rem;
     height: 1.2rem;
     text-align: center;
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    margin-right: 8px;
     font-weight: bold;
 }
 
-.tree-item:hover .tree-add-child {
+.tree-item:hover .tree-button-row {
     display: flex;
+    flex-direction: row;
+    gap: 2px;
 }
 
-.tree-item .tree-add-child:hover {
+.tree-item .tree-button:hover {
     background: rgba(200,200,200, 0.5);
 }
 

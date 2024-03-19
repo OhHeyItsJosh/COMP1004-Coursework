@@ -30,7 +30,7 @@ class StatefulCollectionBuilder extends Stateful {
      * @typedef {(widget: Object, state: T) => boolean} AppendPredicate
      * @typedef {(builder: StatefulCollectionBuilder, parent: HTMLElement, widget: HTMLElement, state: T) => void} AppendCallback
      * @typedef {(ids: string[], changedState: T) => string[]} SortCallback
-     * @typedef {(builder: StatefulCollectionBuilder, widget: HTMLElement) => void} RemoveCallback
+     * @typedef {(id: string, builder: StatefulCollectionBuilder, widget: HTMLElement) => void} RemoveCallback
      */
 
     /** @type {HTMLElement} */
@@ -144,9 +144,10 @@ class StatefulCollectionBuilder extends Stateful {
             return;
         
         this.#items.delete(id);
+        this.#orderIndex.splice(this.#orderIndex.indexOf(id));
         
         if (this.#onRemove)
-            this.#onRemove(this, target);
+            this.#onRemove(id, this, target);
         
         try {
             target.remove();
@@ -278,6 +279,11 @@ class StatefulDistributor extends Stateful {
     }
 
     setItem(id, state, args, builderArgs) {
+        if (state == null) {
+            this.removeFromAll(id);
+            return;
+        }
+
         // sort
         const groupId = this.sortToGroup(id, state);
         const sortedGroup = this.statefulGroups.get(groupId);

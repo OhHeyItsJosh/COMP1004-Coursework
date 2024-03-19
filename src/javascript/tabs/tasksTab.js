@@ -111,8 +111,15 @@ function applyTaskStatusToElement(element, task, short) {
  * @returns 
  */
 function renderTag(tag) {
-    const elem = document.createElement("div");
-    elem.classList.add("task-tag");
+    const elem = elementWithClasses("div", ["task-tag"])
+
+    if (!tag) {
+        elem.innerHTML = "ERR";
+        elem.style.color = "red";
+
+        return elem;
+    }
+    
     elem.innerHTML = tag.text;
     elem.setAttribute("style", `background: ${tag.color};`);
     return elem;
@@ -169,6 +176,7 @@ class TaskViewModal extends Modal {
         // populate basic text elements
         this.renderStaticText(modalBuilder);
 
+        // set edit button
         modalBuilder.setVariableClickListener("edit-btn", () => {
             const editModal = new CreateTaskModal((editedTask) => 
             {
@@ -188,6 +196,29 @@ class TaskViewModal extends Modal {
             editModal.useExistingTask(this.task);
             showModal(editModal);
         });
+
+        modalBuilder.setVariableClickListener("delete-btn", () => {
+            showModal(new ConfirmationDialog({
+                title: "Delete Task?",
+                description: "Are you sure you want to delete this task?",
+                onConfirm: () => {
+                    // remove task and all sub-tasks from UI
+                    this.task.traverseChildNodes((id, _) => {
+                        taskStateNotifier.setState(id, null);
+
+                        const relatedNotes = activeProject.getRelatedNotesForTask(id);
+                        for (const relatedNote of relatedNotes)
+                        {
+                            activeProject.taskNoteRelationship.removeRelationship(id, relatedNote.getId());
+                        }
+                    });
+
+                    this.task.deleteRecursive();
+
+                    popHighestModal();
+                }
+            }))
+        })
 
         // status select box
         const statusSelectBox = modalBuilder.getVariable("status-select");
@@ -456,6 +487,7 @@ class TagEditModal extends Modal {
         activeProject.tasksHierarchy.getSavedTags()
         .map((tag) => {
             const tagElement = renderTag(tag);
+            tagElement.classList.add("flex")
             tagElement.onclick = () => {
                 this.toggleTag(tag);
                 changeMade();
@@ -463,14 +495,34 @@ class TagEditModal extends Modal {
                 popHighestModal();
             }
 
-            return tagElement;
+            const deleteBtn =  document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            deleteBtn.classList.add("compact-icon");
+            deleteBtn.innerHTML = `<use xlink:href="#delete-icon"/>`;
+            deleteBtn.style.cursor = "pointer";
+            deleteBtn.addEventListener("click", () => {
+                showModal(new ConfirmationDialog({
+                    title: "Delete tag?",
+                    description: "Are you sure you want to delete this tag?",
+                    onConfirm: () => {
+                        activeProject.tasksHierarchy.deleteTag(tag.id.toString(), (task) => taskStateNotifier.setState(task.getId(), task));
+                        this.onUpdate(tag.id, null);
+                        popHighestModal();
+                    }
+                }))
+            });
+
+            const row = elementWithClasses("div", ["flex-row", "flex-align-center"]);
+            row.appendChild(tagElement);
+            row.appendChild(deleteBtn);
+            row.style.gap = "4px";
+
+            return row;
         })
         .forEach((element) => {
             tagContainer.appendChild(element);
         });
-        
 
-        tagSelectModalBuilder.setVariableClickListener("tag-submit-btn", () => {
+        const tagSubmit = () => {
             const tagText = tagSelectModalBuilder.getVariable("tag-text-field").value;
             const tagColour = tagSelectModalBuilder.getVariable("tag-colour-field").value;
 
@@ -479,7 +531,13 @@ class TagEditModal extends Modal {
             changeMade();
 
             popHighestModal();
-        });
+        };
+        
+        tagSelectModalBuilder.getVariable("tag-text-field").addEventListener("keydown", (event) => {
+            if (event.key == "Enters")
+                tagSubmit();
+        })
+        tagSelectModalBuilder.setVariableClickListener("tag-submit-btn", tagSubmit);
 
         return tagSelectModalBuilder.getElement();
     }

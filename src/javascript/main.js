@@ -68,7 +68,16 @@ function onProjectLoad() {
     progressTracker.addUpdateCallback((_) => redrawProgressGraph());
     redrawProgressGraph();
 
-    taskStateNotifier.addBuilder(new StatefulListener((id, state) => progressTracker.trackTaskChange(state)));
+    taskStateNotifier.addBuilder(new StatefulListener((id, state) => {
+        // remove tracked data on task remove
+        if (!state) {
+            progressTracker.removeTrackedTaskData(id);
+            return;
+        }
+
+        progressTracker.trackTaskChange(state);
+
+    }));
     // console.log(progressTracker.progressStartedIndecies.map(item => item.date));
     // console.log(progressTracker);
     // console.log(progressTracker.progressStartedIndecies.map((id) => activeProject.tasksHierarchy.getNode(id).getStartedAt()).join(", "));
