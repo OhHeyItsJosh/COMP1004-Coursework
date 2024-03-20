@@ -178,7 +178,7 @@ class StatefulCollectionBuilder extends Stateful {
         for (const [id, widget] of this.#items.entries())
         {
             if (this.#onRemove)
-                this.#onRemove(this, widget);
+                this.#onRemove(id, this, widget);
 
             try {
                 widget.remove();

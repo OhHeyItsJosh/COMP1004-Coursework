@@ -6,6 +6,7 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] [[Scrum meeting 6|Sprint 6 spec]]
 - [ ] Visual improvements:<br>- [x] Adding icons<br>- [x] Improving some buttons<br>- [x] Adding dark mode<br>- possibly add logo
 - [ ] Add ability to delete:<br>- [x] tasks<br>- [x] notes<br>- [x] tags
 - [ ] Dashboard requirements:<br><br>- [x] Do some planning on how elements of this tab will work -> [[Task calendar and progress view graphics]]<br>- [x] Make a prototype for the calendar view<br>- [x] Implement basic layout shown in initial wireframe (without any of the graph stuff)<br>- [x] Create and implement the calendar view functionality<br>- [x] Make a prototype wireframe for the progress graph<br>- [x] Create and implement progress graph
@@ -39,7 +40,7 @@ kanban-plugin: basic
 
 ## Sprint Backlog
 
-- [ ] [[Scrum meeting 6|Sprint 6 spec]]
+- [ ] [[Scrum memeting 7|Sprint 7 spec]]
 
 
 ## Project Backlog
