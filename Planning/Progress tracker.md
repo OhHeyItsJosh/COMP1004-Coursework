@@ -43,16 +43,19 @@ kanban-plugin: basic
 
 - [ ] [[Scrum memeting 7|Sprint 7 spec]]
 - [ ] Plan and draft design for poster
-- [ ] Possibly create a logo for the application
 - [ ] Finish GitHub readme that outlines the project
+- [ ] Possibly create a logo for the application
 
 
 ## Project Backlog
 
+
+
+***
+
+## Archive
+
 - [ ] Create sequence diagram
-
-
-
 
 %% kanban:settings
 ```

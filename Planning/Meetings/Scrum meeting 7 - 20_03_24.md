@@ -6,5 +6,5 @@
 ### Plans for the next sprint
 
 - add sprint planning to report.
-- create poster.
-- add GitHub readme to repo.
+- design and draft poster for app.
+- write a GitHub readme file for my repo that outlines the important parts of the project.
