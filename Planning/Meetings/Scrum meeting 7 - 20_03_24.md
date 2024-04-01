@@ -3,7 +3,7 @@
 - Completed all plans set out.
 - added progress tracker graph and improved task calendar.
 - implemented visual improvements: icons, dark mode, etc.
-### Things to do
+### Plans for the next sprint
 
 - add sprint planning to report.
 - create poster.

@@ -1,56 +1,18 @@
 {
   "main": {
-    "id": "c22aed55800ef4cd",
+    "id": "4a76cec084c4d987",
     "type": "split",
     "children": [
       {
-        "id": "60e28aec73d69e0a",
+        "id": "90e1cd4b57ef0f5f",
         "type": "tabs",
         "children": [
           {
-            "id": "7376df5ab99cab67",
+            "id": "4fbc7399ad72c0a8",
             "type": "leaf",
             "state": {
-              "type": "kanban",
-              "state": {
-                "file": "Progress tracker.md"
-              }
-            }
-          },
-          {
-            "id": "e6ab91c64d7f244d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/Scrum meeting 3 - 13_12_23.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "b970c48656f80a76",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/Scrum meeting 7 - 20_03_24.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "9d86756d3e8738f1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/Scrum meeting 5 - 14_02_24.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -59,15 +21,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "343308ac9ec0ccc4",
+    "id": "f236b01d9a3789a9",
     "type": "split",
     "children": [
       {
-        "id": "5ff8deeb5a43bc6f",
+        "id": "9f25db53af2ad9c1",
         "type": "tabs",
         "children": [
           {
-            "id": "fe27de7f050df5de",
+            "id": "5a80a8487163ee6f",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -77,7 +39,7 @@
             }
           },
           {
-            "id": "29b0d3091275180a",
+            "id": "10f61c2d9c2c7cd9",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -92,7 +54,7 @@
             }
           },
           {
-            "id": "3d5a0878ff97718a",
+            "id": "6251d216bc4ac3eb",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -106,20 +68,19 @@
     "width": 300
   },
   "right": {
-    "id": "7642e4b3e57e9298",
+    "id": "0d79e933f8da8762",
     "type": "split",
     "children": [
       {
-        "id": "c9b7a80a16f939db",
+        "id": "2dac5807fb71472b",
         "type": "tabs",
         "children": [
           {
-            "id": "8800845c14858d93",
+            "id": "611731a1ae9bf04d",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Progress tracker.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -131,19 +92,18 @@
             }
           },
           {
-            "id": "f894b78047b650bb",
+            "id": "8da8f13a46f54623",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Progress tracker.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "82e9e5e43dfd276f",
+            "id": "d78256b8f8920227",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -154,13 +114,11 @@
             }
           },
           {
-            "id": "ce1a3c7507d25f0d",
+            "id": "0ef6dc0960a86bcd",
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Progress tracker.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -180,18 +138,6 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7376df5ab99cab67",
-  "lastOpenFiles": [
-    "Meetings/Scrum meeting 7 - 20_03_24.md",
-    "Meetings/Scrum meeting 6 - 28_02_24.md",
-    "Meetings/Scrum meeting 5 - 14_02_24.md",
-    "Meetings/Scrum meeting 4 - 31_01_24.md",
-    "Meetings/Scrum meeting 3 - 13_12_23.md",
-    "Meetings/Scrum meeting 1 - 01_11_23.md",
-    "Progress tracker.md",
-    "Meetings/Scrum meeting 2 - 29_11_23.md",
-    "Meetings/Scrum meeting 2 - agenda.md",
-    "Feature Planning/Task calendar and progress view graphics.md",
-    "Feature Planning"
-  ]
+  "active": "4fbc7399ad72c0a8",
+  "lastOpenFiles": []
 }
