@@ -11,9 +11,10 @@ Both tasks and notes follow a tree hierarchy structure where, for example, sub-t
 Tasks are intended to track individual aspects of a project, they contain information such as a title, description, start and end date, tags, etc. Tasks can be created and viewed on the tasks tab where they are sorted into 3 groups depending on their status: not started, in progress, and completed.
 
 ![task-tab](examples/tasks-tab.png)
+
 ![task-view](examples/task-view.png)
 
-Notes are more simple as they consist of a title and content. These notes can be used for the planning aspect of the project. They can be created and viewed on the notes tab.
+Notes are more simple, they consist of a title and content. They can be created and viewed on the notes tab.
 
 ![note-tab](examples/notes-tab.png)
 
