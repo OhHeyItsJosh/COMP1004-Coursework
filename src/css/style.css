@@ -875,7 +875,7 @@ input::-webkit-color-swatch {
 }
 
 .related::after {
-    content: "Related";
+    content: "Linked";
     position: absolute;
     font-weight: bold;
     padding: 2px 48px;

@@ -388,7 +388,7 @@ function linkTaskToNote() {
             relatedTasksBuilder.setItem(task.getId(), task);
             changeMade();
         }
-    })
+    }, "Link Task")
 
     showModal(selectorModal);
 }

@@ -8,12 +8,36 @@
         "type": "tabs",
         "children": [
           {
-            "id": "e6ab91c64d7f244d",
+            "id": "c679e232c2589a42",
             "type": "leaf",
             "state": {
               "type": "kanban",
               "state": {
                 "file": "Progress tracker.md"
+              }
+            }
+          },
+          {
+            "id": "c9e0c41856d3c8a1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meetings/Scrum meeting 4 - 31_01_24.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "f65df61d8910fb1b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meetings/Scrum meeting 3 - 13_12_23.md",
+                "mode": "source",
+                "source": false
               }
             }
           },
@@ -168,18 +192,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "e6ab91c64d7f244d",
+  "active": "c679e232c2589a42",
   "lastOpenFiles": [
     "Meetings/Scrum meeting 3 - 13_12_23.md",
+    "Meetings/Scrum meeting 4 - 31_01_24.md",
     "Progress tracker.md",
+    "Meetings/Scrum meeting 2 - 29_11_23.md",
+    "Meetings/Scrum meeting 5 - 14_02_24.md",
+    "Feature Planning/Task calendar and progress view graphics.md",
     "Meetings/Scrum meeting 7 - 20_03_24.md",
     "Meetings/Scrum meeting 6 - 28_02_24.md",
-    "Meetings/Scrum meeting 5 - 14_02_24.md",
-    "Meetings/Scrum meeting 4 - 31_01_24.md",
     "Meetings/Scrum meeting 2 - agenda.md",
-    "Meetings/Scrum meeting 2 - 29_11_23.md",
     "Meetings/Scrum meeting 1 - 01_11_23.md",
-    "Feature Planning/Task calendar and progress view graphics.md",
     "Feature Planning"
   ]
 }

@@ -442,6 +442,8 @@ class SearchSelector extends StatefulCollectionBuilder {
 class SearchSelectorModal extends Modal {
 
     selectorArgs;
+    /** @type {string} */
+    title;
     /** @type {SearchSelector} */
     selectorBuilder;
 
@@ -449,13 +451,18 @@ class SearchSelectorModal extends Modal {
      * 
      * @param {SearchSelectorArgs} args 
      */
-    constructor(args) {
+    constructor(args, title) {
         super();
+        this.title = title;
         this.selectorArgs = args;
     }
 
     build() {
         const modalBuilder = fetchPrefab("search-modal");
+
+        if (this.title) {
+            modalBuilder.setVariableContent("title", this.title);
+        }
 
         const itemContainer = modalBuilder.getVariable("item-container");
         this.selectorBuilder = new SearchSelector(this.selectorArgs, itemContainer);

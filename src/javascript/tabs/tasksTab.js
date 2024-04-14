@@ -344,7 +344,7 @@ class TaskViewModal extends Modal {
                     if (relatedTasksBuilder)
                         relatedTasksBuilder.setItem(this.task.getId(), this.task);
                 }
-            }))
+            }, "Link Note"))
         });
 
         // render progress indicator if there are subtasks
