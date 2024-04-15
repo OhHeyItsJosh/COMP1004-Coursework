@@ -23,7 +23,7 @@
 }
 
 #modal-container > :not(:last-child) {
-    filter: blur(24px);
+    filter: blur(24px) brightness(0.6);
     pointer-events: none;
 }
 
