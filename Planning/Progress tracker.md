@@ -6,6 +6,7 @@ kanban-plugin: basic
 
 ## Complete
 
+- [ ] Finish GitHub readme that outlines the project
 - [ ] [[Scrum meeting 6 - 28_02_24|Sprint 6 spec]]
 - [ ] Visual improvements:<br>- [x] Adding icons<br>- [x] Improving some buttons<br>- [x] Adding dark mode<br>- possibly add logo
 - [ ] Add ability to delete:<br>- [x] tasks<br>- [x] notes<br>- [x] tags
@@ -36,19 +37,18 @@ kanban-plugin: basic
 
 ## In Progress
 
+- [ ] Plan and draft design for poster
 - [ ] Update report with progress tracking information
 
 
 ## Sprint Backlog
 
 - [ ] [[Scrum memeting 7|Sprint 7 spec]]
-- [ ] Plan and draft design for poster
-- [ ] Finish GitHub readme that outlines the project
-- [ ] Possibly create a logo for the application
 
 
 ## Project Backlog
 
+- [ ] Possibly create a logo for the application
 
 
 ***

@@ -87,7 +87,7 @@ function buildTaskCard(task) {
     task.getTags().forEach((tag) => tagContainer.appendChild(renderTag(tag)));
 
     const taskElement = taskCard.getElement();
-    taskElement.onclick = () => showModal(new TaskViewModal(task));
+    onClickOnEnter(taskElement, () => showModal(new TaskViewModal(task)));
 
     // progress indicator
     const completion = task.getSubtaskCompletion();
@@ -303,11 +303,11 @@ class TaskViewModal extends Modal {
             parent: relatedNotesContainer,
             builder: (state, args) => {
                 const card = createNoteCard(state);
-                card.onclick = () => {
+                onClickOnEnter(card, () => {
                     selectNote(state.getId());
                     popAllModals();
                     getTabHandler("main-nav").switchTab("notes");
-                }
+                });
                 
                 return card;
             },
@@ -488,18 +488,22 @@ class TagEditModal extends Modal {
         .map((tag) => {
             const tagElement = renderTag(tag);
             tagElement.classList.add("flex")
-            tagElement.onclick = () => {
+            tagElement.tabIndex = 0;
+
+            onClickOnEnter(tagElement, () => {
                 this.toggleTag(tag);
                 changeMade();
 
                 popHighestModal();
-            }
+            });
 
             const deleteBtn =  document.createElementNS("http://www.w3.org/2000/svg", "svg");
             deleteBtn.classList.add("compact-icon");
+            deleteBtn.tabIndex = 0;
             deleteBtn.innerHTML = `<use xlink:href="#delete-icon"/>`;
             deleteBtn.style.cursor = "pointer";
-            deleteBtn.addEventListener("click", () => {
+
+            onClickOnEnter(deleteBtn, () => {
                 showModal(new ConfirmationDialog({
                     title: "Delete tag?",
                     description: "Are you sure you want to delete this tag?",

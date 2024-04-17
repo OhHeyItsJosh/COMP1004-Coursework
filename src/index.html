@@ -27,7 +27,7 @@
         </modal>
 
         <!-- task card widget -->
-        <div class="card" id = "task-card-prefab">
+        <div class="card" id = "task-card-prefab" tabindex="0">
             <div class="space-between-row">
                 <div class="flex-row" style="align-items: center;">
                     <h3 class="card-title" modal-var="name">Task name</h3>
@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        <div class="card generic-card" id="generic-card">
+        <div tabindex="0" class="card generic-card" id="generic-card">
             <h3 modal-var="title">Title</h3>
             <p class="card-description" modal-var="content">Content</p>
         </div>
@@ -249,7 +249,7 @@
             </div>
         </modal>
 
-        <div id="calendar-task" class="calendar-task-container flex-row" style="gap: 8px;">
+        <div id="calendar-task" tabindex="0" class="calendar-task-container flex-row" style="gap: 8px;">
             <div class="flex-column expanded flex-centered task-text-content">
                 <h3 class="single-line-text" modal-var="name">Task</h3>
                 <p class="single-line-text" modal-var="description">Description</p>
@@ -283,7 +283,7 @@
             <div class="flex-row flex-align-center" style="height: 100%">
                 <!-- <h3 style="margin: 0 32px;">[LOGO]</h3> -->
                 <ul class="navbar tab-controller" tab-controller-id="main-nav">
-                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id = "dashboard">
+                    <li class="selectable-tab navbar-btn selectable-tab-active" tab-id = "dashboard" tabindex="0">
                         <svg width="800px" height="800px" viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M9.918 10.0005H7.082C6.66587 9.99708 6.26541 10.1591 5.96873 10.4509C5.67204 10.7427 5.50343 11.1404 5.5 11.5565V17.4455C5.5077 18.3117 6.21584 19.0078 7.082 19.0005H9.918C10.3341 19.004 10.7346 18.842 11.0313 18.5502C11.328 18.2584 11.4966 17.8607 11.5 17.4445V11.5565C11.4966 11.1404 11.328 10.7427 11.0313 10.4509C10.7346 10.1591 10.3341 9.99708 9.918 10.0005Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M9.918 4.0006H7.082C6.23326 3.97706 5.52559 4.64492 5.5 5.4936V6.5076C5.52559 7.35629 6.23326 8.02415 7.082 8.0006H9.918C10.7667 8.02415 11.4744 7.35629 11.5 6.5076V5.4936C11.4744 4.64492 10.7667 3.97706 9.918 4.0006Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -292,13 +292,13 @@
                         </svg>
                         Dashboard
                     </li>
-                    <li class="selectable-tab navbar-btn" tab-id="tasks">
+                    <li class="selectable-tab navbar-btn" tab-id="tasks" tabindex="0">
                         <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M8 8H20M11 12H20M14 16H20M4 8H4.01M7 12H7.01M10 16H10.01"stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>    
                         Tasks
                     </li>
-                    <li class="selectable-tab navbar-btn" tab-id="notes">
+                    <li class="selectable-tab navbar-btn" tab-id="notes" tabindex="0">
                         <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 30px; height: 30px; padding: 2px">
                             <path d="M20 14V7C20 5.34315 18.6569 4 17 4H7C5.34315 4 4 5.34315 4 7V17C4 18.6569 5.34315 20 7 20H13.5M20 14L13.5 20M20 14H15.5C14.3954 14 13.5 14.8954 13.5 16V20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M8 8H16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -308,7 +308,7 @@
                     </li>
                 </ul>
                 <div style="margin: 0 32px; height: calc(100% - 16px)" class="vertical-separator"></div>
-                <h4 id="project-settings" class="navbar-btn" onclick="openProjectPanel()">
+                <h4 id="project-settings" class="navbar-btn" onclick="openProjectPanel()" onkeydown="((event) => {if (event.key == 'Enter') openProjectPanel()})(event)" tabindex="0">
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" fill="var(--foreground-colour)" viewBox="0 0 512 512" style="width: 25px; height: 25px; margin-right: 8px">
                         <g>
                             <path d="M476.007,209.804c25.297-25.281,37.25-58.859,35.891-91.984l-16.484-16.484l-57.453,57.453l-66.844-17.906
@@ -326,7 +326,7 @@
                 </h4>
                 <div class="expanded"></div>
                 <div class="flex-row" style="margin: 0 32px">
-                    <div id="theme-changer">
+                    <div id="theme-changer" tabindex="0">
                         <!-- svgs from svgrepo.com -->
                         <svg class="lightmode-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5001M17.6859 17.69L18.5 18.5001M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

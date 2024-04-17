@@ -6,6 +6,7 @@ const recognisedAnimationClasses = new Set(["modal-zoom-animation"]);
 const ANIM_DURATION = 300;
 
 class Modal {
+    /** @type {HTMLElement} */
     element;
     animation;
 
@@ -129,5 +130,13 @@ function modalContainerChangedState() {
 window.addEventListener("click", (event) => {
     const target = event.composedPath()[0];
     if (target.classList.contains("modal-container-active") && modalStack[modalStack.length - 1].canClickOff)
+        popHighestModal();
+});
+
+window.addEventListener("keydown", (event) => {
+    if (event.key != "Escape")
+        return;
+
+    if (modalContainer.classList.contains("modal-container-active") && modalStack[modalStack.length - 1].canClickOff)
         popHighestModal();
 });

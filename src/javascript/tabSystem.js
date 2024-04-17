@@ -120,7 +120,7 @@ function bindTabViews() {
 }
 
 function bindSelectableTabToHandler(selectableTabObj, controllerId) {
-    selectableTabObj.addEventListener("click", () => {
+    const handle = () => {
         const handler = tabHandlers.get(controllerId);
         if (!handler)
             return;
@@ -130,7 +130,13 @@ function bindSelectableTabToHandler(selectableTabObj, controllerId) {
             return;
 
         handler.switchTab(tabId);
+    }
+
+    selectableTabObj.addEventListener("keydown", (event) => {
+        if (event.key == "Enter")
+            handle();
     });
+    selectableTabObj.addEventListener("click", handle);
 }
 
 /** @returns {TabHandler} */

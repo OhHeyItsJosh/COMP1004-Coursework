@@ -702,10 +702,11 @@ input::-webkit-color-swatch {
     font-size: 0.925rem;
 }
 
-.tree-item:hover {
+.tree-item:hover, .tree-item:focus {
     background: var(--card-bg-colour);
     user-select: none;
 }
+
 
 .tree-collapse-arrow, .arrow-spacer {
     width: 15px;
@@ -798,7 +799,7 @@ input::-webkit-color-swatch {
     font-weight: bold;
 }
 
-.tree-item:hover .tree-button-row {
+.tree-item:hover .tree-button-row, .tree-item:focus-within .tree-button-row {
     display: flex;
     flex-direction: row;
     gap: 2px;

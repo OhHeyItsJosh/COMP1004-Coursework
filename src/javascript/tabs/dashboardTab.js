@@ -96,9 +96,11 @@ function redrawProgressGraph() {
         startedSection.style.flex = graphData[i].started.length;
         completedSection.style.flex = graphData[i].completed.length;
 
-        column.onclick = () => {
+        column.tabIndex = 0;
+
+        onClickOnEnter(column, () => {
             showModal(new ProgressViewModal(DAYS[i], graphData[i]))
-        };
+        });
     }
 }
 
@@ -192,9 +194,9 @@ const calendarItemBuilder = new StatefulCollectionBuilder({
 
         // const widget = buildCalendarTask(state, showCompact);
 
-        widget.onclick = () => {
+        onClickOnEnter(widget, () => {
             showModal(new TaskViewModal(state));
-        };
+        });
 
         widget.style["grid-column-start"] = startIndex;
         widget.style["grid-column-end"] = endIndex + 1;

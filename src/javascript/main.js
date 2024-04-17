@@ -332,7 +332,8 @@ class ProjectSelectModal extends Modal {
                 cardBuilder.setVariableContent("title", state.name);
                 cardBuilder.setVariableContent("content", `Tasks: ${state.taskCount}, Notes: ${state.noteCount}`);
     
-                cardBuilder.getElement().onclick = () => {
+                // cardBuilder.getElement().onclick = 
+                onClickOnEnter(cardBuilder.getElement(), () => {
                     const project = getProjectFromLocalStroage(state.id);
                     if (!project)
                         return;
@@ -340,7 +341,7 @@ class ProjectSelectModal extends Modal {
                     activeProject = project;
                     onProjectLoad();
                     popHighestModal();
-                }
+                });
 
                 return cardBuilder.getElement();
             }
@@ -401,10 +402,10 @@ class SearchSelector extends StatefulCollectionBuilder {
         super({
             builder: (state, builderArgs) => {
                 const widget = args.itemBuilder(state, builderArgs);
-                widget.onclick = (event) => {
+                onClickOnEnter(widget, (event) => {
                     this.selectCallback(state);
                     popHighestModal();
-                }
+                });
 
                 return widget;
             },
@@ -533,5 +534,19 @@ setInterval(() => {
         dirty = false;
     }
 }, 1000 * 60)
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ * @param {(event) => void} callback 
+ */
+function onClickOnEnter(element, callback) {
+    element.addEventListener("click", callback);
+    element.addEventListener("keydown", (event) => 
+    {
+        if (event.key == "Enter")
+            callback(event);
+    })
+}
 
 init();

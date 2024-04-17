@@ -1,6 +1,6 @@
 let darkMode;
 
-function loadTheme() {;
+function loadTheme() {
     darkMode = parseInt(localStorage.getItem("dark-mode"));
     setTheme(darkMode);
 }
@@ -19,8 +19,15 @@ function setTheme(dark) {
     localStorage.setItem("dark-mode", dark.toString());
 }
 
-document.getElementById("theme-changer").addEventListener("click", () => {
+const themeChanger = document.getElementById("theme-changer");
+const changeTheme = () => {
     setTheme(darkMode ? 0 : 1);
-});
+};
+
+themeChanger.addEventListener("click", changeTheme);
+themeChanger.addEventListener("keydown", (event) => {
+    if (event.key == "Enter")
+        changeTheme();
+})
 
 loadTheme();

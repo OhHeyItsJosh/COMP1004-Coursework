@@ -20,6 +20,7 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
     builder: (state, args) => {
         // create tree item widget
         const widget = elementWithClasses("div", ["tree-item", "flex-row"])
+        widget.tabIndex = 0;
         widget.setAttribute("note-id", state.getId());
 
         // add intends
@@ -33,7 +34,7 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
         // add drawer arrow if the note has children
         if (state.hasChildren()) {
             const collapseBtn = elementWithClasses("div", ["tree-collapse-arrow"]);
-            collapseBtn.onclick = (event) => {
+            onClickOnEnter(collapseBtn, (event) => {
                 event.stopPropagation();
                 const branch = findAdjacentElement(widget, (el) => el.classList.contains("tree-sublist"));
                 if (!branch)
@@ -41,7 +42,7 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
     
                 collapseBtn.classList.toggle("closed");
                 branch.classList.toggle("collpased");
-            };
+            })
             widget.appendChild(collapseBtn);
         }
         // add spacer if the note does not have children
@@ -63,7 +64,8 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
         // create button to delete note
         const deleteBtn = elementWithClasses("p", ["tree-button"]);
         deleteBtn.innerHTML = "x";
-        deleteBtn.addEventListener("click", (event) => {
+        deleteBtn.tabIndex = 0;
+        onClickOnEnter(deleteBtn, (event) => {
             showModal(new ConfirmationDialog({
                 title: "Delete Note?",
                 description: "Are you sure you want to delete this note?",
@@ -79,19 +81,20 @@ const noteExplorerBuilder = new StatefulCollectionBuilder({
         // create button to add child note
         const addBtn = elementWithClasses("p", ["tree-button"]);
         addBtn.innerHTML = "+";
-        addBtn.addEventListener("click", (event) => {
+        addBtn.tabIndex = 0;
+        onClickOnEnter(addBtn, (event) => {
             createNote(state);
             event.stopPropagation();
-        });
+        })
 
         btnRow.appendChild(addBtn);
 
         widget.appendChild(btnRow);
 
         // select the note when it is clicked.
-        widget.onclick = () => {
+        onClickOnEnter(widget, () => {
             selectNote(state.getId());
-        }
+        })
 
         // set selected class if it is selected
         if (args.isSelected)
@@ -263,7 +266,7 @@ function buildNoteContent() {
     noteTitleElement.innerText = note.getName();
     noteContentElement.innerText = note.getContent();
 
-    addNestedNoteButton.onclick = () => createNote(note);
+    onClickOnEnter(addNestedNoteButton, () => createNote(note))
 
     // nested notes section
     if (nestedNotesBuilder)
@@ -280,7 +283,8 @@ function buildNoteContent() {
         builder: (state, args) => {
             const card = createNoteCard(state);
             card.style.fontSize = "0.75rem";
-            card.onclick = () => selectNote(state.getId());
+            card.tabIndex = 0;
+            onClickOnEnter(card, () => selectNote(state.getId()));
             return card;
         }
     });
@@ -359,6 +363,7 @@ noteContentElement.addEventListener("blur", (_) => {
  */
 function createNoteCard(note) {
     const noteCard = fetchPrefab("generic-card");
+    noteCard.element.tabIndex = 0;
     noteCard.setVariableContent("title", note.getName());
 
     noteCard.setVariableContent("content", capString(note.getContent(), 50));

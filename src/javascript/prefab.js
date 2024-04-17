@@ -3,6 +3,7 @@ const prefabsIndex = new Map();
 
 class PrefabBuilder {
     element;
+    /** @type {Map<string, HTMLElement>} */
     variableElements;
 
     constructor(DOMelement) {
@@ -50,6 +51,10 @@ class PrefabBuilder {
 
         const element = this.variableElements.get(variableName);
         element.onclick = listener;
+        element.onkeydown = (event) => {
+            if (event.key == "Enter")
+                listener();
+        }
     }
 
     /** @returns {HTMLElement} */
