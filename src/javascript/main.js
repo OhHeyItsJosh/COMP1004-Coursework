@@ -53,14 +53,10 @@ function onProjectLoad() {
 
     // tasks
     taskStateNotifier.addBuilder(taskDistributorBuilder);
-    // let nCount = 0;/
+    
     activeProject.tasksHierarchy.forEachNode((id, node) => {
-        // setTimeout(() => {
         taskStateNotifier.setState(id, node, {resort: true});
         progressTracker.trackTaskChange(node);
-        // }, 1000 * nCount)
-
-        // nCount++;
     });
 
     buildNoteContent();

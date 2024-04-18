@@ -406,7 +406,7 @@ class CreateTaskModal extends Modal {
 
     build() {
         const createTaskModalBuilder = fetchPrefab("create-task-modal");
-        // IDEA: maybe change modal to store builder instead of element, this way of accessing and setting data is unconsistent.
+        // POSSIBLE ENHANCEMENT: maybe change modal to store builder instead of element, this way of accessing and setting data is unconsistent.
         if (this.existingTask) {
             this.popluateInputs(this.existingTask, createTaskModalBuilder.getElement());
             
@@ -486,6 +486,7 @@ class TagEditModal extends Modal {
 
         activeProject.tasksHierarchy.getSavedTags()
         .map((tag) => {
+            // create tag element
             const tagElement = renderTag(tag);
             tagElement.classList.add("flex")
             tagElement.tabIndex = 0;
@@ -497,6 +498,7 @@ class TagEditModal extends Modal {
                 popHighestModal();
             });
 
+            // create delete button svg and link to icon
             const deleteBtn =  document.createElementNS("http://www.w3.org/2000/svg", "svg");
             deleteBtn.classList.add("compact-icon");
             deleteBtn.tabIndex = 0;
@@ -574,11 +576,13 @@ function buildProgressIndicator(size, thickness) {
     const inner = builder.getVariable("inner-ring");
     const outer = builder.getVariable("outer-ring");
 
+    // set bounding box size
     inner.setAttribute("cx", size / 2);
     inner.setAttribute("cy", size / 2);
     outer.setAttribute("cx", size / 2);
     outer.setAttribute("cy", size / 2);
 
+    // set radius
     const radius = (size / 2) - (thickness / 2) - 4;
     inner.setAttribute("r", radius);
     outer.setAttribute("r", radius);
@@ -586,6 +590,7 @@ function buildProgressIndicator(size, thickness) {
     inner.setAttribute("stroke-width", thickness / 4);
     outer.setAttribute("stroke-width", thickness);
 
+    // set dasharray to circumference, dash values from 0 - circumference maps to 0% - 100%
     const circumference = Math.round(2 * Math.PI * radius);
     outer.setAttribute("stroke-dasharray", circumference);
 

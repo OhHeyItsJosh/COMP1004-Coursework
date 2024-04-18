@@ -1142,8 +1142,7 @@ class ProgressTrackerData {
             if (
                 (this._boundSafeIndex(indexList, refIndex - 1).date <= date) && 
                 (date <= this._boundSafeIndex(indexList, refIndex + 1).date)
-            )
-            {
+            ) {
                 return {ref: existingRef, didChange: false}
             }
 
